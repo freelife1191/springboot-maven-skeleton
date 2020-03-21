@@ -3,7 +3,7 @@
 
 ## Spec
 - SpringBoot 2.2.5.RELEASE
-- JAVA 13
+- JAVA 14
 - ORM Jooq 3.13.1
 - Swagger 3.0.0 SNAPSHOT 
 - Build: Maven
