@@ -32,11 +32,10 @@ class SampleApiControllerTest extends BaseControllerTest {
     /**
      * 상속 클래스의 생성자 생성
      * @param mapper
-     * @param mockMvc
      * @param ctx
      */
-    public SampleApiControllerTest(ObjectMapper mapper, MockMvc mockMvc, WebApplicationContext ctx) {
-        super(mapper, mockMvc, ctx);
+    public SampleApiControllerTest(ObjectMapper mapper, WebApplicationContext ctx) {
+        super(mapper, ctx);
     }
 
     private ReqGetSample reqGetSample;

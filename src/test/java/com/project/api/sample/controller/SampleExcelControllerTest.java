@@ -35,8 +35,8 @@ class SampleExcelControllerTest extends BaseControllerTest {
 
     private static Validator validator;
 
-    public SampleExcelControllerTest(ObjectMapper mapper, MockMvc mockMvc, WebApplicationContext ctx) {
-        super(mapper, mockMvc, ctx);
+    public SampleExcelControllerTest(ObjectMapper mapper, WebApplicationContext ctx) {
+        super(mapper, ctx);
     }
 
     @BeforeAll
