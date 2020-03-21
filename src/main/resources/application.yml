@@ -1,0 +1,137 @@
+spring:
+  profiles:
+    active: local
+  servlet:
+    ## 최대 업로드 이 설정은 현제 사용하지 않음 별도로 WebConfig 에서 commons-fileupload 설정을 사용
+    multipart:
+      enabled: false
+      max-file-size: 50MB
+      max-request-size: 50MB
+  http:
+    converters:
+      preferred-json-mapper: jackson
+## 데이터베이스 옵션 설명
+#  datasource:
+#    driver-class-name: com.mysql.jdbc.Driver
+#    driver-class-name: net.sf.log4jdbc.sql.jdbcapi.DriverSpy
+#    dbcp2:
+#      initial-size: 10
+## idle 상태의 connection 최대 개수
+#      max-idle: 20
+## idle 상태의 connection 최소 개수
+#      min-idle: 5
+#      max-total: 100
+#      max-wait-millis: 720000
+#      pool-prepared-statements: true
+## test Query
+#      validation-query: SELECT 1
+## true로 주면, idle 상태에서도 test를 실행함
+#      test-while-idle: true
+## connection을 가져올 때, test 할것인지 여부
+#      test-on-borrow: true
+#      max-conn-lifetime-millis: 1800000
+## idle 상태가 얼마나 지속되면 test를 실행할 것인지. mil값임.
+#      time-between-eviction-runs-millis: 3600000
+## connection 유효기간
+#      min-evictable-idle-time-millis: 3600000
+  datasource:
+## 추가적으로 줄수 있는 옵션들
+## serverTimezone=UTC&useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
+## autoReconnect=true&noAccessToProcedureBodies=true&useUnicode=true&characterEncoding=utf8
+## MariaDB
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://localhost:3306/test?useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
+## MySQL
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    url: jdbc:mysql://
+    username: test
+    password: test
+## hikari 옵션
+#    hikari:
+#      max-lifetime: 1797000
+#      connection-timeout: 10000
+## 10 ~ 40
+#      minimum-idle: 10
+## 10 ~ 40
+#      maximum-pool-size: 10
+## idle-timeout: 1497000
+#      isolate-internal-queries: false
+#      auto-commit: true
+#      read-only: false
+#      leak-detection-threshold: 10000
+
+  jooq:
+    sql-dialect: mariadb
+  # Excel 설정
+  mvc:
+    contentnegotiation:
+      ## favor-parameter 값이 true면 ContentNegotiationViewResolver가
+      ## format 파라미터로 지정한 미디어 타입을 사용하도록 설정
+      favor-parameter: true
+      ## favor-path-extension 값이 true면 ContentNegotiationViewResolver가
+      ## 확장자로 지정한 미디어 타입을 사용하도록 설정
+      favor-path-extension: true
+      media-types:
+        xls: application/vnd.ms-excel
+
+# AWS 정보 셋팅
+cloud:
+  aws:
+    # AWS S3 bucket의 정보
+    s3:
+       bucket: test.co.kr
+       download-url: https://s3.ap-northeast-2.amazonaws.com/test.co.kr/
+    region:
+      static: ap-northeast-2
+    stack:
+      # EC2에서 Spring Cloud 프로젝트를 실행시키면 기본으로 CloudFormation 구성을 시작합니다.
+      # 설정한 CloudFormation이 없으면 false
+      auto: false
+    # AWS 마스터 계정 또는 IAMUSER 정보
+    credentials:
+      # AWS의 instanceProfile를 사용
+      instanceProfile: true
+      # AWS S3 KEY
+      accessKey:
+      secretKey:
+
+# 멀티 DB 설정 필요시 설정
+#  jta:
+#    enabled: true
+#  original :
+#    datasource:
+#      jdbc-url: jdbc:mysql://xxxxxxxxxxx.com:3306
+#      password: xxxxx
+#      username: xxxxxxx
+#      driverClassName: com.mysql.cj.jdbc.Driver
+#  first :
+#    datasource:
+#      xa-data-source-class-name: com.mysql.cj.jdbc.MysqlXADataSource
+#      xa-properties:
+#        server-name: xxxxxxxxxxxxx.com
+#        database-name: xxxxx
+#        password: xxxxxxx
+#        user: xxxxxx
+#        port-number: 3306
+#  second:
+#    datasource:
+#      xa-data-source-class-name: com.mysql.cj.jdbc.MysqlXADataSource
+#      xa-properties:
+#        server-name: localhost
+#        database-name: test
+#        password: test
+#        user: test
+#        port-number: 3306
+jwt:
+  secret-key:
+  default-value:
+properties:
+  file:
+    ## 최대 업로드 사이즈 기본 100 MB
+    max-upload-size: 100
+service:
+  name: springboot-maven-skeleton
+server:
+  port: 8080
+#  servlet:
+#    context-path: /skeleton

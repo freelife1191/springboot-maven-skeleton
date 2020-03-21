@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="true">
+    <include resource="logs/default-log-constant.xml"/>
+    <include resource="logs/default-log-setting.xml"/>
+
+    <!-- Dooray 메신저에 ERROR 메세지 전송 -->
+    <appender name="dooray" class="com.project.common.appender.DoorayAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <enabled>true</enabled>
+        <token>${HOOK_PROD_URL}</token>
+        <botName>${DEFAULT_BOT_NAME}</botName>
+        <botImage>${DEFAULT_BOT_IMAGE_URL}</botImage>
+        <level>ERROR</level>
+    </appender>
+
+    <!-- additivity="false" 사용시 아래의 logger가 상속 받지 않는다 default 는 true -->
+    <logger name="com.project" level="INFO"/>
+    <logger name="org.hibernate.validator" level="INFO"/>
+
+    <logger name="jdbc" level="OFF"/>
+    <!--jdbc.sqlonly : SQL문만을 로그로 남기며, PreparedStatement일 경우 관련된 argument 값으로 대체된 SQL문이 보여진다.-->
+    <logger name="jdbc.sqlonly" level="OFF"/>
+    <!--jdbc.sqltiming : SQL문과 해당 SQL을 실행시키는데 수행된 시간 정보(milliseconds)를 포함한다.-->
+    <logger name="jdbc.sqltiming" level="DEBUG"/>
+    <!--jdbc.audit : ResultSet을 제외한 모든 JDBC 호출 정보를 로그로 남긴다. 많은 양의 로그가 생성되므로 특별히 JDBC 문제를 추적해야 할 필요가 있는 경우를 제외하고는 사용을 권장하지 않는다.-->
+    <logger name="jdbc.audit" level="OFF"/>
+    <!--jdbc.resultset : ResultSet을 포함한 모든 JDBC 호출 정보를 로그로 남기므로 매우 방대한 양의 로그가 생성된다.-->
+    <logger name="jdbc.resultset" level="OFF"/>
+    <!--jdbc.resultsettable : SQL 결과 조회된 데이터의 table을 로그로 남긴다.-->
+    <logger name="jdbc.resultsettable" level="DEBUG"/>
+    <logger name="jdbc.connection" level="OFF"/>
+
+    <!--dev의 기본 패키지 로그 레벨은 DEBUG로 잡고 appender 등록, 기존의 default-log-setting.xml 파일 내의 spring 로그 레벨은 info로 등록-->
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="DEFAULT_LOG_APPENDER"/>
+        <appender-ref ref="DEFAULT_ERROR_LOG_APPENDER"/>
+        <appender-ref ref="dooray"/>
+    </root>
+</configuration>

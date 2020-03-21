@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- 백오피스용 코드 제너레이터 설정 멀티 스키마 설정 예시 -->
+<configuration xmlns="http://www.jooq.org/xsd/jooq-codegen-3.13.0.xsd">
+    <!-- JDBC connection parameters -->
+    <jdbc>
+        <driver>com.mysql.cj.jdbc.Driver</driver>
+        <!-- ?serverTimezone=UTC&amp;useSSL=false&amp;zeroDateTimeBehavior=convertToNull -->
+        <url>jdbc:mysql://stage:3306?useSSL=false&amp;zeroDateTimeBehavior=convertToNull</url>
+        <user>stage</user>
+        <password>stage</password>
+    </jdbc>
+
+    <!-- Generator parameters -->
+    <generator>
+        <name>org.jooq.codegen.JavaGenerator</name>
+        <strategy>
+            <name>org.jooq.codegen.example.JPrefixGeneratorStrategy</name>
+        </strategy>
+        <database>
+            <name>org.jooq.meta.mysql.MySQLDatabase</name>
+            <includes>.*</includes>
+            <excludes></excludes>
+            <!-- In case your database supports catalogs, e.g. SQL Server:
+            <inputCatalog>public</inputCatalog>
+              -->
+            <schemata>
+                <schema>
+                    <inputSchema>test</inputSchema>
+                </schema>
+                <schema>
+                    <inputSchema>test1</inputSchema>
+                </schema>
+                <schema>
+                    <inputSchema>test2</inputSchema>
+                </schema>
+            </schemata>
+            <unsignedTypes>false</unsignedTypes>
+            <tableValuedFunctions>true</tableValuedFunctions>
+        </database>
+        <target>
+            <packageName>com.project.test.entity</packageName>
+            <directory>target/generated-sources/jooq</directory>
+        </target>
+        <generate>
+            <indexes>true</indexes>
+            <relations>true</relations>
+            <javaTimeTypes>true</javaTimeTypes>
+            <springAnnotations>true</springAnnotations>
+            <!--<deprecated>true</deprecated>-->
+            <!--<instanceFields>true</instanceFields>-->
+            <!--<generatedAnnotation>true</generatedAnnotation>-->
+            <!--<records>true</records>-->
+            <!--<pojos>true</pojos>-->
+            <!--<immutablePojos>false</immutablePojos>-->
+            <!--<interfaces>false</interfaces>-->
+            <!--<daos>true</daos>-->
+            <!--<jpaAnnotations>true</jpaAnnotations>-->
+            <!--<validationAnnotations>false</validationAnnotations>-->
+            <!--<globalObjectReferences>true</globalObjectReferences>-->
+            <!--<fluentSetters>true</fluentSetters>-->
+        </generate>
+    </generator>
+</configuration>

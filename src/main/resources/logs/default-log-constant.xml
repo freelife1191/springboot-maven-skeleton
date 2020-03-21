@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 로그 상수 설정 -->
+<included>
+    <!-- 기본 로그 경로 -->
+    <property name="DEFAULT_LOG_HOME" value="log" />
+    <!-- ERROR 로그 경로 -->
+    <property name="DEFAULT_ERROR_LOG_HOME" value="log" />
+    <!-- 기본 BOT 이미지 URL -->
+    <property name="DEFAULT_BOT_IMAGE_URL" value="https://cdn3.iconfinder.com/data/icons/chat-bot-emoji-filled-color/300/14157797Untitled-3-512.png" />
+    <!-- 기본 BOT NAME -->
+    <property name="DEFAULT_BOT_NAME" value="springboot-maven-skeleton-bot" />
+    <!-- HOOK LOCAL URL -->
+    <property name="HOOK_LOCAL_URL" value="https://hook.dooray.com/services/" />
+    <!-- HOOK DEV URL -->
+    <property name="HOOK_DEV_URL" value="https://hook.dooray.com/services/" />
+    <!-- HOOK STAGE URL -->
+    <property name="HOOK_STAGE_URL" value="https://hook.dooray.com/services/" />
+    <!-- HOOK PROD URL -->
+    <property name="HOOK_PROD_URL" value="https://hook.dooray.com/services/" />
+</included>

@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 로그 APPENDER 및 기본 로그 셋팅 -->
+<included>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <property name="LOG_PATTERN" value="[%d][%highlight(%-5level)] %magenta(%-4relative) [%boldYellow(%t)] %cyan(%logger{30}) [%boldGreen(%method:%line)] - %msg%n%throwable"/>
+
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <layout class="ch.qos.logback.classic.PatternLayout">
+            <Pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss}[%thread] %logger[%method:%line] - %msg%n</Pattern>
+        </layout>
+    </appender>
+
+    <appender name="DEFAULT_ERROR_LOG_APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${DEFAULT_ERROR_LOG_HOME}/error.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${DEFAULT_ERROR_LOG_HOME}/archived/error.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>500MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <springProfile name="!prod">
+                <maxHistory>10</maxHistory>
+            </springProfile>
+            <springProfile name="prod">
+                <maxHistory>30</maxHistory>
+            </springProfile>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>UTF-8</charset>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="DEFAULT_LOG_APPENDER" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${DEFAULT_LOG_HOME}/api.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${DEFAULT_LOG_HOME}/archived/api.%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>500MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+            <springProfile name="!prod">
+                <maxHistory>10</maxHistory>
+            </springProfile>
+            <springProfile name="prod">
+                <maxHistory>30</maxHistory>
+            </springProfile>
+        </rollingPolicy>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <springProfile name="!prod">
+                <level>DEBUG</level>
+            </springProfile>
+            <springProfile name="prod">
+                <level>INFO</level>
+            </springProfile>
+        </filter>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <charset>UTF-8</charset>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="org.springframework" level="INFO"/>
+
+    <logger name="io.swagger" level="WARN" additivity="false"/>
+
+</included>

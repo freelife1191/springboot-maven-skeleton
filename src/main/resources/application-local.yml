@@ -1,0 +1,9 @@
+spring:
+  devtools:
+    livereload:
+      enabled: true
+    remote:
+      restart:
+        enabled: true
+logging:
+  config: classpath:logs/logback-local.xml

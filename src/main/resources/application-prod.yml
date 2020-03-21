@@ -1,0 +1,16 @@
+spring:
+  ## 운영
+  datasource:
+    url: jdbc:mariadb://real:3306?useSSL=false&zeroDateTimeBehavior=convertToNull
+    username: real
+    password: real
+logging:
+  config: classpath:logs/logback-prod.xml
+
+# AWS 정보 셋팅
+cloud:
+  aws:
+    # AWS S3 bucket의 정보
+    s3:
+#      bucket: real.co.kr
+#      download-url: https://s3.ap-northeast-2.amazonaws.com/real.co.kr/

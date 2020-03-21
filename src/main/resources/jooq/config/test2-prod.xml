@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- OSS 개발 DB 코드 제너레이터 -->
+<configuration xmlns="http://www.jooq.org/xsd/jooq-codegen-3.13.0.xsd">
+    <!-- JDBC connection parameters -->
+    <jdbc>
+        <driver>org.mariadb.jdbc.Driver</driver>
+        <!-- ?serverTimezone=UTC&useSSL=false -->
+        <url>jdbc:mariadb://prod:3306</url>
+        <user>prod</user>
+        <password>prod</password>
+    </jdbc>
+
+    <!-- Generator parameters -->
+    <generator>
+        <name>org.jooq.codegen.JavaGenerator</name>
+        <strategy>
+            <name>org.jooq.codegen.example.JPrefixGeneratorStrategy</name>
+        </strategy>
+        <database>
+            <name>org.jooq.meta.mariadb.MariaDBDatabase</name>
+            <includes>.*</includes>
+            <excludes></excludes>
+            <!-- In case your database supports catalogs, e.g. SQL Server:
+            <inputCatalog>public</inputCatalog>
+              -->
+            <inputSchema>prod</inputSchema>
+            <unsignedTypes>false</unsignedTypes>
+            <tableValuedFunctions>true</tableValuedFunctions>
+        </database>
+        <target>
+            <packageName>com.project.test2.entity</packageName>
+            <directory>target/generated-sources/jooq</directory>
+        </target>
+        <generate>
+            <indexes>true</indexes>
+            <relations>true</relations>
+            <javaTimeTypes>true</javaTimeTypes>
+            <springAnnotations>true</springAnnotations>
+            <!--<deprecated>true</deprecated>-->
+            <!--<instanceFields>true</instanceFields>-->
+            <!--<generatedAnnotation>true</generatedAnnotation>-->
+            <!--<records>true</records>-->
+            <!--<pojos>true</pojos>-->
+            <!--<immutablePojos>false</immutablePojos>-->
+            <!--<interfaces>false</interfaces>-->
+            <!--<daos>true</daos>-->
+            <!--<jpaAnnotations>true</jpaAnnotations>-->
+            <!--<validationAnnotations>false</validationAnnotations>-->
+            <!--<globalObjectReferences>true</globalObjectReferences>-->
+            <!--<fluentSetters>true</fluentSetters>-->
+        </generate>
+    </generator>
+</configuration>
