@@ -23,7 +23,7 @@
     </repositories>
 
     <properties>
-        <java.version>13</java.version>
+        <java.version>14</java.version>
         <!-- swagger -->
         <springfox-swagger.version>2.9.2</springfox-swagger.version>
         <springfox-swagger-snapshot.version>3.0.0-SNAPSHOT</springfox-swagger-snapshot.version>
