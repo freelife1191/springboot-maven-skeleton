@@ -39,7 +39,7 @@ public class WebConfig implements WebMvcConfigurer {
                         , HttpMethod.OPTIONS.name(), HttpMethod.HEAD.name(), HttpMethod.TRACE.name())
                 .allowCredentials(false)
                 .allowedHeaders("*")
-                .maxAge(3600);
+                .maxAge(60 * 60); // 1시간
     }
 
     @Bean
@@ -48,8 +48,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .requestFactory(HttpComponentsClientHttpRequestFactory::new)
                 //.additionalInterceptors(new RestTemplateClientHttpRequestInterceptor)
                 //.errorHandler(new RestTemplateErrorHandler())
-                .setConnectTimeout(Duration.ofSeconds(30))
-                .setReadTimeout(Duration.ofSeconds(300))
+                .setConnectTimeout(Duration.ofSeconds(30)) //접속유지 30초
+                .setReadTimeout(Duration.ofSeconds(300)) //응답대기 300초
                 .build();
     }
 

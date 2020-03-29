@@ -8,6 +8,7 @@ import org.apache.poi.ss.usermodel.Row;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 /**
@@ -42,6 +43,10 @@ public class SampleExcelDto {
     @Size(min = 1, max = 500)
     @ApiModelProperty("내용")
     private String content;
+    @Size(max = 15)
+    @Pattern(regexp="(\\d{1,2}|1\\d\\d|2[0-4]\\d|25[0-5])\\.(\\d{1,2}|1\\d\\d|2[0-4]\\d|25[0-5])\\.(\\d{1,2}|1\\d\\d|2[0-4]\\d|25[0-5])\\.(\\d{1,2}|1\\d\\d|2[0-4]\\d|25[0-5])", message="IP 주소 형식이 올바르지 않습니다")
+    @ApiModelProperty("IP")
+    private String ip;
     @ApiModelProperty("소수")
     private Double percent;
     @ApiModelProperty("날짜")

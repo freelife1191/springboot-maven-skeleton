@@ -86,16 +86,30 @@ public class ErrorUtils {
      * @param e
      */
     public static void logWriter(CommonError error, String CLASS_NAME, String ERROR_MSG, Map<String, Object> errorMap, Exception e) {
+        logWriter(error, CLASS_NAME, ERROR_MSG, errorMap, e, null);
+    }
+
+    /**
+     * Level 별 에러메세지 출력
+     * @param error
+     * @param CLASS_NAME
+     * @param ERROR_MSG
+     * @param errorMap
+     * @param e
+     */
+    public static void logWriter(CommonError error, String CLASS_NAME, String ERROR_MSG, Map<String, Object> errorMap, Exception e, String CUSTOM_MSG) {
+
+        String EX_MSG = StringUtils.isEmpty(CUSTOM_MSG) ? ExceptionUtils.getMessage(e) : CUSTOM_MSG + "\n" + ExceptionUtils.getMessage(e);
         //에러메세지 출력
         switch (error.getLevel()){
             case INFO:
-                ErrorUtils.infoWriter(CLASS_NAME, ERROR_MSG, errorMap, ExceptionUtils.getMessage(e));
+                ErrorUtils.infoWriter(CLASS_NAME, ERROR_MSG, errorMap, EX_MSG);
                 break;
             case WARN:
-                ErrorUtils.warnWriter(CLASS_NAME, ERROR_MSG, errorMap, ExceptionUtils.getMessage(e));
+                ErrorUtils.warnWriter(CLASS_NAME, ERROR_MSG, errorMap, EX_MSG);
                 break;
             case ERROR:
-                ErrorUtils.errorWriter(CLASS_NAME, ERROR_MSG, errorMap, ExceptionUtils.getMessage(e));
+                ErrorUtils.errorWriter(CLASS_NAME, ERROR_MSG, errorMap, EX_MSG);
                 break;
         }
     }

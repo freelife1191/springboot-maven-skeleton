@@ -1,9 +1,12 @@
 package com.project.component.excel.service;
 
+import com.project.common.constant.ResCode;
 import com.project.component.excel.model.ExcelReaderErrorField;
 import com.project.component.excel.utils.ExcelUtils;
+import com.project.exception.excel.ExcelReaderException;
 import com.project.exception.excel.ExcelReaderFileException;
 import com.project.exception.excel.ExcelReaderFieldException;
+import com.project.exception.excel.ExcelReaderFileExtentionException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -68,10 +71,25 @@ public class ExcelReader {
      * @throws IOException
      */
     public static <T> List<T> getObjectList(final MultipartFile multipartFile,
-                                      final Function<Row, T> rowFunc, Integer startRow) {
+                                            final Function<Row, T> rowFunc, Integer startRow) {
 
         errorFieldList = new ArrayList<>();
         headerList = new ArrayList<>();
+
+        if(Objects.isNull(multipartFile)) throw new ExcelReaderFileException("처리할 파일이 없습니다");
+
+        if(Objects.isNull(rowFunc)) throw new ExcelReaderException("처리할 ROW 함수가 없습니다");
+
+        try {
+            log.info("Excel Upload fileInfo :: fileName: {}, fileSize: {} Byte, {} MB",multipartFile.getOriginalFilename(),multipartFile.getSize(), multipartFile.getSize()/1024/1024);
+        } catch (Exception e) {
+            log.info("Excel Upload fileInfo :: fileName: {}, fileSize: {}",multipartFile.getOriginalFilename(),"비정상 파일 - 파일 사이즈 측정 불가");
+        }
+
+        String originalFileName = multipartFile.getOriginalFilename();
+        String originalFileExtension = originalFileName.substring(originalFileName.lastIndexOf(".")+1);
+        if( !(originalFileExtension.equals("xlsx") || originalFileExtension.equals("xls")) )
+            throw new ExcelReaderFileExtentionException("엑셀 파일 확장자가 아닙니다 :: originalFileName = "+originalFileName+", originalFileExtension = "+originalFileExtension);
 
         // rownum 이 입력되지 않으면 default로 1 번째 라인을 데이터 시작 ROW로 판단
         if(Objects.isNull(startRow)) startRow = 1;
@@ -98,7 +116,7 @@ public class ExcelReader {
                 .collect(Collectors.toList());
 
         if(!ListUtils.emptyIfNull(errorFieldList).isEmpty())
-            throw new ExcelReaderFieldException();
+            throw new ExcelReaderFieldException(ResCode.EXCEL_READER_FIELD_ERROR.getMessage());
 
         return objectList;
     }

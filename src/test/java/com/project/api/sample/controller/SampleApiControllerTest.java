@@ -5,12 +5,11 @@ import com.project.api.sample.constant.Hobby;
 import com.project.api.sample.model.Address;
 import com.project.api.sample.packet.ReqGetSample;
 import com.project.api.sample.packet.ReqJsonSample;
-import com.project.common.BaseControllerTest;
+import com.project.common.BaseTest;
 import com.project.utils.common.TestUtils;
 import org.junit.jupiter.api.*;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.util.StopWatch;
 import org.springframework.web.context.WebApplicationContext;
@@ -27,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * BaseControllerTest를 상속 받으면 미리 설정해둔 어노테이션들이 자동으로 셋팅됨
  * Created by KMS on 11/03/2020.
  */
-class SampleApiControllerTest extends BaseControllerTest {
+class SampleApiControllerTest extends BaseTest {
 
     /**
      * 상속 클래스의 생성자 생성

@@ -141,7 +141,11 @@ public class ExcelUtils {
      */
     public static String getValue(Cell cell) {
 
-        String value = null;
+        if(Objects.isNull(cell) || Objects.isNull(cell.getCellType()))
+            return "";
+
+        String value;
+
         // 셀 내용의 유형 판별
         switch (cell.getCellType()) {
             case STRING: // getRichStringCellValue() 메소드를 사용하여 컨텐츠를 읽음
@@ -152,8 +156,8 @@ public class ExcelUtils {
                     value = cell.getLocalDateTimeCellValue().toString();
                 else
                     value = String.valueOf(cell.getNumericCellValue());
-                    if (value.endsWith(".0"))
-                        value = value.substring(0, value.length() - 2);
+                if (value.endsWith(".0"))
+                    value = value.substring(0, value.length() - 2);
                 break;
             case BOOLEAN:
                 value = String.valueOf(cell.getBooleanCellValue());

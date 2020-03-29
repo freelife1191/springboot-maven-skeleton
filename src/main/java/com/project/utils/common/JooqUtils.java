@@ -492,7 +492,18 @@ public class JooqUtils {
      * @param <T>
      */
     public static <T extends Table> void resetAutoincrement(DSLContext dsl, T table) {
-        dsl.execute("ALTER TABLE "+getTableNmToString(table)+" AUTO_INCREMENT = 1");
+        resetAutoincrement(dsl, table, 1);
+    }
+
+    /**
+     * 해당 테이블의 AUTO_INCREMENT 값 원하는 값으로 초기화
+     * @param dsl
+     * @param table
+     * @param value 변경할 AUTO_INCREMENT 값
+     * @param <T>
+     */
+    public static <T extends Table> void resetAutoincrement(DSLContext dsl, T table, Integer value) {
+        dsl.execute("ALTER TABLE "+getTableNmToString(table)+" AUTO_INCREMENT = "+value);
     }
 
     /**

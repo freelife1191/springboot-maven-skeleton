@@ -202,23 +202,40 @@ public class CommonUtils {
 
 
     /**
-     * '|' 구분자로 문자데이터를 추가 연결함
-     * @param objectList
+     * 구분자로 문자데이터를 추가 연결함 (기본값 '|' )
+     * @param objectList 데이터 리스트
      * @return
      */
     public static String getJoinData(List<Object> objectList) {
-        return getJoinData(null, objectList);
+        return getJoinData((String) null, objectList);
     }
 
     /**
-     * '|' 구분자로 문자데이터를 추가 연결함
-     * @param joiner
-     * @param objectList
+     * 구분자로 문자데이터를 추가 연결함 (기본값 '|' )
+     * @param joinStr 구분자
+     * @param objectList 데이터 리스트
+     * @return
+     */
+    public static String getJoinData(String joinStr, List<Object> objectList) {
+
+        StringJoiner joiner;
+
+        if(StringUtils.isNotEmpty(joinStr)) joiner = new StringJoiner(joinStr);
+        else joiner = new StringJoiner("|");
+
+        return getJoinData(joiner, objectList);
+
+    }
+
+    /**
+     * 구분자로 문자데이터를 추가 연결함 (기본값 '|' )
+     * @param joiner 구분 Joiner
+     * @param objectList 데이터 리스트
      * @return
      */
     public static String getJoinData(StringJoiner joiner, List<Object> objectList) {
 
-        if(joiner == null) joiner = new StringJoiner("|");
+        if(Objects.isNull(joiner)) joiner = new StringJoiner("|");
 
         for(Object object : objectList) {
             joiner.add(String.valueOf(object));

@@ -24,9 +24,12 @@ public enum ResCode {
     ERROR(500, "ERROR", "ERROR"),
     FAIL(900, "FAIL","FAIL"),
 
-    /* ImisFile Message */
+    /* File Error Message */
+    FILE_REQUEST_MISSING_PART(3000, "FILE REQUEST MISSING PART ERROR", "File Request Missing Part Error"),
     FILE_DUPLICATE(3001, "FILE DUPLACATE", "File Duplacate"),
     FILE_MAX_UPLOAD_SIZE_EXCEEDED(3002, "FILE MAX UPLOAD SIZE EXCEEDED","File Max Upload Size Exceeded"),
+
+    FILE_REQUEST_ERROR(3010, "FILE REQUEST ERROR", "File Request Error"),
     FILE_NOT_EXIST(3101, "FILE NOT EXIST", "File Not Exist"),
 
     EXCEL_ERROR(4000, "EXCEL ERROR", "Excel Error"),

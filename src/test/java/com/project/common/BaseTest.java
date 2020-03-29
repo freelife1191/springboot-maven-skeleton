@@ -35,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
 // @Transactional
-public class BaseControllerTest {
+public class BaseTest {
     protected final MockMvc mockMvc;
     protected final ObjectMapper mapper;
     protected final WebApplicationContext ctx;
@@ -45,7 +45,7 @@ public class BaseControllerTest {
     // 테스트 JWT 데이터
     protected static String jwtData = "";
 
-    public BaseControllerTest(ObjectMapper mapper, WebApplicationContext ctx) {
+    public BaseTest(ObjectMapper mapper, WebApplicationContext ctx) {
         this.mapper = mapper;
         this.ctx = ctx;
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.ctx)

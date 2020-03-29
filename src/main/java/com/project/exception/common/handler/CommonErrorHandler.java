@@ -9,10 +9,7 @@ import com.project.common.domain.CommonResult;
 import com.project.component.excel.service.ExcelReader;
 import com.project.exception.common.*;
 import com.project.exception.common.constant.CommonError;
-import com.project.exception.excel.ExcelComponentException;
-import com.project.exception.excel.ExcelReaderException;
-import com.project.exception.excel.ExcelReaderFieldException;
-import com.project.exception.excel.ExcelReaderFileException;
+import com.project.exception.excel.*;
 import com.project.exception.file.FileDuplicateException;
 import com.project.exception.file.FileNotExistException;
 import com.project.exception.file.FileRequestFileNotException;
@@ -39,12 +36,11 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.project.common.constant.ResCode.ERROR;
 
@@ -55,9 +51,6 @@ public class CommonErrorHandler {
     private String CLASS_NAME = "Common";
 
     private Map<String, Object> errorMap = new LinkedHashMap<>();
-
-    @Value("${properties.file.max-upload-size}")
-    private long MAX_UPLOAD_SIZE;
 
     @Value("${jwt.secret-key}")
     private String secretKey;
@@ -72,6 +65,34 @@ public class CommonErrorHandler {
      * @throws Exception
      */
     @ExceptionHandler({
+            // HTTP 요청 에러
+            HttpMessageNotReadableException.class,
+            // 지원되지 않는 HTTP METHOD 에러 핸들러
+            HttpRequestMethodNotSupportedException.class,
+
+            // 데이터 등록 실패 에러핸들러
+            DataRegistrationFailedException.class,
+            // 임시 파일 적용 시 BODY가 없을 때
+            DataNotFoundException.class,
+            // 중복된 데이터 처리 에러 핸들러
+            DuplicateDataException.class,
+            // 데이터베이스 중복 키 에러
+            DuplicateKeyException.class,
+
+            // RestTemplate API 통신 에러 핸들러
+            RestClientException.class,
+            // RestTemplate API 통신 에러 핸들러
+            ResourceAccessException.class,
+
+            // 최대 파일 용량 초과 에러
+            MaxUploadSizeExceededException.class,
+            // 파일이 용량 제한 에러
+            SizeLimitExceededException.class,
+            // MultiPart 파일 전송 누락 에러
+            MissingServletRequestPartException.class,
+            // MultiPart 파일 전송 요청 에러
+            MultipartException.class,
+
             //프로세스를 더이상 진행할 수 없을 때
             UnprocessableException.class,
             // 파일이 존재하지 않을 때
@@ -82,65 +103,63 @@ public class CommonErrorHandler {
             FileDuplicateException.class,
             // 파일 등록 필수 파라메터 체크
             FileRequestParamRequiredException.class,
+
+            // JWT 토큰 복호화 ERROR 핸들러
+            InvalidSignatureException.class,
+
             // 파라메터 유효성 체크 실패 에러 핸들러
             ParameterValidationFailedException.class,
-            // 데이터 등록 실패 에러핸들러
-            DataRegistrationFailedException.class,
-            // 임시 파일 적용 시 BODY가 없을 때
-            DataNotFoundException.class,
-            // RequestBody(JSON 데이터)가 없을 때
-            HttpMessageNotReadableException.class,
-            // 중복된 데이터 처리 에러 핸들러
-            DuplicateDataException.class,
-            // 지원되지 않는 HttpMethod 에러 핸들러
-            HttpRequestMethodNotSupportedException.class,
             // 사용자 정의 필수 파라메터 누락 에러 핸들러
             RequestParamRequiredException.class,
             // Parameter Validation Error
             MissingServletRequestParameterException.class,
-            // RestTemplate API 통신 에러 핸들러
-            RestClientException.class,
-            // RestTemplate API 통신 에러 핸들러
-            ResourceAccessException.class,
-            // JWT 토큰 복호화 ERROR 핸들러
-            InvalidSignatureException.class,
-            // 데이터베이스 중복 키 에러
-            DuplicateKeyException.class,
-            // 최대 파일 용량 초과 에러
-            MaxUploadSizeExceededException.class,
-            // 파일이 용량 제한 에러
-            SizeLimitExceededException.class,
             // Parameter Validation Error
             BindException.class,
             // Parameter Validation Error
             MethodArgumentNotValidException.class,
+
             // AES 복호화 에러
             AesDecryptException.class,
             // AES 암호화 에러
             AesEncryptException.class,
+
             // 엑셀 데이터 처리중 에러
             ExcelComponentException.class,
             // 엑셀 업로드 필드 에러 핸들러
             ExcelReaderFieldException.class,
+            // 엑셀 업로드 파일 에러 핸들러
+            ExcelReaderFileException.class,
+            // 엑셀 업로드 파일 확장자 에러 핸들러
+            ExcelReaderFileExtentionException.class,
             // 엑셀 업로드 시 캐치 하지 못한 그외 에러
             ExcelReaderException.class,
-            // 엑셀 업로드시 읽을 수 없는 엑셀 파일 에러
-            ExcelReaderFileException.class,
     })
     public CommonResult<?> CommonErrorException(Exception e, HttpServletRequest request, WebRequest webRequest) throws Exception {
 
         // 공통에러상수 객체 셋팅
         CommonError error = CommonError.getCommonError(e);
 
-        String ERROR_MSG = error.isException() && StringUtils.isNotEmpty(e.getMessage()) ? error.getMessage()+ExceptionUtils.getRootCauseMessage(e) : error.getMessage();
+        String ERROR_MSG = error.isException() && StringUtils.isNotEmpty(e.getMessage()) ? error.getMessage()+e.getMessage() : error.getMessage();
 
         errorMap = ErrorUtils.setErrorMap(request, webRequest, secretKey); // 에러 맵 기본 셋팅
-        CommonResult<?> commonResult = new CommonResult<>(error.getResCode(), ERROR_MSG, errorMap);
+
+        CommonResult<?> commonResult = null;
+        String CUSTOM_MSG = null; //커스텀 Exception Message
 
         /* Exception 별 커스텀 처리 */
         switch (error) {
             case MaxUploadSizeExceededException: // 최대 파일 용량 초과 에러
-                ERROR_MSG += "제한값 ( " + MAX_UPLOAD_SIZE + " MB )";
+                long permittedSize=0L; //제한용량
+                long actualSize=0L; //요청 파일용량
+                MaxUploadSizeExceededException me = (MaxUploadSizeExceededException) e;
+                Throwable cause = me.getCause();
+                if(cause instanceof SizeLimitExceededException) {
+                    SizeLimitExceededException sizeLimit = (SizeLimitExceededException) cause;
+                    permittedSize = sizeLimit.getPermittedSize() != 0L ? sizeLimit.getPermittedSize()/1024/1024 : 0L;
+                    actualSize = sizeLimit.getActualSize() != 0L ? sizeLimit.getActualSize()/1024/1024 : 0L;
+                    CUSTOM_MSG = "최대 업로드 파일용량 제한초과 :: 제한용량 = "+permittedSize+"MB, 요청 파일용량 = "+actualSize+"MB";
+                }
+                ERROR_MSG += "최대 "+permittedSize+"MB까지 등록할 수 있습니다: 요청 파일용량 = "+actualSize+"MB";
                 break;
             case BindException: // Parameter Validation Error
                 ERROR_MSG = getBindResultFieldErrorMessage(((BindException) e).getBindingResult());
@@ -153,9 +172,11 @@ public class CommonErrorHandler {
                 errorMap.put("CommonResult", commonResult);
                 break;
         }
+        if(Objects.isNull(commonResult))
+            commonResult = new CommonResult<>(error.getResCode(), ERROR_MSG, errorMap);
 
         // Level 별 에러메시지 출력
-        ErrorUtils.logWriter(error, CLASS_NAME, ERROR_MSG, errorMap, e);
+        ErrorUtils.logWriter(error, CLASS_NAME, ERROR_MSG, errorMap, e, CUSTOM_MSG);
         return commonResult;
     }
 

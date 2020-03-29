@@ -33,8 +33,17 @@ public class ExcelReaderTest {
 
         MockMultipartFile multipartFile = new MockMultipartFile(fileName, originalFileName, contentType, content);
 
-        List<SampleExcelDto> products = ExcelReader.getObjectList(multipartFile, SampleExcelDto::from, 2);
-        products.forEach(data -> System.out.println("## data = "+data));
+        System.out.println(multipartFile.getOriginalFilename());
+        String originalFileExtension = multipartFile.getOriginalFilename().substring(originalFileName.lastIndexOf(".")+1);
+        System.out.println(originalFileExtension);
+        if(originalFileExtension.equals("xlsx"))
+            System.out.println("엑셀파일 입니다");
+        else
+            System.out.println("엑셀파일이 아닙니다");
+
+
+        // List<SampleExcelDto> products = ExcelReader.getObjectList(multipartFile, SampleExcelDto::from, 2);
+        // products.forEach(data -> System.out.println("## data = "+data));
     }
 
 }

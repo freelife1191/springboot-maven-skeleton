@@ -2,12 +2,11 @@ package com.project.api.sample.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.api.sample.dto.SampleExcelDto;
-import com.project.common.BaseControllerTest;
+import com.project.common.BaseTest;
 import com.project.common.domain.CommonResult;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -31,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Sample Excel Controller 테스트
  * Created by KMS on 18/03/2020.
  */
-class SampleExcelControllerTest extends BaseControllerTest {
+class SampleExcelControllerTest extends BaseTest {
 
     private static Validator validator;
 
@@ -76,7 +75,7 @@ class SampleExcelControllerTest extends BaseControllerTest {
     }
 
     @Test
-    @DisplayName("Sample 엑셀 업로드 에러")
+    @DisplayName("Sample 엑셀 업로드 필드 에러")
     void insertEquipmentError() throws Exception {
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/sample/excel")
                 .file(getMultipartFile("sampleUpload_error.xlsx", "file"))
@@ -96,6 +95,19 @@ class SampleExcelControllerTest extends BaseControllerTest {
             System.out.println(dto);
         }
 
+    }
+
+    @Test
+    @DisplayName("Sample 엑셀 업로드 에러")
+    void insertEquipmentFileExtentionError() throws Exception {
+        MockHttpServletRequestBuilder builder = MockMvcRequestBuilders.multipart("/sample/excel")
+                .file(getMultipartFile("test.txt", "file"))
+                .header("jwt",jwtData);
+
+        ResultActions result = mockMvc.perform(builder)
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("code").value(4010))
+                .andDo(print());
     }
 
     @Test
