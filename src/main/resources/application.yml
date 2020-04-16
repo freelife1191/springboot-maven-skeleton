@@ -1,3 +1,14 @@
+## 서비스 설정
+service:
+  name: springboot-maven-skeleton
+
+## 서버 설정
+server:
+  port: 8080
+#  servlet:
+#    context-path: /skeleton
+
+## Spring 설정
 spring:
   profiles:
     active: local
@@ -10,6 +21,7 @@ spring:
   http:
     converters:
       preferred-json-mapper: jackson
+
 ## 데이터베이스 옵션 설명
 #  datasource:
 #    driver-class-name: com.mysql.jdbc.Driver
@@ -34,18 +46,23 @@ spring:
 #      time-between-eviction-runs-millis: 3600000
 ## connection 유효기간
 #      min-evictable-idle-time-millis: 3600000
-  datasource:
+
 ## 추가적으로 줄수 있는 옵션들
 ## serverTimezone=UTC&useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
 ## autoReconnect=true&noAccessToProcedureBodies=true&useUnicode=true&characterEncoding=utf8
+
+## 기본 데이터베이스 설정
+#  datasource:
+#    username: test
+#    password: test
+
 ## MariaDB
-    driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/test?useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
+#    driver-class-name: org.mariadb.jdbc.Driver
+#    url: jdbc:mariadb://localhost:3306/test?useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
 ## MySQL
 #    driver-class-name: com.mysql.cj.jdbc.Driver
-#    url: jdbc:mysql://
-    username: test
-    password: test
+#    url: jdbc:mysql://localhost:3306/test?useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
+
 ## hikari 옵션
 #    hikari:
 #      max-lifetime: 1797000
@@ -60,9 +77,35 @@ spring:
 #      read-only: false
 #      leak-detection-threshold: 10000
 
-  jooq:
-    sql-dialect: mariadb
-  # Excel 설정
+## Jooq 설정
+#  jooq:
+#    sql-dialect: mariadb
+
+## 멀티 DB 설정 필요시 설정
+#  jta:
+#    enabled: true
+#  datasource:
+## 기본 메인 DB 설정
+## driver-class-name: com.mysql.cj.jdbc.Driver
+#    hikari:
+#      driver-class-name: org.mariadb.jdbc.Driver
+#      jdbc-url: jdbc:mariadb://localhost:3306/test?useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
+#      username: test
+#      password: test
+## 서브 DB 설정
+#    second:
+#      xa-data-source-class-name: com.mysql.cj.jdbc.MysqlXADataSource
+#      url: jdbc:mysql://localhost:3306/test?useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
+#      username: test
+#      password: test
+## MariaDB 설정 샘플
+#    mariadb:
+#      xa-data-source-class-name: org.mariadb.jdbc.MariaDbDataSource
+#      url: jdbc:mariadb://localhost:3306/test?useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
+#      username: test
+#      password: test
+
+## Excel 설정
   mvc:
     contentnegotiation:
       ## favor-parameter 값이 true면 ContentNegotiationViewResolver가
@@ -74,7 +117,7 @@ spring:
       media-types:
         xls: application/vnd.ms-excel
 
-# AWS 정보 셋팅
+## AWS 정보 셋팅
 cloud:
   aws:
     # AWS S3 bucket의 정보
@@ -95,43 +138,46 @@ cloud:
       accessKey:
       secretKey:
 
-# 멀티 DB 설정 필요시 설정
-#  jta:
-#    enabled: true
-#  original :
-#    datasource:
-#      jdbc-url: jdbc:mysql://xxxxxxxxxxx.com:3306
-#      password: xxxxx
-#      username: xxxxxxx
-#      driverClassName: com.mysql.cj.jdbc.Driver
-#  first :
-#    datasource:
-#      xa-data-source-class-name: com.mysql.cj.jdbc.MysqlXADataSource
-#      xa-properties:
-#        server-name: xxxxxxxxxxxxx.com
-#        database-name: xxxxx
-#        password: xxxxxxx
-#        user: xxxxxx
-#        port-number: 3306
-#  second:
-#    datasource:
-#      xa-data-source-class-name: com.mysql.cj.jdbc.MysqlXADataSource
-#      xa-properties:
-#        server-name: localhost
-#        database-name: test
-#        password: test
-#        user: test
-#        port-number: 3306
+## 외부 서비스 URL
+external-service:
+  api1:
+  api2:
+
+## JWT 설정
 jwt:
   secret-key:
   default-value:
+
+## 기타 속성설정
 properties:
   file:
     ## 최대 업로드 사이즈 기본 100 MB
     max-upload-size: 100
-service:
-  name: springboot-maven-skeleton
-server:
-  port: 8080
-#  servlet:
-#    context-path: /skeleton
+
+## Spring Actuator Client 설정
+#  boot:
+#    admin:
+#      client:
+#        url: http://localhost:8080
+#  security:
+#    user:
+#      name: admin
+#      password: secret
+
+## Actuator 활성화 옵션 조정
+#management:
+#  server:
+#    port: 9080
+#    address: freelife-MacBook-Pro.local
+#  endpoints:
+#    enabled-by-default: false
+#    web:
+#      exposure:
+## 모든 EndPoints 모두공개 설정
+#        include: "*"
+## 일부 EndPoints 비공개 설정
+#        exclude: env,beans
+#  endpoint:
+#    health:
+#      show-details: ALWAYS
+#    info:

@@ -14,6 +14,7 @@ import java.util.*;
 /**
  * VO to MAP / MAP to VO : 필드 값의 null 처리를 하기 위해 커스텀 한 클래스
  *
+ * @author Parking Cloud, bhkwon@iparking.co.kr
  * @since 2019.04.15
  */
 public class BeanUtils {

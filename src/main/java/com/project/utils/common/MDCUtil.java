@@ -9,6 +9,7 @@ import java.util.Map;
  * httpRequest가 존재하는 동안 데이터를 유지시키기 위한 유틸
  * http://logback.qos.ch/manual/mdc.html
  *
+ * @author Parking Cloud, bhkwon@iparking.co.kr
  * @since 2019.03.04
  */
 public class MDCUtil {

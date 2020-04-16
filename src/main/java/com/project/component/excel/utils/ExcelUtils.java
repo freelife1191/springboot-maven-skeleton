@@ -24,7 +24,10 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.EnumSet;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
@@ -156,8 +159,8 @@ public class ExcelUtils {
                     value = cell.getLocalDateTimeCellValue().toString();
                 else
                     value = String.valueOf(cell.getNumericCellValue());
-                if (value.endsWith(".0"))
-                    value = value.substring(0, value.length() - 2);
+                    if (value.endsWith(".0"))
+                        value = value.substring(0, value.length() - 2);
                 break;
             case BOOLEAN:
                 value = String.valueOf(cell.getBooleanCellValue());

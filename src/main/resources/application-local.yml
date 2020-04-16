@@ -5,5 +5,29 @@ spring:
     remote:
       restart:
         enabled: true
+
+## LOCAL H2 DB 설정
+  datasource:
+    platform: h2
+    ## 공통 코드 테이블 생성
+    schema: classpath:sql/common-h2.sql
+    ## 공통 코드 테스트 데이터 INSERT
+    data: classpath:sql/data-h2.sql
+    ## 로컬에서 H2 DB에 초기 테이블을 만들어주는 설정 H2 DB를 사용하지 않으면 주석처리
+    initialization-mode: always
+    ## h2 DB 사용 설정
+    url: jdbc:h2:~
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  h2:
+    console:
+      ## h2 console 사용
+      enabled: true
+      ## /h2 로 접속 지정하지 않으면 /h2-console 로 접속
+      path: /h2
+  jooq:
+    sql-dialect: h2
+
 logging:
   config: classpath:logs/logback-local.xml

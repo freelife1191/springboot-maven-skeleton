@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.2.5.RELEASE</version>
+        <version>2.2.6.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.project</groupId>
@@ -19,6 +19,11 @@
             <id>jcenter-snapshots</id>
             <name>jcenter</name>
             <url>http://oss.jfrog.org/artifactory/oss-snapshot-local/</url>
+        </repository>
+        <repository>
+            <id>central</id>
+            <name>Central Repository</name>
+            <url>https://repo.maven.apache.org/maven2</url>
         </repository>
     </repositories>
 
@@ -44,11 +49,12 @@
         <java-uuid-generator.version>4.0.1</java-uuid-generator.version>
         <spring-security-jwt.version>1.1.0.RELEASE</spring-security-jwt.version>
         <UserAgentUtils.version>1.21</UserAgentUtils.version>
-        <mariadb.version>2.5.4</mariadb.version>
-        <commons-lang3.version>3.9</commons-lang3.version>
-        <commons-codec.version>1.13</commons-codec.version>
+        <mariadb.version>2.6.0</mariadb.version>
+        <commons-lang3.version>3.10</commons-lang3.version>
+        <commons-codec.version>1.14</commons-codec.version>
         <s3mock_2.12.version>0.2.5</s3mock_2.12.version>
         <type-parser.version>0.6.0</type-parser.version>
+        <spring-boot-admin-starter.version>2.2.2</spring-boot-admin-starter.version>
     </properties>
 
     <dependencies>
@@ -122,6 +128,25 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Spring Actuator 설정 -->
+        <!--
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>de.codecentric</groupId>
+            <artifactId>spring-boot-admin-starter-client</artifactId>
+            <version>${spring-boot-admin-starter.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        -->
+
         <dependency>
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-aws</artifactId>
@@ -143,6 +168,12 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- JSON -->
@@ -295,19 +326,39 @@
 
     <build>
         <plugins>
+            <!-- H2 전용 플러그인 Start H2 미사용시 주석처리 -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>src/generated/java</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- H2 전용 플러그인 End -->
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
+            <!-- DB Generator 시 사용시 주석해제 -->
+            <!--
             <plugin>
                 <groupId>org.jooq</groupId>
                 <artifactId>jooq-codegen-maven</artifactId>
                 <version>${jooq.version}</version>
-                <!-- The plugin should hook into the generate goal -->
+                &lt;!&ndash; The plugin should hook into the generate goal &ndash;&gt;
                 <executions>
-                    <!-- TEST DB 코드 제너레이터 -->
-                    <!-- env 값으로 generate를 수행하도록 설정 -->
-                    <!--
+                    &lt;!&ndash; TEST DB 코드 제너레이터 &ndash;&gt;
+                    &lt;!&ndash; env 값으로 generate를 수행하도록 설정 &ndash;&gt;
                     <execution>
                         <id>test</id>
                         <phase>generate-sources</phase>
@@ -318,10 +369,8 @@
                             <configurationFile>src/main/resources/jooq/config/test-${env}.xml</configurationFile>
                         </configuration>
                     </execution>
-                    -->
-                    <!-- TEST2 DB 코드 제너레이터 -->
-                    <!-- env 값으로 generate를 수행하도록 설정 -->
-                    <!--
+                    &lt;!&ndash; TEST2 DB 코드 제너레이터 &ndash;&gt;
+                    &lt;!&ndash; env 값으로 generate를 수행하도록 설정 &ndash;&gt;
                     <execution>
                         <id>test2</id>
                         <phase>generate-sources</phase>
@@ -333,27 +382,134 @@
                             <configurationFile>src/main/resources/jooq/config/test2-${env}.xml</configurationFile>
                         </configuration>
                     </execution>
-                    -->
                 </executions>
             </plugin>
+            -->
         </plugins>
     </build>
+
     <!-- profile 별로 profile 값을 받아서 env 값을 셋팅 -->
     <!--
     아래와 같이 Jenkins Build 시 -P profile 로 profile 값을 넘겨서 Build 한다
     clean compile install -P stage -D maven.test.skip=true
+    mvn compile -P local 나 mvn install -P local
     -->
     <profiles>
         <profile>
             <id>dev</id>
-            <activation>
-                <!-- Jenkins Build 시 별도의 profile 값을 넘겨주지 않으면 기본값으로 설정됨-->
-                <activeByDefault>true</activeByDefault>
-            </activation>
             <properties> <!-- resource 필터 사용시 개발자 PC에 적용되는 필터 properties 의 폴더 위치 -->
                 <!--                <deployTarget>local</deployTarget>-->
                 <env>dev</env>
             </properties>
+            <!-- DB를 붙여서 Application을 개발하기 시작하면 activation을 dev 로 이동 -->
+            <activation>
+                <!-- Jenkins Build 시 별도의 profile 값을 넘겨주지 않으면 기본값으로 설정됨-->
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <!-- dev Profile에서 H2 DB를 generate 하는 설정 -->
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>generate-jooq-utils</id>
+                                <phase>generate-sources</phase>
+                                <!--<goals>-->
+                                <!--<goal>compile</goal>-->
+                                <!--</goals>-->
+                                <inherited>false</inherited>
+                                <!--<configuration>-->
+                                <!--<includes>-->
+                                <!--<inclue>sample/jooq/util/**</inclue>-->
+                                <!--</includes>-->
+                                <!--</configuration>-->
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>properties-maven-plugin</artifactId>
+                        <version>1.0.0</version>
+                        <executions>
+                            <execution>
+                                <phase>initialize</phase>
+                                <goals>
+                                    <goal>read-project-properties</goal>
+                                </goals>
+                                <configuration>
+                                    <files>
+                                        <file>src/main/resources/config.properties</file>
+                                    </files>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>sql-maven-plugin</artifactId>
+                        <version>1.5</version>
+
+                        <executions>
+                            <execution>
+                                <phase>initialize</phase>
+                                <!--<phase>generate-sources</phase>-->
+                                <goals>
+                                    <goal>execute</goal>
+                                </goals>
+                                <configuration>
+                                    <!--
+                                    <driver>${db.driver}</driver>
+                                    <url>${db.url}</url>
+                                    <username>${db.username}</username>
+                                    <password>${db.password}</password>
+                                    -->
+
+                                    <driver>org.h2.Driver</driver>
+                                    <!--<url>jdbc:h2:mem:testdb</url>-->
+                                    <url>jdbc:h2:~</url>
+                                    <username>sa</username>
+                                    <password></password>
+
+                                    <delimiterType>row</delimiterType>
+                                    <autocommit>true</autocommit>
+                                    <srcFiles>
+                                        <srcFile>src/main/resources/sql/common-h2.sql</srcFile>
+                                    </srcFiles>
+                                </configuration>
+                            </execution>
+                        </executions>
+
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.h2database</groupId>
+                                <artifactId>h2</artifactId>
+                                <version>${h2.version}</version>
+                            </dependency>
+                        </dependencies>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.jooq</groupId>
+                        <artifactId>jooq-codegen-maven</artifactId>
+                        <version>${jooq.version}</version>
+                        <!-- The plugin should hook into the generate goal -->
+                        <executions>
+                            <!-- H2 개발 DB 코드 제너레이터 -->
+                            <execution>
+                                <id>h2</id>
+                                <phase>generate-sources</phase>
+                                <goals>
+                                    <goal>generate</goal>
+                                </goals>
+                                <configuration>
+                                    <!-- env 값으로 generate를 수행하도록 설정 -->
+                                    <configurationFile>src/main/resources/jooq/config/h2-local.xml</configurationFile>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
         <profile>
             <id>local</id>

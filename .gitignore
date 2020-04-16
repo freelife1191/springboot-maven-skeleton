@@ -5,6 +5,7 @@ mvnw*
 .mvn/
 log/
 transaction-logs/
+*.db
 
 # Gradle
 # ------

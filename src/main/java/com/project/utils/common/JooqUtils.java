@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static com.project.utils.common.constant.ConditionType.eq;
+import static com.project.utils.common.constant.ConditionType.*;
 import static org.jooq.impl.DSL.value;
 import static org.jooq.meta.mysql.information_schema.InformationSchema.INFORMATION_SCHEMA;
 
@@ -557,4 +557,49 @@ public class JooqUtils {
         return DSL.function("LPAD", String.class, field, DSL.val(length, Integer.class), value("0")).as(field.getName());
     }
 
+    /**
+     * 테이블 필드를 오브젝트 객체 리스트로 반환
+     * 테이블 필드를 카멜케이스로 변환하고 주석 코멘트를 추가하여 객체 리스트로 반환
+     * @param table Jooq 테이블 객체
+     * @return List<String>
+     */
+    public static List<String> makeObject(Table<?> table) {
+        return makeObject(table, false);
+    }
+
+    /**
+     * 테이블 필드를 오브젝트 객체 리스트로 반환
+     * 테이블 필드를 카멜케이스로 변환하고 주석 코멘트를 추가하여 객체 리스트로 반환
+     * @param table Jooq 테이블 객체
+     * @param apiModel ApiModelProperty 생성여부
+     * @return List<String>
+     */
+    public static List<String> makeObject(Table<?> table, boolean apiModel) {
+        List<String> objectList = new ArrayList<>();
+
+        if(Objects.isNull(table)) return objectList;
+
+        objectList.add("테이블 코멘트: "+(apiModel ? "@ApiModel(\""+table.getComment()+"\")" : table.getComment()));
+        objectList.add("테이블 명: "+ CommonUtils.toPascalCase(table.getName()));
+        objectList.add("");
+
+        String typeName;
+
+        for(Field<?> field : table.fields()) {
+            objectList.add(apiModel ? "@ApiModelProperty(\""+field.getComment()+"\")" : "/** "+field.getComment() +" **/");
+
+            typeName = field.getDataType().getType().getSimpleName();
+            //log.debug("## DataType = {}, type = {}, typeName = {}",field.getDataType().getTypeName(),field.getDataType().getType(),typeName);
+            // tinyint(Byte) 타입은 Boolean 형으로
+            if(field.getDataType().getType() == Byte.class) typeName = Boolean.class.getSimpleName();
+                // BigInt(Long) 타입은 Long 형으로
+            else if(field.getDataType().getType() == Long.class) typeName = Long.class.getSimpleName();
+                // 그외 나머지 Number 타입은 Integer 형으로
+            else if(field.getDataType().getType().getSuperclass() == Number.class) typeName = Integer.class.getSimpleName();
+
+            objectList.add("private "+typeName+" "+ CommonUtils.toCamelCase(field.getName())+";");
+        }
+
+        return objectList;
+    }
 }
