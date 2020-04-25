@@ -19,6 +19,7 @@ import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.IntStream;
 
 import static com.project.common.constant.ResCode.SUCCESS;
 
@@ -59,6 +60,30 @@ public class SampleApiController {
     public CommonResult<List<Integer>> test(){
         log.info("~~~~~~~~~~~~~~~");
         return new CommonResult<>(SUCCESS, SUCCESS.getMessage(), Lists.newArrayList(1,2,3));
+    }
+
+    @ApiOperation("비동기 서비스 테스트1 SUCCESS")
+    @GetMapping("/test-async-test1")
+    public void testAsync1() {
+        IntStream.range(1,100).forEach(service::asyncTestSuccess);
+    }
+
+    @ApiOperation("비동기 서비스 테스트2 FAIL")
+    @GetMapping("/test-async-test2")
+    public void testAsync2() {
+        IntStream.range(1,100).forEach(service::asyncTestFail);
+    }
+
+    @ApiOperation("비동기 서비스 테스트3 메인 AsyncService 사용")
+    @GetMapping("/test-async-test3")
+    public void testAsync3() {
+        IntStream.range(1,100).forEach(service::asyncTestAsyncService);
+    }
+
+    @ApiOperation("비동기 서비스 테스트4 CompletableFuture")
+    @GetMapping("/test-async-test4")
+    public void testAsync4() {
+        IntStream.range(1,100).forEach(service::asyncTestCompletableFuture);
     }
 
     /**

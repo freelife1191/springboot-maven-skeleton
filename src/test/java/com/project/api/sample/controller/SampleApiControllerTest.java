@@ -118,6 +118,46 @@ class SampleApiControllerTest extends BaseTest {
 
     @Test
     @Order(3)
+    @DisplayName("GET - 서버 비동기 테스트1 성공")
+    void testAsyncSuccess() throws Exception {
+        totalStopWatch.start("GET - 서버 비동기 테스트1 SUCCESS");
+        mockMvc.perform(get("/test-async-test1"))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @Order(4)
+    @DisplayName("GET - 서버 비동기 테스트2 실패")
+    void testAsyncFail() throws Exception {
+        totalStopWatch.start("GET - 서버 비동기 테스트2 FAIL");
+        mockMvc.perform(get("/test-async-test2"))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @Order(5)
+    @DisplayName("GET - 서버 비동기 테스트3 메인 AsyncService 사용")
+    void testAsyncAsyncService() throws Exception {
+        totalStopWatch.start("GET - 서버 비동기 테스트3 메인 AsyncService 사용");
+        mockMvc.perform(get("/test-async-test3"))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @Order(6)
+    @DisplayName("GET - 서버 비동기 테스트4 CompletableFuture 사용")
+    void testAsyncCompletableFuture() throws Exception {
+        totalStopWatch.start("GET - 서버 비동기 테스트4 CompletableFuture 사용");
+        mockMvc.perform(get("/test-async-test4"))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    @Order(7)
     @DisplayName("GET - 에러 테스트")
     void error() throws Exception {
         totalStopWatch.start("GET - 에러 테스트");
@@ -130,7 +170,7 @@ class SampleApiControllerTest extends BaseTest {
     }
 
     @Test
-    @Order(4)
+    @Order(8)
     @DisplayName("GET - Object 파라메터 요청 테스트")
     void sampleGet() throws Exception {
         totalStopWatch.start("GET - Object 파라메터 요청 테스트");
@@ -169,7 +209,7 @@ class SampleApiControllerTest extends BaseTest {
     }
 
     @Test
-    @Order(5)
+    @Order(9)
     @DisplayName("GET - Object PathVariable 파라메터 요청 테스트")
     void sampleGetPathVariable() throws Exception {
         totalStopWatch.start("GET - Object PathVariable 파라메터 요청 테스트");
@@ -186,7 +226,7 @@ class SampleApiControllerTest extends BaseTest {
     }
 
     @Test
-    @Order(6)
+    @Order(10)
     @DisplayName("GET - Category Object PathVariable 파라메터 요청 테스트")
     void sampleGetCategoryPathVariable() throws Exception {
         totalStopWatch.start("GET - Category Object PathVariable 파라메터 요청 테스트");
@@ -204,7 +244,7 @@ class SampleApiControllerTest extends BaseTest {
     }
 
     @Test
-    @Order(7)
+    @Order(11)
     @DisplayName("POST - @RequestBody String 파라메터 테스트")
     void bodyString() throws Exception {
         totalStopWatch.start("POST - @RequestBody String 파라메터 테스트");
@@ -216,7 +256,7 @@ class SampleApiControllerTest extends BaseTest {
     }
 
     @Test
-    @Order(8)
+    @Order(12)
     @DisplayName("POST - @RequestBody Object 파라메터 테스트")
     void bodyObject() throws Exception {
         totalStopWatch.start("POST - @RequestBody Object 파라메터 테스트");
@@ -228,7 +268,7 @@ class SampleApiControllerTest extends BaseTest {
     }
 
     @Test
-    @Order(9)
+    @Order(13)
     @DisplayName("PATCH - @RequestBody Object PathVariable 파라메터 테스트")
     void patchBodyObjectPathvariable() throws Exception {
         totalStopWatch.start("PATCH - @RequestBody Object PathVariable 파라메터 테스트");
@@ -240,7 +280,7 @@ class SampleApiControllerTest extends BaseTest {
     }
 
     @Test
-    @Order(10)
+    @Order(14)
     @DisplayName("DELETE - @RequestBody Object PathVariable 파라메터 테스트")
     void deleteObjectPathVariable() throws Exception {
         totalStopWatch.start("DELETE - @RequestBody Object PathVariable 파라메터 테스트");

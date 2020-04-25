@@ -28,6 +28,13 @@
             -->
 
             <inputSchema>PUBLIC</inputSchema>
+            <!-- https://blog.jooq.org/tag/boolean-type/ -->
+            <forcedTypes>
+                <forcedType>
+                    <name>BOOLEAN</name>
+                    <includeTypes>(?i:TINYINT\(1\))</includeTypes>
+                </forcedType>
+            </forcedTypes>
         </database>
         <target>
             <packageName>com.project.h2.entity</packageName>

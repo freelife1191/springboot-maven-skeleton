@@ -26,6 +26,13 @@
             <inputSchema>stage</inputSchema>
             <unsignedTypes>false</unsignedTypes>
             <tableValuedFunctions>true</tableValuedFunctions>
+            <!-- https://blog.jooq.org/tag/boolean-type/ -->
+            <forcedTypes>
+                <forcedType>
+                    <name>BOOLEAN</name>
+                    <includeTypes>(?i:TINYINT\(1\))</includeTypes>
+                </forcedType>
+            </forcedTypes>
         </database>
         <target>
             <packageName>com.project.test2.entity</packageName>

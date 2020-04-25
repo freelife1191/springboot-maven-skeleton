@@ -2,9 +2,12 @@ package com.project.utils.common;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.text.CaseUtils;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -30,8 +33,6 @@ public class CommonUtils {
         return resultMap;
     }
 
-
-
     /**
      * Field 허용 처리 및 Object 값 받아오기
      * @param field
@@ -46,6 +47,45 @@ public class CommonUtils {
             throw new RuntimeException(e.getMessage(),e);
         }
     }
+
+    /**
+     * 부모 객체를 DTO 자식객체에 맵핑
+     * @param object
+     * @param dto
+     * @param <T>
+     * @return
+     */
+    public static<T> T objectToDto(Object object, Object dto) {
+        if(Objects.isNull(object)) return null;
+
+        List<Field> subFields = new ArrayList<>(Arrays.asList(dto.getClass().getSuperclass().getDeclaredFields()));
+        for(Field field : object.getClass().getDeclaredFields())
+            subFields.removeIf(subField -> dtoMapping(object, dto, field, subField));
+        return (T) dto;
+    }
+
+    /**
+     * Dto 맵핑 유틸
+     * Dto 맵핑 후 제거할 원소는 true를 리턴
+     * @param object
+     * @param dto
+     * @param field
+     * @param subField
+     * @return
+     */
+    private static boolean dtoMapping(Object object, Object dto, Field field, Field subField) {
+        subField.setAccessible(true);
+        if(field.getName().equals(subField.getName())) {
+            try {
+                subField.set(dto, getFieldObject(field, object));
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e.getMessage(),e);
+            }
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Object를 Map으로 변환
      * @param object
@@ -182,6 +222,28 @@ public class CommonUtils {
     }
 
     /**
+     * Object 필드만큼 루프 돌면서 Field 맵을 생성함
+     * @param object
+     * @return
+     */
+    private static Map getEmptyCheckObjecttMap(Object object){
+        Map resultMap = new LinkedHashMap<>();
+
+        // 기본 클래스 값 셋팅
+        for(Field field : object.getClass().getDeclaredFields()) {
+            if (ValidationUtils.isEmpty(object, field.getName())) return new LinkedHashMap<>();
+            resultMap.put(field.getName(), getFieldObject(field, object));
+        }
+        // 슈퍼 클래스 값 셋팅
+        for(Field field : object.getClass().getSuperclass().getDeclaredFields()) {
+            if (ValidationUtils.isEmpty(object, field.getName())) return new LinkedHashMap<>();
+            resultMap.put(field.getName(), getFieldObject(field, object));
+        }
+
+        return resultMap;
+    }
+
+    /**
      * 객체의 데이터가 있는지 확인
      * 있으면 true 없으면 false
      * @param object
@@ -192,15 +254,101 @@ public class CommonUtils {
     }
 
     /**
+     * 객체의 데이터가 있는지 확인
+     * 있으면 true 없으면 false
+     * @param object
+     * @param isZero true 0 허용, false 0 미허용
+     * @return
+     */
+    public static boolean objectNotEmpty(Object object, boolean isZero){
+        return Objects.nonNull(object) && !objectEmpty(object, isZero);
+    }
+
+    /**
      * 객체의 데이터가 없는지 확인
      * 없으면 true 있으면 false
      * @param object
      * @return
      */
     public static boolean objectEmpty(Object object) {
-        return Objects.isNull(object) || CommonUtils.objectValueToList(object).isEmpty();
+        return Objects.isNull(object) || CommonUtils.getEmptyCheckObjectValueToList(object).isEmpty();
     }
 
+    /**
+     * 객체의 데이터가 없는지 확인
+     * 없으면 true 있으면 false
+     * @param object
+     * @param isZero true 0 허용, false 0 미허용
+     * @return
+     */
+    public static boolean objectEmpty(Object object, boolean isZero) {
+        return Objects.isNull(object) || CommonUtils.getEmptyCheckObjectValueToList(object, isZero).isEmpty();
+    }
+
+    /**
+     * objctEmpty 유틸 전용 빈 값 체크 유틸
+     * Object Value To List
+     * 멥 데이터를 순회하며 조건에 맞는 데이터만 걸러내고 리스트에 담아서 리턴
+     * @param object
+     * @return
+     */
+    public static List<Object> getEmptyCheckObjectValueToList(Object object) {
+        return getEmptyCheckMapValueToList(getEmptyCheckObjecttMap(object), true);
+    }
+
+    /**
+     * objctEmpty 유틸 전용 빈 값 체크 유틸
+     * Object Value To List
+     * 멥 데이터를 순회하며 조건에 맞는 데이터만 걸러내고 리스트에 담아서 리턴
+     * @param object
+     * @param isZero true 0 허용, false 0 미허용
+     * @return
+     */
+    public static List<Object> getEmptyCheckObjectValueToList(Object object, boolean isZero) {
+        return getEmptyCheckMapValueToList(getEmptyCheckObjecttMap(object), isZero);
+    }
+
+    /**
+     * objctEmpty 유틸 전용 빈 값 체크 유틸
+     * Map Value To List
+     * 멥 데이터를 순회하며 조건에 맞는 데이터만 걸러내고 리스트에 담아서 리턴
+     * @param map
+     * @return
+     */
+    public static List<Object> getEmptyCheckMapValueToList(Map<String, Object> map) {
+        return getEmptyCheckMapValueToList(map, true);
+    }
+
+    /**
+     * objctEmpty 유틸 전용 빈 값 체크 유틸
+     * Map Value To List
+     * 멥 데이터를 순회하며 조건에 맞는 데이터만 걸러내고 리스트에 담아서 리턴
+     * @param map
+     * @param isZero true 0 허용, false 0 미허용
+     * @return
+     */
+    public static List<Object> getEmptyCheckMapValueToList(Map<String, Object> map, boolean isZero) {
+        if(Objects.isNull(map)) return new ArrayList<>();
+
+        return map.values().stream()
+                .filter(data -> emptyDataCheck(data, isZero))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Empty 데이터 체크 유틸
+     * null, "", 0 값에 대해 empty 로 판단함
+     * 단 0의 경우 isZero 옵션으로 empty라고 판단하지 않을 수 있음
+     * @param data
+     * @param isZero
+     * @return
+     */
+    public static boolean emptyDataCheck(Object data, boolean isZero) {
+        if(!isProcess(false, false, data)) return false;
+        boolean zeroData = NumberUtils.isDigits(String.valueOf(data)) && String.valueOf(data).equals("0");
+        if(!zeroData) return true;
+        return isZero;
+    }
 
     /**
      * 구분자로 문자데이터를 추가 연결함 (기본값 '|' )
@@ -380,6 +528,57 @@ public class CommonUtils {
     }
 
     /**
+     * String BigDecimal 변환 유틸 null 이거나 Empty 값은 null 로 리턴한다
+     * @param object 변환할 값
+     * @return 원래 값 또는 변환된 값
+     */
+    public static BigDecimal strToBigDecimalEmptyIfNull(Object object) {
+        return strToBigDecimalEmptyIfNull(object, null);
+    }
+
+    /**
+     * String BigDecimal 변환 유틸 null 이거나 Empty 값은 null 로 리턴한다
+     * @param object 변환할 값
+     * @param scale 소수점자리수 이외에는 반올림처리
+     * @return 원래 값 또는 변환된 값
+     */
+    public static BigDecimal strToBigDecimalEmptyIfNull(Object object, Integer scale) {
+        if(Objects.isNull(scale)) scale = 1;
+        if(Objects.isNull(strEmptyIfNull(false, object))) return null;
+        return new BigDecimal(String.valueOf(object)).setScale(scale, RoundingMode.HALF_EVEN);
+    }
+
+    /**
+     * String Float 변환 유틸 null 이거나 Empty 값은 null 로 리턴한다
+     * @param object 변환할 값
+     * @return 원래 값 또는 변환된 값
+     */
+    public static Float strToFloatEmptyIfNull(Object object) {
+        if(Objects.isNull(strEmptyIfNull(false, object))) return null;
+        return Float.parseFloat(String.valueOf(object));
+    }
+
+    /**
+     * String Long 변환 유틸 null 이거나 Empty 값은 null 로 리턴한다
+     * @param object 변환할 값
+     * @return 원래 값 또는 변환된 값
+     */
+    public static Long strToLongEmptyIfNull(Object object) {
+        if(Objects.isNull(strEmptyIfNull(false, object))) return null;
+        return Long.parseLong(String.valueOf(object));
+    }
+
+    /**
+     * String Float 변환 유틸 null 이거나 Empty 값은 null 로 리턴한다
+     * @param object 변환할 값
+     * @return 원래 값 또는 변환된 값
+     */
+    public static Integer strToIntegerEmptyIfNull(Object object) {
+        if(Objects.isNull(strEmptyIfNull(false, object))) return null;
+        return Integer.parseInt(String.valueOf(object));
+    }
+
+    /**
      * String Empty 값 null 변환 유틸
      * String 문자열이 empty 값이면 null 로 변환하여 리턴한다
      * @param object 변환할 값
@@ -388,6 +587,7 @@ public class CommonUtils {
     public static Object strEmptyIfNull(Object object) {
         return strEmptyIfNull(false, object);
     }
+
     /**
      * String Empty 값 null 변환 유틸
      * String 문자열이 empty 값이면 null 로 변환하여 리턴한다

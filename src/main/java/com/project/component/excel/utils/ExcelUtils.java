@@ -6,6 +6,7 @@ import com.github.drapostolos.typeparser.TypeParserException;
 import com.project.component.excel.constant.ExcelReaderFieldError;
 import com.project.component.excel.model.ExcelReaderErrorField;
 import com.project.component.excel.service.ExcelReader;
+import com.project.utils.common.ValidationUtils;
 import eu.bitwalker.useragentutils.Browser;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -247,12 +248,7 @@ public class ExcelUtils {
      * @param <T>
      */
     private static<T> void checkValidation(T object, Row row, int i, String cellValue, String fieldName) {
-        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
-        Validator validator = factory.getValidator();
-        Set<ConstraintViolation<T>> constraintValidations = validator.validate(object);
-        ConstraintViolation<T> validData = constraintValidations.stream()
-                .filter(data -> data.getPropertyPath().toString().equals(fieldName))
-                .findFirst().orElse(null);
+        ConstraintViolation<T> validData = ValidationUtils.getValidData(object, fieldName);
 
         if(Objects.isNull(validData)) return;
 

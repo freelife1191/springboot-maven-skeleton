@@ -237,7 +237,6 @@ public class JooqUtils {
     /**
      * Object의 null이 아닌 값을 fieldlist의 field 들에 셋팅하여
      * 넘겨 받은 InsertSetMoreStep에 에 추가 적용
-     * nullOption false: null 미허용 기본값
      * @param insert
      * @param fieldList
      * @param object
@@ -245,7 +244,7 @@ public class JooqUtils {
      */
     public static InsertSetMoreStep setInsertSetMoreStep(InsertSetStep insert, List<Field> fieldList, Object object){
         InsertSetMoreStep moreStep = (InsertSetMoreStep) insert;
-        return setInsertSetMoreStep(moreStep, fieldList, object, true, false);
+        return setInsertSetMoreStep(moreStep, fieldList, object, false, false, true);
     }
 
     /**
@@ -255,24 +254,40 @@ public class JooqUtils {
      * @param fieldList
      * @param object
      * @param nullOption true: null 허용, false: null 미허용
+     * @param emptyOption true: empty 허용, false: empty 미허용
      * @return
      */
     public static InsertSetMoreStep setInsertSetMoreStep(InsertSetStep insert, List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption){
         InsertSetMoreStep moreStep = (InsertSetMoreStep) insert;
-        return setInsertSetMoreStep(moreStep, fieldList, object, nullOption, emptyOption);
+        return setInsertSetMoreStep(moreStep, fieldList, object, nullOption, emptyOption, true);
     }
 
     /**
      * Object의 null이 아닌 값을 fieldlist의 field 들에 셋팅하여
      * 넘겨 받은 InsertSetMoreStep에 에 추가 적용
-     * nullOption false: null 미허용 기본값
+     * @param insert
+     * @param fieldList
+     * @param object
+     * @param nullOption true: null 허용, false: null 미허용
+     * @param emptyOption true: empty 허용, false: empty 미허용
+     * @param isIpOption true: IP 옵션 적용, false: IP 옵션 미적용
+     * @return
+     */
+    public static InsertSetMoreStep setInsertSetMoreStep(InsertSetStep insert, List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption, boolean isIpOption){
+        InsertSetMoreStep moreStep = (InsertSetMoreStep) insert;
+        return setInsertSetMoreStep(moreStep, fieldList, object, nullOption, emptyOption, isIpOption);
+    }
+
+    /**
+     * Object의 null이 아닌 값을 fieldlist의 field 들에 셋팅하여
+     * 넘겨 받은 InsertSetMoreStep에 에 추가 적용
      * @param moreStep
      * @param fieldList
      * @param object
      * @return
      */
     public static InsertSetMoreStep setInsertSetMoreStep(InsertSetMoreStep moreStep, List<Field> fieldList, Object object){
-        return setInsertSetMoreStep(moreStep, fieldList, object, true, false);
+        return setInsertSetMoreStep(moreStep, fieldList, object, false, false, true);
     }
 
     /**
@@ -282,9 +297,25 @@ public class JooqUtils {
      * @param fieldList
      * @param object
      * @param nullOption true: null 허용, false: null 미허용
+     * @param emptyOption true: empty 허용, false: empty 미허용
      * @return
      */
     public static InsertSetMoreStep setInsertSetMoreStep(InsertSetMoreStep moreStep, List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption){
+        return setInsertSetMoreStep(moreStep, fieldList, object, nullOption, emptyOption, true);
+    }
+
+    /**
+     * Object의 null이 아닌 값을 fieldlist의 field 들에 셋팅하여
+     * 넘겨 받은 InsertSetMoreStep에 에 추가 적용
+     * @param moreStep
+     * @param fieldList
+     * @param object
+     * @param nullOption true: null 허용, false: null 미허용
+     * @param emptyOption true: empty 허용, false: empty 미허용
+     * @param isIpOption true: IP 옵션 적용, false: IP 옵션 미적용
+     * @return
+     */
+    public static InsertSetMoreStep setInsertSetMoreStep(InsertSetMoreStep moreStep, List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption, boolean isIpOption ){
 
         if(moreStep == null) return null;
 
@@ -292,8 +323,11 @@ public class JooqUtils {
             for (Field field : fieldList) {
                 Object objectValue = getObjectValue(field, object);
 
-                if (CommonUtils.isProcess(nullOption, objectValue)) {
-                    moreStep.set(field, CommonUtils.strEmptyIfNull(emptyOption, objectValue));
+                if (CommonUtils.isProcess(nullOption, emptyOption, objectValue)) {
+                    //moreStep.set(field, CommonUtils.strEmptyIfNull(emptyOption, objectValue));
+                    if(field.getName().toLowerCase().contains("ip") && isIpOption )
+                        objectValue = setConvertIp(String.valueOf(objectValue));
+                    moreStep.set(field, objectValue);
                     /*
                     if (objectValue instanceof String) {
                         if (StringUtils.isNotEmpty((String) objectValue))
@@ -331,14 +365,28 @@ public class JooqUtils {
      * @return
      */
     public static UpdateSetMoreStep setUpdateSetMoreStep(UpdateSetStep update, List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption){
-        UpdateSetMoreStep moreStep = (UpdateSetMoreStep) update;
-        return setUpdateSetMoreStep(moreStep, fieldList, object, nullOption, emptyOption);
+        return setUpdateSetMoreStep(update, fieldList, object, nullOption, emptyOption, true);
     }
 
     /**
      * Object의 값을 fieldlist의 field 들에 셋팅하여
      * 넘겨 받은 UpdateSetMoreStep 에 추가 적용
-     * nullOption false: null 미허용 기본값
+     * @param update
+     * @param fieldList
+     * @param object
+     * @param nullOption true: null 허용, false: null 미허용
+     * @param emptyOption true: empty 허용, false: empty 미허용
+     * @param isIpOption true: IP 옵션 적용, false: IP 옵션 미적용
+     * @return
+     */
+    public static UpdateSetMoreStep setUpdateSetMoreStep(UpdateSetStep update, List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption, boolean isIpOption){
+        UpdateSetMoreStep moreStep = (UpdateSetMoreStep) update;
+        return setUpdateSetMoreStep(moreStep, fieldList, object, nullOption, emptyOption, isIpOption);
+    }
+
+    /**
+     * Object의 값을 fieldlist의 field 들에 셋팅하여
+     * 넘겨 받은 UpdateSetMoreStep 에 추가 적용
      * @param moreStep
      * @param fieldList
      * @param object
@@ -355,9 +403,25 @@ public class JooqUtils {
      * @param fieldList
      * @param object
      * @param nullOption true: null 허용, false: null 미허용
+     * @param emptyOption true: empty 허용, false: empty 미허용
      * @return
      */
-    public static UpdateSetMoreStep setUpdateSetMoreStep(UpdateSetMoreStep moreStep, List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption){
+    public static UpdateSetMoreStep setUpdateSetMoreStep(UpdateSetMoreStep moreStep, List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption ){
+        return setUpdateSetMoreStep(moreStep, fieldList, object, nullOption, emptyOption, true);
+    }
+
+    /**
+     * Object의 값을 fieldlist의 field 들에 셋팅하여
+     * 넘겨 받은 UpdateSetMoreStep 에 추가 적용
+     * @param moreStep
+     * @param fieldList
+     * @param object
+     * @param nullOption true: null 허용, false: null 미허용
+     * @param emptyOption true: empty 허용, false: empty 미허용
+     * @param isIpOption true: IP 옵션 적용, false: IP 옵션 미적용
+     * @return
+     */
+    public static UpdateSetMoreStep setUpdateSetMoreStep(UpdateSetMoreStep moreStep, List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption, boolean isIpOption ){
 
         if(moreStep == null) return null;
 
@@ -365,8 +429,11 @@ public class JooqUtils {
             for (Field field : fieldList) {
                 Object objectValue = getObjectValue(field, object);
 
-                if (CommonUtils.isProcess(nullOption, objectValue)) {
-                    moreStep.set(field, CommonUtils.strEmptyIfNull(emptyOption, objectValue));
+                if (CommonUtils.isProcess(nullOption, emptyOption, objectValue)) {
+                    // moreStep.set(field, CommonUtils.strEmptyIfNull(emptyOption, objectValue));
+                    if(field.getName().toLowerCase().contains("ip") && isIpOption )
+                        objectValue = setConvertIp(String.valueOf(objectValue));
+                    moreStep.set(field, objectValue);
                     /*
                     if (objectValue instanceof String) {
                         if (StringUtils.isNotEmpty((String) objectValue))
@@ -388,7 +455,7 @@ public class JooqUtils {
      * @return
      */
     public static List<Object> getObjectValueList(List<Field> fieldList, Object object) {
-        return getObjectValueList(fieldList, object, true, false);
+        return getObjectValueList(fieldList, object, false, false);
     }
 
     /**
@@ -408,9 +475,9 @@ public class JooqUtils {
             for (Field field : fieldList) {
                 Object objectValue = getObjectValue(field, object);
 
-                if (CommonUtils.isProcess(nullOption, objectValue)) {
-                    resultList.add(CommonUtils.strEmptyIfNull(emptyOption, objectValue));
-                }
+                if (CommonUtils.isProcess(nullOption, emptyOption, objectValue))
+                    // resultList.add(CommonUtils.strEmptyIfNull(emptyOption, objectValue));
+                    resultList.add(objectValue);
             }
         }
         return resultList;
@@ -427,8 +494,46 @@ public class JooqUtils {
         if(field == null && Objects.isNull(object)) return null;
 
         Map<String, Object> map = CommonUtils.objectToMap(object);
+
         String fieldCamelCaseName = CaseUtils.toCamelCase(field.getName(), false, new char[]{'_'});
+        if(field.getName().startsWith("_")) fieldCamelCaseName = "_"+fieldCamelCaseName;
         return map.get(fieldCamelCaseName);
+    }
+
+    /**
+     * Insert columns 필드리스트 기반 필드 리스트 생성 유틸
+     * 컬럼 필드리스트 중 null, empty 조건에 해당되는 필드 값들을 리스트에 담아서 리턴해줌
+     * 기본값으로 null 데이터를 허용 처리함
+     * @param fieldList
+     * @param object
+     * @return
+     */
+    public static List<Field> getColumnFieldList(List<Field> fieldList, Object object) {
+        return getColumnFieldList(fieldList, object, false, false);
+    }
+
+    /**
+     * Insert columns 필드리스트 기반 필드 리스트 생성 유틸
+     * 컬럼 필드리스트 중 null, empty 조건에 해당되는 필드 값들을 리스트에 담아서 리턴해줌
+     * @param fieldList
+     * @param object
+     * @param nullOption true: null 허용, false: null 미허용
+     * @return
+     */
+    public static List<Field> getColumnFieldList(List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption) {
+        if(object == null) return null;
+
+        List<Field> resultList = new ArrayList<>();
+
+        if(fieldList != null && Objects.nonNull(object)) {
+            for (Field field : fieldList) {
+                Object objectValue = getObjectValue(field, object);
+
+                if (CommonUtils.isProcess(nullOption, emptyOption, objectValue))
+                    resultList.add(field);
+            }
+        }
+        return resultList;
     }
 
     /**
@@ -472,7 +577,7 @@ public class JooqUtils {
      */
     public static Field<String> setDateTimeFormat(Field field, String format){
         if(StringUtils.isEmpty(format)) format = "%Y-%m-%d %H:%i:%s";
-        return DSL.function("DATE_FORMAT",String.class,field,value(format)).as(field.getName());
+        return DSL.function("DATE_FORMAT", String.class,field,value(format)).as(field.getName());
     }
 
     /**
@@ -504,6 +609,17 @@ public class JooqUtils {
      */
     public static <T extends Table> void resetAutoincrement(DSLContext dsl, T table, Integer value) {
         dsl.execute("ALTER TABLE "+getTableNmToString(table)+" AUTO_INCREMENT = "+value);
+    }
+
+    /**
+     * 해당 테이블 데이터를 초기화 하고 AUTO_INCREMENT 값을 1로 초기화 한다
+     * @param dsl
+     * @param table
+     * @param <T>
+     */
+    public static <T extends Table> void resetTable(DSLContext dsl, T table) {
+        dsl.deleteFrom(table).execute();
+        JooqUtils.resetAutoincrement(dsl, table);
     }
 
     /**
