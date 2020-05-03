@@ -260,7 +260,7 @@ public class S3FileService {
      * @param fileList
      */
     public void delete(List<String> fileList, Path path) {
-        fileList.forEach(fileName -> delete(Paths.get(String.valueOf(path), File.separator, fileName)));
+        fileList.forEach(fileName -> delete(Paths.get(String.valueOf(path), fileName)));
     }
 
     /**

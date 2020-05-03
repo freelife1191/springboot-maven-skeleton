@@ -65,7 +65,7 @@ public class SampleExcelService {
 
         //Path filePath = Paths.get("src", "resources", "file", File.separatorChar + fileName);
         // Resource resource = resourceLoader.getResource(filePath.toString());
-        Path filePath = Paths.get(File.separatorChar + "file", File.separatorChar + fileName);
+        Path filePath = Paths.get(File.separatorChar + "file", fileName);
         Resource resource = new InputStreamResource(getClass().getResourceAsStream(filePath.toString()));
 
         return ResponseEntity.ok()

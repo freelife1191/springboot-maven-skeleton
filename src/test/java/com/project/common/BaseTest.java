@@ -1,6 +1,7 @@
 package com.project.common;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -34,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 @ActiveProfiles("local")
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-// @Transactional
+@Transactional
 public class BaseTest {
     protected final MockMvc mockMvc;
     protected final ObjectMapper mapper;
@@ -61,8 +62,21 @@ public class BaseTest {
      * @return
      */
     protected static MockMultipartFile getMultipartFile(String originalFileName, String reqFileName) {
-        Path filePath = Paths.get("src", "test", "resources", File.separatorChar + originalFileName);
-        File file = new File(String.valueOf(filePath));
+        return getMultipartFile(null, originalFileName, reqFileName);
+    }
+    /**
+     * 파일 업로드 데이터 생성
+     * @param originalFileName 원본파일명
+     * @param reqFileName 요청파일명(API에서 받는 이름)
+     * @return
+     */
+    protected static MockMultipartFile getMultipartFile(String fileMiddlePath, String originalFileName, String reqFileName) {
+        Path filePath = Paths.get("src", "test", "resources");
+        if(StringUtils.isNotEmpty(fileMiddlePath))
+            filePath = Path.of(filePath.toString(), fileMiddlePath);
+
+        filePath = Paths.get(filePath.toString() ,originalFileName);
+        // File file = new File(String.valueOf(filePath));
 
         //        String contentType = "";
         //        String contentType = "image/png";

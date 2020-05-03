@@ -116,8 +116,8 @@ public class FileTutorialController {
             @ApiImplicitParam(name = "fileName", value = "파일명", defaultValue = "ERD.png", dataType = "string")
     })
     @GetMapping("/download")
-    public ResponseEntity<Resource> download(@RequestParam("path") String path, @RequestParam("fileName") String fileName) throws UnsupportedEncodingException {
-        Resource resource = fileService.download(Paths.get(path, File.separator,fileName), bucket);
+    public ResponseEntity<Resource> download(@RequestParam("path") String path, @RequestParam("fileName") String fileName) throws Exception {
+        Resource resource = fileService.download(Paths.get(path, fileName), bucket);
         fileName = URLEncoder.encode(fileName, StandardCharsets.UTF_8);
         return ResponseEntity.ok()
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
