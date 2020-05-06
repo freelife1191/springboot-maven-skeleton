@@ -16,6 +16,7 @@ spring:
     ## 최대 업로드 이 설정은 현제 사용하지 않음 별도로 WebConfig 에서 commons-fileupload 설정을 사용
     multipart:
       enabled: false
+      location: ${java.io.tmpdir}
       max-file-size: 50MB
       max-request-size: 50MB
   http:
@@ -153,6 +154,16 @@ properties:
   file:
     ## 최대 업로드 사이즈 기본 100 MB
     max-upload-size: 100
+    ## 업로드 경로 Docker 컨테이너 내부 경로
+    ## auto_apply.sh 파일의 [FILE_UPLOAD_PATH]에 설정된 HOST 파일업로드 경로와 Mapping
+
+    ## 경로 지정 설명
+    ## ${user.home} - USER HOME 경로에 files 디렉토리 ex) /home/user/files
+    ## files - Project 디렉토리 경로에 files 디렉토리 ex) backoffice-skeleton/files
+    ## /files - 절대경로인 ROOT 경로에 files 디렉토리 ex) /files
+
+    ## Docker로 구동시 Docker 컨테이너 내의 /files 경로를 파일 업로드 경로로 지정함
+    upload-dir: /files
 
 ## Spring Actuator Client 설정
 #  boot:

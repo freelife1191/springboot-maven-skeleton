@@ -6,6 +6,7 @@ import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,10 +26,10 @@ public class SampleFileController {
 
     private final SampleFileService sampleFileService;
 
-    @ApiOperation(value = "Sample File 업로드",notes = "한개의 파일 업로드시 사용")
+    @ApiOperation(value = "Sample File 업로드",notes = "한개의 파일 업로드시 사용", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiResponses({@ApiResponse(code = 200, message = "업로드 성공시 파일 업로드 파일정보 리턴")})
-    @PostMapping
-    public ResponseEntity<ResFileSample> upload(@ApiParam(value = "파일") @RequestPart(value = "file") MultipartFile file) throws IOException {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ResFileSample> upload(@ApiParam(value = "파일", required = true) @RequestPart(value = "file") MultipartFile file) throws IOException {
         return sampleFileService.upload(file);
     }
 

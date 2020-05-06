@@ -23,7 +23,7 @@ public class ExcelReaderTest {
     @DisplayName("엑셀 데이터 읽어서 오브젝트에 담기 테스트")
     public void getObjectListTest() throws IOException, InvalidFormatException, IllegalAccessException {
         String fileName = "dev_doc.xlsx";
-        Path filePath = Paths.get("src", "test", "resources",File.separatorChar + fileName);
+        Path filePath = Paths.get("src", "test", "resources", fileName);
         System.out.println("## filePath = "+filePath);
 
         String originalFileName = fileName;

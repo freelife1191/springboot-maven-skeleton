@@ -55,6 +55,9 @@
         <s3mock_2.12.version>0.2.5</s3mock_2.12.version>
         <type-parser.version>0.6.0</type-parser.version>
         <spring-boot-admin-starter.version>2.2.2</spring-boot-admin-starter.version>
+        <build-helper-maven-plugin.version>3.1.0</build-helper-maven-plugin.version>
+        <properties-maven-plugin.version>1.0.0</properties-maven-plugin.version>
+        <sql-maven-plugin.version>1.5</sql-maven-plugin.version>
     </properties>
 
     <dependencies>
@@ -336,6 +339,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
+                <version>${build-helper-maven-plugin.version}</version>
                 <executions>
                     <execution>
                         <phase>generate-sources</phase>
@@ -416,7 +420,12 @@
             <build>
                 <plugins>
                     <plugin>
+                        <!--
+                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
+                        -->
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
                         <executions>
                             <execution>
                                 <id>generate-jooq-utils</id>
@@ -436,7 +445,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>properties-maven-plugin</artifactId>
-                        <version>1.0.0</version>
+                        <version>${properties-maven-plugin.version}</version>
                         <executions>
                             <execution>
                                 <phase>initialize</phase>
@@ -454,7 +463,7 @@
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>sql-maven-plugin</artifactId>
-                        <version>1.5</version>
+                        <version>${sql-maven-plugin.version}</version>
 
                         <executions>
                             <execution>

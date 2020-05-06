@@ -45,7 +45,7 @@ public class SampleApiController {
     @ApiOperation("서버 접속 테스트")
     @GetMapping("/call")
     public String call(){
-        log.info("~~~~~~~~~~~~~~~");
+        //log.info("~~~~~~~~~~~~~~~");
         Map<String , Object> result = new HashMap<>();
         //        result.put("list",service.test() );
         return "ok";

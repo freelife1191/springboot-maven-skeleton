@@ -4,6 +4,7 @@ import com.fasterxml.classmate.TypeResolver;
 import com.google.common.collect.Lists;
 import com.project.common.constant.ResCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -48,6 +49,13 @@ import static com.google.common.collect.Lists.newArrayList;
 @EnableSwagger2WebMvc
 @RequiredArgsConstructor
 public class SwaagerConfig {
+
+    @Value("${service.name}")
+    private String serviceName;
+    @Value("${service.version}")
+    private String serviceVersion;
+    @Value("${spring.profiles.active}")
+    private String springProfile;
 
     /** Swagger 3.0.0 SNAPSHOT 전용 설정 2.9.2 사용시 주석처리 */
     private final TypeResolver typeResolver;
@@ -107,9 +115,9 @@ public class SwaagerConfig {
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("springboot-maven-skeleton")
-                .description("springboot-maven-skeleton")
-                .version("V0.1")
+                .title(serviceName+"-"+springProfile)
+                .description(serviceName+"-"+springProfile)
+                .version(serviceVersion)
                 .build();
         /*
         return new ApiInfo(
