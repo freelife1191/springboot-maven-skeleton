@@ -9,6 +9,7 @@ import org.jooq.Field;
 import org.jooq.InsertSetMoreStep;
 import org.jooq.InsertSetStep;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,6 +20,7 @@ import static com.project.h2.entity.tables.JCommonEmptyCode.COMMON_EMPTY_CODE;
  */
 @Repository
 @RequiredArgsConstructor
+@Transactional
 public class CommonEmptyCodeRepository {
 
     private final DSLContext dsl;

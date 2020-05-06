@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -28,6 +29,7 @@ import static com.project.common.constant.ResCode.SUCCESS;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CommonDetailCodeService {
 
     private final CommonCodeRepository codeRepository;

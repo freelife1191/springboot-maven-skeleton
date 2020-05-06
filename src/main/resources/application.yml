@@ -1,6 +1,7 @@
 ## 서비스 설정
 service:
   name: springboot-maven-skeleton
+  version: V0.0.1
 
 ## 서버 설정
 server:
@@ -22,6 +23,15 @@ spring:
   http:
     converters:
       preferred-json-mapper: jackson
+
+## ThreadPool 생성 및 적용
+#  task:
+#    execution:
+#      pool:
+## 8개의 ThreadPool을 생성
+#        core-size: 8
+## 최대 8개의 ThreadPool 을 유지
+#        max-size: 8
 
 ## 데이터베이스 옵션 설명
 #  datasource:
@@ -192,3 +202,4 @@ properties:
 #    health:
 #      show-details: ALWAYS
 #    info:
+#      enabled: true

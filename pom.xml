@@ -179,6 +179,7 @@
             <artifactId>httpclient</artifactId>
         </dependency>
 
+
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
@@ -328,6 +329,7 @@
         <dependency>
             <groupId>com.github.drapostolos</groupId>
             <artifactId>type-parser</artifactId>
+            <artifactId>type-parser</artifactId>
             <version>${type-parser.version}</version>
         </dependency>
 
@@ -464,7 +466,6 @@
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>sql-maven-plugin</artifactId>
                         <version>${sql-maven-plugin.version}</version>
-
                         <executions>
                             <execution>
                                 <phase>initialize</phase>
@@ -495,6 +496,7 @@
                             </execution>
                         </executions>
 
+                        <!--
                         <dependencies>
                             <dependency>
                                 <groupId>com.h2database</groupId>
@@ -502,6 +504,7 @@
                                 <version>${h2.version}</version>
                             </dependency>
                         </dependencies>
+                        -->
                     </plugin>
                     <plugin>
                         <groupId>org.jooq</groupId>

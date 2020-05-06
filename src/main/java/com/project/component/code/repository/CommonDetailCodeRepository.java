@@ -11,6 +11,7 @@ import org.apache.commons.collections4.ListUtils;
 import org.jooq.*;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ import static org.jooq.impl.DSL.*;
 @Slf4j
 @Repository
 @RequiredArgsConstructor
+@Transactional
 public class CommonDetailCodeRepository {
 
     private final DSLContext dsl;

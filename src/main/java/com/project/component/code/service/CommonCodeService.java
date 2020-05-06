@@ -12,13 +12,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import static com.project.common.constant.ResCode.SUCCESS;
 import static com.project.h2.entity.tables.JCommonCode.COMMON_CODE;
+import static com.project.common.constant.ResCode.SUCCESS;
 
 /**
  * 공통 메인 코드 서비스
@@ -27,6 +28,7 @@ import static com.project.h2.entity.tables.JCommonCode.COMMON_CODE;
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CommonCodeService {
 
     private final DSLContext dsl;
