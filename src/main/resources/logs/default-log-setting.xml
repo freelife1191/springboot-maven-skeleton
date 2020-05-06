@@ -17,13 +17,13 @@
             <fileNamePattern>${DEFAULT_ERROR_LOG_HOME}/archived/error.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy
                     class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>500MB</maxFileSize>
+                <maxFileSize>${DEFAULT_MAX_FILESIZE}</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
             <springProfile name="!prod">
-                <maxHistory>10</maxHistory>
+                <maxHistory>${DEFAULT_MAX_HISTORY}</maxHistory>
             </springProfile>
             <springProfile name="prod">
-                <maxHistory>30</maxHistory>
+                <maxHistory>${PROD_MAX_HISTORY}</maxHistory>
             </springProfile>
         </rollingPolicy>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
@@ -42,13 +42,13 @@
             </fileNamePattern>
             <timeBasedFileNamingAndTriggeringPolicy
                     class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
-                <maxFileSize>500MB</maxFileSize>
+                <maxFileSize>${DEFAULT_MAX_FILESIZE}</maxFileSize>
             </timeBasedFileNamingAndTriggeringPolicy>
             <springProfile name="!prod">
-                <maxHistory>10</maxHistory>
+                <maxHistory>${DEFAULT_MAX_HISTORY}</maxHistory>
             </springProfile>
             <springProfile name="prod">
-                <maxHistory>30</maxHistory>
+                <maxHistory>${PROD_MAX_HISTORY}</maxHistory>
             </springProfile>
         </rollingPolicy>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">

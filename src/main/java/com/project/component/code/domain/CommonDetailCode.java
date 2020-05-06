@@ -15,7 +15,9 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 @ToString
+@Builder
 @ApiModel("공통 상세 코드 도메인 객체")
 public class CommonDetailCode {
     @ApiModelProperty("공통코드 ID")
@@ -50,26 +52,6 @@ public class CommonDetailCode {
     private String updatedId;
     @ApiModelProperty("수정일시")
     private LocalDateTime updatedAt;
-
-    @Builder
-    public CommonDetailCode(Integer commonCodeId, Integer detailCode, String detailCodeNm, String detailCodeEngNm, String detailCodeDc, Integer order, Boolean enabled, String etc1, String etc2, String etc3, String etc4, String etc5, String createdId, LocalDateTime createdAt, String updatedId, LocalDateTime updatedAt) {
-        this.commonCodeId = commonCodeId;
-        this.detailCode = detailCode;
-        this.detailCodeNm = detailCodeNm;
-        this.detailCodeEngNm = detailCodeEngNm;
-        this.detailCodeDc = detailCodeDc;
-        this.order = order;
-        this.enabled = enabled;
-        this.etc1 = etc1;
-        this.etc2 = etc2;
-        this.etc3 = etc3;
-        this.etc4 = etc4;
-        this.etc5 = etc5;
-        this.createdId = createdId;
-        this.createdAt = createdAt;
-        this.updatedId = updatedId;
-        this.updatedAt = updatedAt;
-    }
 
     /**
      * 공통 상세 코드 단건 등록 객체 셋팅
