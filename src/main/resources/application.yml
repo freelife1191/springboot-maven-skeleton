@@ -14,15 +14,28 @@ spring:
   profiles:
     active: local
   servlet:
-    ## 최대 업로드 이 설정은 현제 사용하지 않음 별도로 WebConfig 에서 commons-fileupload 설정을 사용
     multipart:
-      enabled: false
-      location: ${java.io.tmpdir}
-      max-file-size: 50MB
-      max-request-size: 50MB
+      ## 멀티파트 업로드 지원여부 (default: true)
+      enabled: true
+      ## 업로드된 파일의 임시 저장 공간
+      ## TEMP 파일 경로 지정시 절대경로 지정 default: ${java.io.tmpdir}
+      ## ${user.dir}/tmpfiles 는 현재 프로젝트에 tmpfiles
+      ## ${user.home}/rcs/tmpfiles 는 USER HOME 디렉토리에 rcs/tmpfiles
+      location: ${user.home}/${service.name}/tmpfiles
+      ## 파일의 최대 사이즈 (default: 1MB) 파일당 최대 파일 크기이다
+      max-file-size: 100MB
+      ## 요청의 최대 사이즈 (default: 10MB)
+      ## 파일 한 개의 용량이 아니라 multipart/form-data 요청당 최대 파일 크기이다 (여러 파일 업로드 시 총 크기로 보면 된다)
+      max-request-size: 100MB
+      ## 파일이 메모리에 기록되는 임계값 (default: 0B)
+      ## 파일의 크기가 fize-size-threshold 값을 초과한다면 파일은 location 경로에 저장되어 해당 파일을 읽어서 작업
+      file-size-threshold: 1MB
   http:
     converters:
       preferred-json-mapper: jackson
+  jackson:
+    serialization:
+      FAIL_ON_EMPTY_BEANS: false
 
 ## ThreadPool 생성 및 적용
 #  task:

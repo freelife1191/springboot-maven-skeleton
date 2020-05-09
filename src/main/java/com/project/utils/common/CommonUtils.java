@@ -50,17 +50,17 @@ public class CommonUtils {
 
     /**
      * 부모 객체를 DTO 자식객체에 맵핑
-     * @param object
-     * @param dto
+     * @param parent 데이터가 있는 부모객체
+     * @param dto 맵핑할 자식객체
      * @param <T>
      * @return
      */
-    public static<T> T objectToDto(Object object, Object dto) {
-        if(Objects.isNull(object)) return null;
+    public static<T> T parentObjectToDto(Object parent, Object dto) {
+        if(Objects.isNull(parent)) return null;
 
         List<Field> subFields = new ArrayList<>(Arrays.asList(dto.getClass().getSuperclass().getDeclaredFields()));
-        for(Field field : object.getClass().getDeclaredFields())
-            subFields.removeIf(subField -> dtoMapping(object, dto, field, subField));
+        for(Field field : parent.getClass().getDeclaredFields())
+            subFields.removeIf(subField -> dtoMapping(parent, dto, field, subField));
         return (T) dto;
     }
 

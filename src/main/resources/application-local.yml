@@ -5,7 +5,12 @@ spring:
     remote:
       restart:
         enabled: true
-
+  servlet:
+    multipart:
+      ## TEMP 파일 경로 지정시 절대경로 지정 default: ${java.io.tmpdir}
+      ## ${user.dir}/tmpfiles 는 현재 프로젝트에 tmpfiles
+      ## ${user.home}/rcs/tmpfiles 는 USER HOME 디렉토리에 rcs/tmpfiles
+      location: ${user.dir}/tmpfiles
 ## LOCAL H2 DB 설정
   datasource:
     platform: h2

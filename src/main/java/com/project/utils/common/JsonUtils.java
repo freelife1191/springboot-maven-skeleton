@@ -45,10 +45,10 @@ public class JsonUtils {
         return new JsonUtils();
     }
 
-    private static Gson getGson() {
+    public static Gson getGson() {
         return getInstance().gson;
     }
-    private static ObjectMapper getObjectMapper() {
+    public static ObjectMapper getObjectMapper() {
         return getInstance().mapper;
     }
 
