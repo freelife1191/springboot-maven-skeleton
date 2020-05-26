@@ -1,5 +1,23 @@
 package com.project.config.datasource;
 
+import com.zaxxer.hikari.HikariDataSource;
+import org.jooq.DSLContext;
+import org.jooq.SQLDialect;
+import org.jooq.conf.RenderQuotedNames;
+import org.jooq.impl.DefaultConfiguration;
+import org.jooq.impl.DefaultDSLContext;
+import org.jooq.impl.DefaultExecuteListenerProvider;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.jdbc.DataSourceBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Primary;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.transaction.PlatformTransactionManager;
+
+import javax.sql.DataSource;
+
 /**
  * MariaDB 설정 샘플
  * Created by KMS on 14/04/2020.
@@ -28,9 +46,12 @@ public class MainDslConfig {
     @DependsOn(DATASOURCE)
     DSLContext dslContext() throws Exception {
         DefaultConfiguration jooqConfiguration = new DefaultConfiguration();
-        jooqConfiguration.set( SQLDialect.MARIADB );
-        jooqConfiguration.set(dataSource());
-        jooqConfiguration.set( new DefaultExecuteListenerProvider(new JOOQToSpringExceptionTransformer()) );
+        jooqConfiguration.settings()
+                .withRenderQuotedNames(RenderQuotedNames.EXPLICIT_DEFAULT_UNQUOTED);
+        jooqConfiguration.setDataSource(dataSource());
+        jooqConfiguration.setSQLDialect(SQLDialect.MARIADB);
+        // .withRenderNameCase(RenderNameCase.LOWER_IF_UNQUOTED);               // Defaults to AS_IS
+        jooqConfiguration.setExecuteListenerProvider( new DefaultExecuteListenerProvider(new JOOQToSpringExceptionTransformer()) );
         return new DefaultDSLContext(jooqConfiguration);
     }
     */

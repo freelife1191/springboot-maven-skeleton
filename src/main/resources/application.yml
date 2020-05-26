@@ -23,16 +23,13 @@ spring:
       ## ${user.home}/rcs/tmpfiles 는 USER HOME 디렉토리에 rcs/tmpfiles
       location: ${user.home}/${service.name}/tmpfiles
       ## 파일의 최대 사이즈 (default: 1MB) 파일당 최대 파일 크기이다
-      max-file-size: 100MB
+      max-file-size: -1
       ## 요청의 최대 사이즈 (default: 10MB)
       ## 파일 한 개의 용량이 아니라 multipart/form-data 요청당 최대 파일 크기이다 (여러 파일 업로드 시 총 크기로 보면 된다)
-      max-request-size: 100MB
+      max-request-size: -1
       ## 파일이 메모리에 기록되는 임계값 (default: 0B)
       ## 파일의 크기가 fize-size-threshold 값을 초과한다면 파일은 location 경로에 저장되어 해당 파일을 읽어서 작업
       file-size-threshold: 1MB
-  http:
-    converters:
-      preferred-json-mapper: jackson
   jackson:
     serialization:
       FAIL_ON_EMPTY_BEANS: false
@@ -140,6 +137,8 @@ spring:
       favor-path-extension: true
       media-types:
         xls: application/vnd.ms-excel
+    converters:
+      preferred-json-mapper: jackson
 
 ## AWS 정보 셋팅
 cloud:

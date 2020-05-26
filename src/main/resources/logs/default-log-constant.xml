@@ -9,9 +9,9 @@
     <!-- 운영서버가 아닌 서버의 최대 로그 저장 기간 -->
     <property name="DEFAULT_MAX_HISTORY" value="10" />
     <!-- 운영서버 최대 로그 저장 기간 -->
-    <property name="PROD_MAX_HISTORY" value="30" />
+    <property name="PROD_MAX_HISTORY" value="90" />
     <!-- 최대 로그 파일 사이즈 MB -->
-    <property name="DEFAULT_MAX_FILESIZE" value="500" />
+    <property name="DEFAULT_MAX_FILESIZE" value="500MB" />
 
     <!-- 기본 BOT 이미지 URL -->
     <property name="DEFAULT_BOT_IMAGE_URL" value="https://cdn3.iconfinder.com/data/icons/chat-bot-emoji-filled-color/300/14157797Untitled-3-512.png" />

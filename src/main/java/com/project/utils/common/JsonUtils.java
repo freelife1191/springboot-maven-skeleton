@@ -7,14 +7,18 @@
 package com.project.utils.common;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
+import org.jooq.JSON;
 
 import java.lang.reflect.Type;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * The type Json utils.
@@ -135,6 +139,66 @@ public class JsonUtils {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    /**
+     * To ObjectMapper Mapping json string
+     * @param obj JSON String
+     * @param clz 변환할 오브젝트 클래스
+     * @param <T>
+     * @return
+     */
+    public static<T> T toMapperObject(String obj, Class<T> clz) {
+        if(StringUtils.isEmpty(obj)) return null;
+        try {
+            return getObjectMapper().readValue(obj, clz);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * To ObjectMapper Mapping json string
+     * @param obj JSON String
+     * @param type 변환할 오브젝트 클래스
+     * @param <T>
+     * List 와 같은 형태는 TypeReference 형으로 처리
+     * new TypeReference<List<Object>() {}
+     * @return
+     */
+    public static<T> T toMapperObject(String obj, TypeReference<T> type) {
+        if(StringUtils.isEmpty(obj)) return null;
+        try {
+            return getObjectMapper().readValue(obj, type);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * To ObjectMapper Mapping json string
+     * @param json JSON String
+     * @param clz 변환할 오브젝트 클래스
+     * @param <T>
+     * @return
+     */
+    public static<T> T jsonToObject(JSON json, Class<T> clz) {
+        if(Objects.isNull(json)) return null;
+        return toMapperObject(json.data(), clz);
+    }
+
+    /**
+     * To ObjectMapper Mapping json string
+     * @param json JSON String
+     * @param type 변환할 오브젝트 클래스
+     * @param <T>
+     * List 와 같은 형태는 TypeReference 형으로 처리
+     * new TypeReference<List<Object>() {}
+     * @return
+     */
+    public static<T> T jsonToObject(JSON json, TypeReference<T> type) {
+        if(Objects.isNull(json)) return null;
+        return toMapperObject(json.data(), type);
     }
 
 }
