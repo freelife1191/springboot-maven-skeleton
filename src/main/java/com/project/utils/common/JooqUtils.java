@@ -1,5 +1,6 @@
 package com.project.utils.common;
 
+import com.google.common.collect.Lists;
 import com.project.utils.common.constant.ConditionType;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.ListUtils;
@@ -35,9 +36,6 @@ public class JooqUtils {
      * conditionList 생성
      * List<Condition> conditionsList = setConditionList(fieldList, object);
      *
-     * 특정 FieldList 제외해야할 경우
-     * List<Condition> conditionsList = setConditionList(fieldList, object, outList);
-     *
      * 생성된 conditionList를 WHERE 조건에 적용
      * .where(DSL.and(conditionsList))
      *
@@ -47,10 +45,6 @@ public class JooqUtils {
      */
     public static List<Condition> setConditionList(List<Field> fieldList, Object object) {
         return setConditionList(null, fieldList, object, eq);
-    }
-
-    public static List<Condition> setConditionList(List<Field> fieldList, Object object, List<Field> outList) {
-        return setConditionList(null, fieldList, object, outList, eq);
     }
 
     /**
@@ -63,19 +57,11 @@ public class JooqUtils {
      * @return
      */
     public static List<Condition> setConditionList(List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption) {
-        return setConditionList(null, fieldList, object, null, eq, nullOption, emptyOption);
-    }
-
-    public static List<Condition> setConditionList(List<Field> fieldList, Object object, List<Field> outList, boolean nullOption, boolean emptyOption) {
-        return setConditionList(null, fieldList, object, outList, eq, nullOption, emptyOption);
+        return setConditionList(null, fieldList, object, eq, nullOption, emptyOption);
     }
 
     public static List<Condition> setConditionList(List<Condition> conditionList, List<Field> fieldList, Object object) {
         return setConditionList(conditionList, fieldList, object, eq);
-    }
-
-    public static List<Condition> setConditionList(List<Condition> conditionList, List<Field> fieldList, Object object, List<Field> outList) {
-        return setConditionList(conditionList, fieldList, object, outList, eq);
     }
 
     /**
@@ -89,13 +75,8 @@ public class JooqUtils {
      * @return
      */
     public static List<Condition> setConditionList(List<Condition> conditionList, List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption) {
-        return setConditionList(conditionList, fieldList, object, null, eq, nullOption, emptyOption);
+        return setConditionList(conditionList, fieldList, object, eq, nullOption, emptyOption);
     }
-
-    public static List<Condition> setConditionList(List<Condition> conditionList, List<Field> fieldList, List<Field> outList, Object object, boolean nullOption, boolean emptyOption) {
-        return setConditionList(conditionList, fieldList, object, outList, eq, nullOption, emptyOption);
-    }
-
 
     /**
      * 기존 conditionList와 TableField 값과 Object 를 받아 ConditionList를 셋팅함
@@ -108,9 +89,6 @@ public class JooqUtils {
      * 기존 conditionList에 추가해서 conditionList 생성
      * List<Condition> conditionsList = setConditionList(conditionList, fieldList, object, conditionType);
      *
-     * 특정 FieldList 제외해야할 경우
-     * List<Condition> conditionsList = setConditionList(conditionList, fieldList, object, outList, conditionType);
-     *
      * 생성된 conditionList를 WHERE 조건에 적용
      * .where(DSL.and(conditionsList))
      *
@@ -121,11 +99,7 @@ public class JooqUtils {
      * @throws IllegalAccessException
      */
     public static List<Condition> setConditionList(List<Condition> conditionList, List<Field> fieldList, Object object, ConditionType conditionType) {
-        return setConditionList(conditionList, fieldList, object, null, conditionType, false, false);
-    }
-
-    public static List<Condition> setConditionList(List<Condition> conditionList, List<Field> fieldList, Object object, List<Field> outList, ConditionType conditionType) {
-        return setConditionList(conditionList, fieldList, object, outList, conditionType, false, false);
+        return setConditionList(conditionList, fieldList, object, conditionType, false, false);
     }
 
     /**
@@ -136,7 +110,7 @@ public class JooqUtils {
      * List<TableField> fieldList = new ArrayList<>();
      * fieldList.add(SERVICE_DETAIL_CODE.SERVICE_CODE);`
      *
-     * List<Condition> conditionsList = setConditionList(conditionList, fieldList, object, outList, conditionType, nullOption, emptyOption);
+     * List<Condition> conditionsList = setConditionList(conditionList, fieldList, object, conditionType, nullOption, emptyOption);
      *
      * 생성된 conditionList를 WHERE 조건에 적용
      * .where(DSL.and(conditionsList))
@@ -147,12 +121,9 @@ public class JooqUtils {
      * @return
      * @throws IllegalAccessException
      */
-    public static List<Condition> setConditionList(List<Condition> conditionList, List<Field> fieldList, Object object, List<Field> outList, ConditionType conditionType, boolean nullOption, boolean emptyOption) {
+    public static List<Condition> setConditionList(List<Condition> conditionList, List<Field> fieldList, Object object, ConditionType conditionType, boolean nullOption, boolean emptyOption) {
 
         if(conditionList == null) conditionList = new ArrayList<>();
-
-        if(!ListUtils.emptyIfNull(outList).isEmpty())
-            fieldList = getFieldList(fieldList, outList);
 
         if(fieldList != null && Objects.nonNull(object)) {
             for (Field field : fieldList) {
@@ -505,11 +476,23 @@ public class JooqUtils {
      * Insert columns 필드리스트 기반 필드 리스트 생성 유틸
      * 컬럼 필드리스트 중 null, empty 조건에 해당되는 필드 값들을 리스트에 담아서 리턴해줌
      * 기본값으로 null 데이터를 허용 처리함
+     * @param fieldArray
+     * @param object
+     * @return
+     */
+    public static List<Field> getColumnFieldList(Field<?>[] fieldArray, Object object){
+        return getColumnFieldList(Lists.newArrayList(fieldArray), object);
+    }
+
+    /**
+     * Insert columns 필드리스트 기반 필드 리스트 생성 유틸
+     * 컬럼 필드리스트 중 null, empty 조건에 해당되는 필드 값들을 리스트에 담아서 리턴해줌
+     * 기본값으로 null 데이터를 허용 처리함
      * @param fieldList
      * @param object
      * @return
      */
-    public static<T  > List<Field> getColumnFieldList(List<Field> fieldList, Object object) {
+    public static<T> List<Field> getColumnFieldList(List<Field> fieldList, Object object) {
         return getColumnFieldList(fieldList, new ArrayList<>(), object, false, false);
     }
 
@@ -523,8 +506,47 @@ public class JooqUtils {
      * @param emptyOption true: null 허용, false: null 미허용
      * @return
      */
-    public static<T  > List<Field> getColumnFieldList(List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption) {
+    public static<T> List<Field> getColumnFieldList(List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption) {
         return getColumnFieldList(fieldList, new ArrayList<>(), object, nullOption, emptyOption);
+    }
+
+    /**
+     * Insert columns 필드리스트 기반 필드 리스트 생성 유틸
+     * 컬럼 필드리스트 중 null, empty 조건에 해당되는 필드 값들을 리스트에 담아서 리턴해줌
+     * 기본값으로 null 데이터를 허용 처리함
+     * @param fieldArray
+     * @param object
+     * @param addFieldLists 추가 할 리스트 기존 동일항목이 있으면 제거하고 뒤에 추가
+     * @return
+     */
+    public static List<Field> getColumnFieldList(Field<?>[] fieldArray, Object object, Field<?> ... addFieldLists) {
+        return getColumnFieldList(Lists.newArrayList(fieldArray), Lists.newArrayList(addFieldLists), object);
+    }
+
+    /**
+     * Insert columns 필드리스트 기반 필드 리스트 생성 유틸
+     * 컬럼 필드리스트 중 null, empty 조건에 해당되는 필드 값들을 리스트에 담아서 리턴해줌
+     * 기본값으로 null 데이터를 허용 처리함
+     * @param fieldList
+     * @param object
+     * @param addFieldLists 추가 할 리스트 기존 동일항목이 있으면 제거하고 뒤에 추가
+     * @return
+     */
+    public static List<Field> getColumnFieldList(List<Field> fieldList, Object object, Field<?> ... addFieldLists) {
+        return getColumnFieldList(fieldList, Lists.newArrayList(addFieldLists), object);
+    }
+
+    /**
+     * Insert columns 필드리스트 기반 필드 리스트 생성 유틸
+     * 컬럼 필드리스트 중 null, empty 조건에 해당되는 필드 값들을 리스트에 담아서 리턴해줌
+     * 기본값으로 null 데이터를 허용 처리함
+     * @param fieldArray
+     * @param addFieldList 추가 할 리스트 기존 동일항목이 있으면 제거하고 뒤에 추가
+     * @param object
+     * @return
+     */
+    public static List<Field> getColumnFieldList(Field<?>[] fieldArray, List<Field> addFieldList, Object object) {
+        return getColumnFieldList(Lists.newArrayList(fieldArray), addFieldList, object);
     }
 
     /**
@@ -538,6 +560,47 @@ public class JooqUtils {
      */
     public static List<Field> getColumnFieldList(List<Field> fieldList, List<Field> addFieldList, Object object) {
         return getColumnFieldList(fieldList, addFieldList, object, false, false);
+    }
+
+    /**
+     * Insert columns 필드리스트 기반 필드 리스트 생성 유틸
+     * 컬럼 필드리스트 중 null, empty 조건에 해당되는 필드 값들을 리스트에 담아서 리턴해줌
+     * 기본값으로 null 데이터를 허용 처리함
+     * @param fieldArray
+     * @param addFieldList 추가 할 리스트 기존 동일항목이 있으면 제거하고 뒤에 추가
+     * @param object
+     * @return
+     */
+    public static List<Field> getColumnFieldList(Field<?>[] fieldArray, List<Field> addFieldList, Object object, boolean nullOption, boolean emptyOption) {
+        return getColumnFieldList(Lists.newArrayList(fieldArray), addFieldList, object, nullOption, emptyOption);
+    }
+
+    /**
+     * Insert columns 필드리스트 기반 필드 리스트 생성 유틸
+     * 컬럼 필드리스트 중 null, empty 조건에 해당되는 필드 값들을 리스트에 담아서 리턴해줌
+     * @param fieldArray
+     * @param object
+     * @param nullOption true: null 허용, false: null 미허용
+     * @param emptyOption true: null 허용, false: null 미허용
+     * @param addFieldLists 추가 할 리스트 기존 동일항목이 있으면 제거하고 뒤에 추가
+     * @return
+     */
+    public static List<Field> getColumnFieldList(Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption, Field<?> ... addFieldLists) {
+        return getColumnFieldList(Lists.newArrayList(fieldArray), Lists.newArrayList(addFieldLists), object, nullOption, emptyOption);
+    }
+
+    /**
+     * Insert columns 필드리스트 기반 필드 리스트 생성 유틸
+     * 컬럼 필드리스트 중 null, empty 조건에 해당되는 필드 값들을 리스트에 담아서 리턴해줌
+     * @param fieldList
+     * @param object
+     * @param nullOption true: null 허용, false: null 미허용
+     * @param emptyOption true: null 허용, false: null 미허용
+     * @param addFieldLists 추가 할 리스트 기존 동일항목이 있으면 제거하고 뒤에 추가
+     * @return
+     */
+    public static List<Field> getColumnFieldList(List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption, Field<?> ... addFieldLists) {
+        return getColumnFieldList(fieldList, Lists.newArrayList(addFieldLists), object, nullOption, emptyOption);
     }
 
     /**
@@ -581,8 +644,40 @@ public class JooqUtils {
      * 필드리스트 셋팅 후 가져오기
      * @return
      */
+    public static List<Field> getFieldList(Field<?>[] fieldArray){
+        return getFieldList(Lists.newArrayList(fieldArray), new ArrayList<>());
+    }
+
+    /**
+     * 필드리스트 셋팅 후 가져오기
+     * @return
+     */
+    public static List<Field> getFieldList(Field<?>[] fieldArray, Field<?> ... fields){
+        return getFieldList(Lists.newArrayList(fieldArray), Lists.newArrayList(fields));
+    }
+
+    /**
+     * 필드리스트 셋팅 후 가져오기
+     * @return
+     */
+    public static List<Field> getFieldList(Field<?>[] fieldArray, List<Field> outList){
+        return getFieldList(Lists.newArrayList(fieldArray), outList);
+    }
+
+    /**
+     * 필드리스트 셋팅 후 가져오기
+     * @return
+     */
     public static List<Field> getFieldList(List<Field> inList){
-        return getFieldList(inList, null);
+        return getFieldList(inList, new ArrayList<>());
+    }
+
+    /**
+     * 필드리스트 셋팅 후 가져오기
+     * @return
+     */
+    public static List<Field> getFieldList(List<Field> inList, Field<?> ... fields){
+        return getFieldList(inList, Lists.newArrayList(fields));
     }
 
     /**
@@ -592,18 +687,48 @@ public class JooqUtils {
      * @return
      */
     public static List<Field> getFieldList(List<Field> inList, List<Field> outList) {
-        if(inList == null) return null;
+        if(ListUtils.emptyIfNull(inList).isEmpty()) return null;
 
         List<Field> fieldList = new ArrayList<>();
         fieldList.addAll(inList);
 
-        if(outList != null)
+        if(!ListUtils.emptyIfNull(outList).isEmpty())
             fieldList.removeAll(outList);
         return fieldList;
     }
 
     /**
-     * 필드리스트 셋팅 후 제외리스트 제거 후 가져오기
+     * 기존 필드리스트에 필드리스트 추가하기
+     * @param fieldArray
+     * @param addFieldLists
+     * @return
+     */
+    public static List<Field> addAllFieldList(Field<?>[] fieldArray, Field<?> ... addFieldLists) {
+        return addAllFieldList(Lists.newArrayList(fieldArray), Lists.newArrayList(addFieldLists));
+    }
+
+    /**
+     * 기존 필드리스트에 필드리스트 추가하기
+     * @param fieldArray
+     * @param add
+     * @return
+     */
+    public static List<Field> addAllFieldList(Field<?>[] fieldArray, List<Field> add) {
+        return addAllFieldList(Lists.newArrayList(fieldArray), add);
+    }
+
+    /**
+     * 기존 필드리스트에 필드리스트 추가하기
+     * @param original
+     * @param addFieldLists
+     * @return
+     */
+    public static List<Field> addAllFieldList(List<Field> original, Field<?> ... addFieldLists) {
+        return addAllFieldList(original, Lists.newArrayList(addFieldLists));
+    }
+
+    /**
+     * 기존 필드리스트에 필드리스트 추가하기
      * @param original
      * @param add
      * @return
@@ -625,12 +750,59 @@ public class JooqUtils {
     /**
      * Object 값을 DSL.value에 맵핑하고 Field Name 을 Alias 로 추가
      * insert select 등에서 사용하기 위해 셋팅하는 field List 유틸
+     * @param fieldArray Alias 로 적용하기 위한 Field List
+     * @param object 적용할 object
+     * @return
+     */
+    public static List<Field> setAliasFieldList(Field<?>[] fieldArray, Object object) {
+        return setAliasFieldList(Lists.newArrayList(fieldArray), new ArrayList<>(), object, false, false, true);
+    }
+
+    /**
+     * Object 값을 DSL.value에 맵핑하고 Field Name 을 Alias 로 추가
+     * insert select 등에서 사용하기 위해 셋팅하는 field List 유틸
      * @param fieldList Alias 로 적용하기 위한 Field List
      * @param object 적용할 object
      * @return
      */
     public static List<Field> setAliasFieldList(List<Field> fieldList, Object object) {
         return setAliasFieldList(fieldList, new ArrayList<>(), object, false, false, true);
+    }
+
+    /**
+     * Object 값을 DSL.value에 맵핑하고 Field Name 을 Alias 로 추가
+     * insert select 등에서 사용하기 위해 셋팅하는 field List 유틸
+     * @param fieldArray Alias 로 적용하기 위한 Field List
+     * @param object 적용할 object
+     * @param addFieldLists 추가 할 리스트 기존 동일항목이 있으면 제거하고 뒤에 추가
+     * @return
+     */
+    public static List<Field> setAliasFieldList(Field<?>[] fieldArray, Object object, Field<?> ... addFieldLists) {
+        return setAliasFieldList(Lists.newArrayList(fieldArray), Lists.newArrayList(addFieldLists), object);
+    }
+
+    /**
+     * Object 값을 DSL.value에 맵핑하고 Field Name 을 Alias 로 추가
+     * insert select 등에서 사용하기 위해 셋팅하는 field List 유틸
+     * @param fieldArray Alias 로 적용하기 위한 Field List
+     * @param addFieldList 추가 할 리스트 기존 동일항목이 있으면 제거하고 뒤에 추가
+     * @param object 적용할 object
+     * @return
+     */
+    public static List<Field> setAliasFieldList(Field<?>[] fieldArray, List<Field> addFieldList, Object object) {
+        return setAliasFieldList(Lists.newArrayList(fieldArray), addFieldList, object);
+    }
+
+    /**
+     * Object 값을 DSL.value에 맵핑하고 Field Name 을 Alias 로 추가
+     * insert select 등에서 사용하기 위해 셋팅하는 field List 유틸
+     * @param fieldList Alias 로 적용하기 위한 Field List
+     * @param object 적용할 object
+     * @param addFieldLists 추가 할 리스트 기존 동일항목이 있으면 제거하고 뒤에 추가
+     * @return
+     */
+    public static List<Field> setAliasFieldList(List<Field> fieldList, Object object, Field<?> ... addFieldLists) {
+        return setAliasFieldList(fieldList, Lists.newArrayList(addFieldLists), object);
     }
 
     /**
@@ -661,6 +833,55 @@ public class JooqUtils {
     /**
      * Object 값을 DSL.value에 맵핑하고 Field Name 을 Alias 로 추가
      * insert select 등에서 사용하기 위해 셋팅하는 field List 유틸
+     * @param fieldArray Alias 로 적용하기 위한 Field List
+     * @param object 적용할 object
+     * @param nullOption true: null 허용, false: null 미허용
+     * @param emptyOption true: empty 허용, false: empty 미허용
+     * @return
+     */
+    public static List<Field> setAliasFieldList(Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption) {
+        return setAliasFieldList(Lists.newArrayList(fieldArray), new ArrayList<>(), object, nullOption, emptyOption, true);
+    }
+
+    /**
+     * Object 값을 DSL.value에 맵핑하고 Field Name 을 Alias 로 추가
+     * insert select 등에서 사용하기 위해 셋팅하는 field List 유틸
+     * @param fieldArray Alias 로 적용하기 위한 Field List
+     * @param object 적용할 object
+     * @param addFieldLists 추가 할 리스트 기존 동일항목이 있으면 제거하고 뒤에 추가
+     * @return
+     */
+    public static List<Field> setAliasFieldList(Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption, Field<?> ... addFieldLists) {
+        return setAliasFieldList(Lists.newArrayList(fieldArray), Lists.newArrayList(addFieldLists), object, nullOption, emptyOption, true);
+    }
+
+    /**
+     * Object 값을 DSL.value에 맵핑하고 Field Name 을 Alias 로 추가
+     * insert select 등에서 사용하기 위해 셋팅하는 field List 유틸
+     * @param fieldArray Alias 로 적용하기 위한 Field List
+     * @param addFieldList 추가 할 리스트 기존 동일항목이 있으면 제거하고 뒤에 추가
+     * @param object 적용할 object
+     * @return
+     */
+    public static List<Field> setAliasFieldList(Field<?>[] fieldArray, List<Field> addFieldList, Object object, boolean nullOption, boolean emptyOption) {
+        return setAliasFieldList(Lists.newArrayList(fieldArray), addFieldList, object, nullOption, emptyOption, true);
+    }
+
+    /**
+     * Object 값을 DSL.value에 맵핑하고 Field Name 을 Alias 로 추가
+     * insert select 등에서 사용하기 위해 셋팅하는 field List 유틸
+     * @param fieldList Alias 로 적용하기 위한 Field List
+     * @param object 적용할 object
+     * @param addFieldLists 추가 할 리스트 기존 동일항목이 있으면 제거하고 뒤에 추가
+     * @return
+     */
+    public static List<Field> setAliasFieldList(List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption, Field<?> ... addFieldLists) {
+        return setAliasFieldList(fieldList, Lists.newArrayList(addFieldLists), object, nullOption, emptyOption, true);
+    }
+
+    /**
+     * Object 값을 DSL.value에 맵핑하고 Field Name 을 Alias 로 추가
+     * insert select 등에서 사용하기 위해 셋팅하는 field List 유틸
      * @param fieldList Alias 로 적용하기 위한 Field List
      * @param addFieldList 추가 할 리스트 기존 동일항목이 있으면 제거하고 뒤에 추가
      * @param object 적용할 object
@@ -670,6 +891,42 @@ public class JooqUtils {
      */
     public static List<Field> setAliasFieldList(List<Field> fieldList, List<Field> addFieldList, Object object, boolean nullOption, boolean emptyOption) {
         return setAliasFieldList(fieldList, addFieldList, object, nullOption, emptyOption, true);
+    }
+
+    /**
+     * Object 값을 DSL.value에 맵핑하고 Field Name 을 Alias 로 추가
+     * insert select 등에서 사용하기 위해 셋팅하는 field List 유틸
+     * @param fieldArray Alias 로 적용하기 위한 Field List
+     * @param object 적용할 object
+     * @param addFieldLists 추가 할 리스트 기존 동일항목이 있으면 제거하고 뒤에 추가
+     * @return
+     */
+    public static List<Field> setAliasFieldList(Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption, boolean isIpOption, Field<?> ... addFieldLists) {
+        return setAliasFieldList(Lists.newArrayList(fieldArray), Lists.newArrayList(addFieldLists), object, nullOption, emptyOption, isIpOption);
+    }
+
+    /**
+     * Object 값을 DSL.value에 맵핑하고 Field Name 을 Alias 로 추가
+     * insert select 등에서 사용하기 위해 셋팅하는 field List 유틸
+     * @param fieldArray Alias 로 적용하기 위한 Field List
+     * @param addFieldList 추가 할 리스트 기존 동일항목이 있으면 제거하고 뒤에 추가
+     * @param object 적용할 object
+     * @return
+     */
+    public static List<Field> setAliasFieldList(Field<?>[] fieldArray, List<Field> addFieldList, Object object, boolean nullOption, boolean emptyOption, boolean isIpOption) {
+        return setAliasFieldList(Lists.newArrayList(fieldArray), addFieldList, object, nullOption, emptyOption, isIpOption);
+    }
+
+    /**
+     * Object 값을 DSL.value에 맵핑하고 Field Name 을 Alias 로 추가
+     * insert select 등에서 사용하기 위해 셋팅하는 field List 유틸
+     * @param fieldList Alias 로 적용하기 위한 Field List
+     * @param object 적용할 object
+     * @param addFieldLists 추가 할 리스트 기존 동일항목이 있으면 제거하고 뒤에 추가
+     * @return
+     */
+    public static List<Field> setAliasFieldList(List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption, boolean isIpOption, Field<?> ... addFieldLists) {
+        return setAliasFieldList(fieldList, Lists.newArrayList(addFieldLists), object, nullOption, emptyOption, isIpOption);
     }
 
     /**
