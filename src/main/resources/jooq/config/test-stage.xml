@@ -4,7 +4,7 @@
     <!-- JDBC connection parameters -->
     <jdbc>
         <driver>com.mysql.cj.jdbc.Driver</driver>
-        <!-- ?serverTimezone=UTC&amp;useSSL=false&amp;zeroDateTimeBehavior=convertToNull -->
+        <!-- ?serverTimezone=Asia/Seoul&amp;useSSL=false&amp;zeroDateTimeBehavior=convertToNull -->
         <url>jdbc:mysql://stage:3306?useSSL=false&amp;zeroDateTimeBehavior=convertToNull</url>
         <user>stage</user>
         <password>stage</password>

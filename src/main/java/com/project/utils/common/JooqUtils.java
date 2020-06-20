@@ -159,10 +159,9 @@ public class JooqUtils {
                 Map<String, Object> map = CommonUtils.objectToMap(object);
                 String fieldCamelCaseName = CaseUtils.toCamelCase(field.getName(), false, new char[]{'_'});
 
-                Object conditionData = map.get(fieldCamelCaseName);
+                Object conditionData = CommonUtils.strEmptyIfNull(emptyOption, map.get(fieldCamelCaseName));
                 //프로세스 진행여부 판단 후 진행
-                if (CommonUtils.isProcess(nullOption, emptyOption, conditionData)) {
-
+                if (CommonUtils.isProcess(nullOption, conditionData)) {
                     switch (conditionType) {
                         case like:
                             conditionList.add(field.like("%"+conditionData+"%"));
@@ -321,11 +320,11 @@ public class JooqUtils {
 
         if(fieldList != null && Objects.nonNull(object)) {
             for (Field field : fieldList) {
-                Object objectValue = getObjectValue(field, object);
+                Object objectValue = CommonUtils.strEmptyIfNull(emptyOption, getObjectValue(field, object));
 
-                if (CommonUtils.isProcess(nullOption, emptyOption, objectValue)) {
+                if (CommonUtils.isProcess(nullOption, objectValue)) {
                     //moreStep.set(field, CommonUtils.strEmptyIfNull(emptyOption, objectValue));
-                    if(field.getName().toLowerCase().contains("ip") && isIpOption )
+                    if(field.getName().toLowerCase().endsWith("ip") && isIpOption )
                         objectValue = setConvertIp(String.valueOf(objectValue));
                     moreStep.set(field, objectValue);
                     /*
@@ -427,11 +426,11 @@ public class JooqUtils {
 
         if(fieldList != null && Objects.nonNull(object)) {
             for (Field field : fieldList) {
-                Object objectValue = getObjectValue(field, object);
+                Object objectValue = CommonUtils.strEmptyIfNull(emptyOption, getObjectValue(field, object));
 
-                if (CommonUtils.isProcess(nullOption, emptyOption, objectValue)) {
+                if (CommonUtils.isProcess(nullOption, objectValue)) {
                     // moreStep.set(field, CommonUtils.strEmptyIfNull(emptyOption, objectValue));
-                    if(field.getName().toLowerCase().contains("ip") && isIpOption )
+                    if(field.getName().toLowerCase().endsWith("ip") && isIpOption )
                         objectValue = setConvertIp(String.valueOf(objectValue));
                     moreStep.set(field, objectValue);
                     /*
@@ -464,6 +463,7 @@ public class JooqUtils {
      * @param fieldList
      * @param object
      * @param nullOption true: null 허용, false: null 미허용
+     * @param emptyOption true: null 허용, false: null 미허용
      * @return
      */
     public static List<Object> getObjectValueList(List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption) {
@@ -473,10 +473,10 @@ public class JooqUtils {
 
         if(fieldList != null && Objects.nonNull(object)) {
             for (Field field : fieldList) {
-                Object objectValue = getObjectValue(field, object);
+                Object objectValue = CommonUtils.strEmptyIfNull(emptyOption, getObjectValue(field, object));
 
-                if (CommonUtils.isProcess(nullOption, emptyOption, objectValue))
-                    // resultList.add(CommonUtils.strEmptyIfNull(emptyOption, objectValue));
+                if (CommonUtils.isProcess(nullOption, objectValue))
+                    //emptyOption 이 true 이고 String 타입이면 공백문자 값 add 아니면 null 로 변환하여 add
                     resultList.add(objectValue);
             }
         }
@@ -497,6 +497,7 @@ public class JooqUtils {
 
         String fieldCamelCaseName = CaseUtils.toCamelCase(field.getName(), false, new char[]{'_'});
         if(field.getName().startsWith("_")) fieldCamelCaseName = "_"+fieldCamelCaseName;
+
         return map.get(fieldCamelCaseName);
     }
 
@@ -510,6 +511,20 @@ public class JooqUtils {
      */
     public static<T  > List<Field> getColumnFieldList(List<Field> fieldList, Object object) {
         return getColumnFieldList(fieldList, new ArrayList<>(), object, false, false);
+    }
+
+    /**
+     * Insert columns 필드리스트 기반 필드 리스트 생성 유틸
+     * 컬럼 필드리스트 중 null, empty 조건에 해당되는 필드 값들을 리스트에 담아서 리턴해줌
+     * 기본값으로 null 데이터를 허용 처리함
+     * @param fieldList
+     * @param object
+     * @param nullOption true: null 허용, false: null 미허용
+     * @param emptyOption true: null 허용, false: null 미허용
+     * @return
+     */
+    public static<T  > List<Field> getColumnFieldList(List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption) {
+        return getColumnFieldList(fieldList, new ArrayList<>(), object, nullOption, emptyOption);
     }
 
     /**
@@ -532,6 +547,7 @@ public class JooqUtils {
      * @param addFieldList 추가 할 리스트 기존 동일항목이 있으면 제거하고 뒤에 추가
      * @param object
      * @param nullOption true: null 허용, false: null 미허용
+     * @param emptyOption true: null 허용, false: null 미허용
      * @return
      */
     public static List<Field> getColumnFieldList(List<Field> fieldList, List<Field> addFieldList, Object object, boolean nullOption, boolean emptyOption) {
@@ -542,9 +558,9 @@ public class JooqUtils {
 
         if(fieldList != null && Objects.nonNull(object)) {
             for (Field field : fieldList) {
-                Object objectValue = getObjectValue(field, object);
+                Object objectValue = CommonUtils.strEmptyIfNull(emptyOption, getObjectValue(field, object));
 
-                if (CommonUtils.isProcess(nullOption, emptyOption, objectValue))
+                if (CommonUtils.isProcess(nullOption, objectValue))
                     resultList.add(field);
             }
         }
@@ -672,12 +688,11 @@ public class JooqUtils {
 
         if(fieldList != null && Objects.nonNull(object)) {
             for (Field field : fieldList) {
-                Object objectValue = getObjectValue(field, object);
+                Object objectValue = CommonUtils.strEmptyIfNull(emptyOption, getObjectValue(field, object));
 
-                if (CommonUtils.isProcess(nullOption, emptyOption, objectValue)) {
-                    //moreStep.set(field, CommonUtils.strEmptyIfNull(emptyOption, objectValue));
+                if (CommonUtils.isProcess(nullOption, objectValue)) {
                     Field objectField = DSL.value(objectValue).as(field.getName());
-                    if(field.getName().toLowerCase().contains("ip") && isIpOption )
+                    if(field.getName().toLowerCase().endsWith("ip") && isIpOption )
                         objectField = setConvertIp(String.valueOf(objectValue)).as(field.getName());
                     aliasFieldList.add(objectField);
                     /*
@@ -781,6 +796,16 @@ public class JooqUtils {
      */
     public static Field<String> getConvertIp(Field field) {
         return DSL.function("INET_NTOA", String.class,field).as(field.getName());
+    }
+
+    /**
+     * 해당 테이블의 가장 마지막에 생성된 ID 조회
+     * @param field
+     * @param <T>
+     * @return
+     */
+    public static Field<Integer> getLastInsertId(Field field) {
+        return DSL.function("LAST_INSERT_ID", Integer.class, field);
     }
 
     /**

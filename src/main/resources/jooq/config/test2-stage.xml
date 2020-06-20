@@ -4,7 +4,7 @@
     <!-- JDBC connection parameters -->
     <jdbc>
         <driver>org.mariadb.jdbc.Driver</driver>
-        <!-- ?serverTimezone=UTC&useSSL=false -->
+        <!-- ?serverTimezone=Asia/Seoul&useSSL=false -->
         <url>jdbc:mariadb://stage:3306</url>
         <user>stage</user>
         <password>stage</password>

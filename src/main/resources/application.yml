@@ -31,6 +31,8 @@ spring:
       ## 파일의 크기가 fize-size-threshold 값을 초과한다면 파일은 location 경로에 저장되어 해당 파일을 읽어서 작업
       file-size-threshold: 1MB
   jackson:
+    ## SnakeCase -> CamelCase 로 변환해서 받게 해줌
+    #    property-naming-strategy: SNAKE_CASE
     serialization:
       FAIL_ON_EMPTY_BEANS: false
 
@@ -69,7 +71,7 @@ spring:
 #      min-evictable-idle-time-millis: 3600000
 
 ## 추가적으로 줄수 있는 옵션들
-## serverTimezone=UTC&useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
+## serverTimezone=Asia/Seoul&useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
 ## autoReconnect=true&noAccessToProcedureBodies=true&useUnicode=true&characterEncoding=utf8
 
 ## 기본 데이터베이스 설정
@@ -116,7 +118,7 @@ spring:
 ## 서브 DB 설정
 #    second:
 #      xa-data-source-class-name: com.mysql.cj.jdbc.MysqlXADataSource
-#      url: jdbc:mysql://localhost:3306/test?useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true
+#      url: jdbc:mysql://localhost:3306/test?useSSL=false&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&serverTimezone=Asia/Seoul
 #      username: test
 #      password: test
 ## MariaDB 설정 샘플

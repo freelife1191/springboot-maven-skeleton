@@ -94,6 +94,8 @@ public class CommonUtils {
      * @throws IllegalAccessException
      */
     public static Map objectToMap(Object object) {
+        if(object instanceof Map)
+            return (Map) object;
         return getResultMap(object);
     }
 

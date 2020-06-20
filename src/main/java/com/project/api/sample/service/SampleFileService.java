@@ -11,7 +11,6 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.WebRequest;
@@ -35,7 +34,7 @@ import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
 
 /**
  * Sample 파일 서비스
- * created by KMS on 03/05/2020
+ * created by YJK on 23/04/2020
  */
 @Slf4j
 @Service
@@ -95,6 +94,36 @@ public class SampleFileService {
         return commonResult;
     }
 
+
+    /**
+     * Sample 파일 JSON 업로드 CommonResult 리턴 서비스
+     * @param reqFileSample
+     * @param request
+     * @param webRequest
+     * @return
+     * @throws Exception
+     */
+    public CommonResult<?> mixJsonMultiMapUpload(ReqFileSample reqFileSample, HttpServletRequest request, WebRequest webRequest) throws Exception {
+        if(reqFileSample.getFiles().length < 1)
+            throw new FileRequestParamRequiredException("첨부된 파일이 없습니다");
+        return mixJsonMapUpload(reqFileSample, request, webRequest);
+    }
+
+    /**
+     * Sample 파일 JSON 업로드 CommonResult 리턴 서비스
+     * @param reqFileSample
+     * @param request
+     * @param webRequest
+     * @return
+     * @throws Exception
+     */
+    public CommonResult<?> mixJsonOneMapUpload(ReqFileSample reqFileSample, HttpServletRequest request, WebRequest webRequest) throws Exception {
+        if(reqFileSample.getFile().isEmpty())
+            throw new FileRequestParamRequiredException("첨부된 파일이 없습니다");
+
+        return mixJsonMapUpload(reqFileSample, request, webRequest);
+    }
+
     /**
      * Sample 파일 JSON 업로드 CommonResult 리턴 서비스
      * @param reqFileSample
@@ -105,11 +134,11 @@ public class SampleFileService {
      */
     public CommonResult<?> mixJsonMapUpload(ReqFileSample reqFileSample, HttpServletRequest request, WebRequest webRequest) throws Exception {
 
-        if(reqFileSample.getFile().isEmpty())
-            throw new FileRequestParamRequiredException("첨부된 파일이 없습니다");
-
         Map<String, Object> map = InfoUtils.setInfoMap(request, webRequest); // 에러 맵 기본 셋팅
-        map.put("reqFileSample", getUploadData(reqFileSample));
+        if (reqFileSample.getFile() != null)
+            map.put("reqFileSample", getUploadData(reqFileSample));
+        if (reqFileSample.getFiles() != null)
+            map.put("reqFileSampleList", getMultiUploadList(reqFileSample));
 
         CommonResult<?> commonResult = new CommonResult<>(SUCCESS, SUCCESS.getMessage(), map);
         log.info("## commonResult = {}",commonResult);
@@ -263,5 +292,6 @@ public class SampleFileService {
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + fileName);
         return headers;
     }
+
 
 }

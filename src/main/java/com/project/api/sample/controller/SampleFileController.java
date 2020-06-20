@@ -77,14 +77,15 @@ public class SampleFileController {
         return sampleFileService.mixMapUpload(reqFileSample, request, webRequest);
     }
 
-    @ApiOperation(value = "Sample File 업로드 JSON",notes = "한개의 파일 업로드와 추가적인 파라메터를 넘길때", consumes = MediaType.MULTIPART_FORM_DATA_VALUE+","+MediaType.MULTIPART_MIXED_VALUE) //, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Sample File 단일 업로드 JSON",notes = "한개의 파일 업로드와 추가적인 파라메터를 넘길때", consumes = MediaType.MULTIPART_FORM_DATA_VALUE+","+MediaType.MULTIPART_MIXED_VALUE) //, produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "Content-Type", defaultValue = MediaType.MULTIPART_FORM_DATA_VALUE+","+MediaType.MULTIPART_MIXED_VALUE, paramType = "header")// +","+MediaType.MULTIPART_MIXED_VALUE, paramType = "header")
     })
     @ApiResponses({@ApiResponse(code = 200, message = "업로드 성공시 파일 업로드 파일정보 리턴")})
     @PostMapping(value = "/mixjson", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.MULTIPART_MIXED_VALUE})//, MediaType.MULTIPART_MIXED_VALUE})
     public CommonResult<?> mixJsonMapUpload(@ApiParam(value = "파일", required = true) @RequestPart(value = "file") MultipartFile file,
-                                            @ApiParam(value = "요청 JSON", required = false) @RequestParam("params") String params,
+                                            @ApiParam(value = "요청 JSON\n" +
+                                                    "예시 - {\"name\":\"아이언맨\", \"phoneNumber\":\"010-1111-1111\"}", required = false) @RequestParam("params") String params,
                                             // @ApiParam(value = "이름", required = false) @RequestParam("name") String name,
                                             HttpServletRequest request, WebRequest webRequest) throws Exception {
         ReqJsonFileSample jsonData = JsonUtils.getObjectMapper().readValue(params, ReqJsonFileSample.class);
@@ -92,7 +93,27 @@ public class SampleFileController {
         ReqFileSample reqFileSample = new ReqFileSample();
         CommonUtils.parentObjectToDto(jsonData, reqFileSample);
         reqFileSample.setFile(file);
-        return sampleFileService.mixJsonMapUpload(reqFileSample, request, webRequest);
+        return sampleFileService.mixJsonOneMapUpload(reqFileSample, request, webRequest);
+    }
+
+    @ApiOperation(value = "Sample File 멀티 업로드 JSON",notes = "여러개의 파일 업로드와 추가적인 파라메터를 넘길때", consumes = MediaType.MULTIPART_FORM_DATA_VALUE+","+MediaType.MULTIPART_MIXED_VALUE) //, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "Content-Type", defaultValue = MediaType.MULTIPART_FORM_DATA_VALUE+","+MediaType.MULTIPART_MIXED_VALUE, paramType = "header")// +","+MediaType.MULTIPART_MIXED_VALUE, paramType = "header")
+    })
+    @ApiResponses({@ApiResponse(code = 200, message = "업로드 성공시 파일 업로드 파일정보 리턴")})
+    @PostMapping(value = "/mixjson-multi", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE, MediaType.MULTIPART_MIXED_VALUE})//, MediaType.MULTIPART_MIXED_VALUE})
+    public CommonResult<?> mixJsonMultiMapUpload(@ApiParam(value = "파일", required = true) @RequestPart(value = "files") MultipartFile[] files,
+                                                 @ApiParam(value = "요청 JSON\n" +
+                                                         "예시 - {\"name\":\"아이언맨\", \"phoneNumber\":\"010-1111-1111\"}", required = false)
+                                                 @RequestParam("params") String params,
+                                                 // @ApiParam(value = "이름", required = false) @RequestParam("name") String name,
+                                                 HttpServletRequest request, WebRequest webRequest) throws Exception {
+        ReqJsonFileSample jsonData = JsonUtils.getObjectMapper().readValue(params, ReqJsonFileSample.class);
+        log.info("## jsonData = {}",jsonData);
+        ReqFileSample reqFileSample = new ReqFileSample();
+        CommonUtils.parentObjectToDto(jsonData, reqFileSample);
+        reqFileSample.setFiles(files);
+        return sampleFileService.mixJsonMultiMapUpload(reqFileSample, request, webRequest);
     }
 
     @ApiOperation(value = "Sample File 다중 업로드 기본",notes = "여러개의 파일 업로드시 사용")//, consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

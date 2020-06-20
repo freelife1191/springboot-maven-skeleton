@@ -1,6 +1,7 @@
 package com.java;
 
 import org.junit.Test;
+import org.springframework.http.MediaType;
 
 import java.sql.Timestamp;
 
@@ -11,7 +12,6 @@ public class LocalDateTimeTest {
 
     @Test
     public void DateTimeParsingTest() {
-
         System.out.println(new Timestamp(1580707730000L).toLocalDateTime());
     }
 }
