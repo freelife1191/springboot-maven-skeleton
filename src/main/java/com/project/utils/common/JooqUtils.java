@@ -208,6 +208,19 @@ public class JooqUtils {
      * Object의 null이 아닌 값을 fieldlist의 field 들에 셋팅하여
      * 넘겨 받은 InsertSetMoreStep에 에 추가 적용
      * @param insert
+     * @param fieldArray
+     * @param object
+     * @return
+     */
+    public static InsertSetMoreStep setInsertSetMoreStep(InsertSetStep insert, Field<?>[] fieldArray, Object object){
+        InsertSetMoreStep moreStep = (InsertSetMoreStep) insert;
+        return setInsertSetMoreStep(moreStep, Lists.newArrayList(fieldArray), object, false, false, true);
+    }
+
+    /**
+     * Object의 null이 아닌 값을 fieldlist의 field 들에 셋팅하여
+     * 넘겨 받은 InsertSetMoreStep에 에 추가 적용
+     * @param insert
      * @param fieldList
      * @param object
      * @return
@@ -215,6 +228,21 @@ public class JooqUtils {
     public static InsertSetMoreStep setInsertSetMoreStep(InsertSetStep insert, List<Field> fieldList, Object object){
         InsertSetMoreStep moreStep = (InsertSetMoreStep) insert;
         return setInsertSetMoreStep(moreStep, fieldList, object, false, false, true);
+    }
+
+    /**
+     * Object의 null이 아닌 값을 fieldlist의 field 들에 셋팅하여
+     * 넘겨 받은 InsertSetMoreStep에 에 추가 적용
+     * @param insert
+     * @param fieldArray
+     * @param object
+     * @param nullOption true: null 허용, false: null 미허용
+     * @param emptyOption true: empty 허용, false: empty 미허용
+     * @return
+     */
+    public static InsertSetMoreStep setInsertSetMoreStep(InsertSetStep insert, Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption){
+        InsertSetMoreStep moreStep = (InsertSetMoreStep) insert;
+        return setInsertSetMoreStep(moreStep, Lists.newArrayList(fieldArray), object, nullOption, emptyOption, true);
     }
 
     /**
@@ -230,6 +258,22 @@ public class JooqUtils {
     public static InsertSetMoreStep setInsertSetMoreStep(InsertSetStep insert, List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption){
         InsertSetMoreStep moreStep = (InsertSetMoreStep) insert;
         return setInsertSetMoreStep(moreStep, fieldList, object, nullOption, emptyOption, true);
+    }
+
+    /**
+     * Object의 null이 아닌 값을 fieldlist의 field 들에 셋팅하여
+     * 넘겨 받은 InsertSetMoreStep에 에 추가 적용
+     * @param insert
+     * @param fieldArray
+     * @param object
+     * @param nullOption true: null 허용, false: null 미허용
+     * @param emptyOption true: empty 허용, false: empty 미허용
+     * @param isIpOption true: IP 옵션 적용, false: IP 옵션 미적용
+     * @return
+     */
+    public static InsertSetMoreStep setInsertSetMoreStep(InsertSetStep insert, Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption, boolean isIpOption){
+        InsertSetMoreStep moreStep = (InsertSetMoreStep) insert;
+        return setInsertSetMoreStep(moreStep, Lists.newArrayList(fieldArray), object, nullOption, emptyOption, isIpOption);
     }
 
     /**
@@ -252,12 +296,38 @@ public class JooqUtils {
      * Object의 null이 아닌 값을 fieldlist의 field 들에 셋팅하여
      * 넘겨 받은 InsertSetMoreStep에 에 추가 적용
      * @param moreStep
+     * @param fieldArray
+     * @param object
+     * @return
+     */
+    public static InsertSetMoreStep setInsertSetMoreStep(InsertSetMoreStep moreStep, Field<?>[] fieldArray, Object object){
+        return setInsertSetMoreStep(moreStep, Lists.newArrayList(fieldArray), object, false, false, true);
+    }
+
+    /**
+     * Object의 null이 아닌 값을 fieldlist의 field 들에 셋팅하여
+     * 넘겨 받은 InsertSetMoreStep에 에 추가 적용
+     * @param moreStep
      * @param fieldList
      * @param object
      * @return
      */
     public static InsertSetMoreStep setInsertSetMoreStep(InsertSetMoreStep moreStep, List<Field> fieldList, Object object){
         return setInsertSetMoreStep(moreStep, fieldList, object, false, false, true);
+    }
+
+    /**
+     * Object의 null이 아닌 값을 fieldlist의 field 들에 셋팅하여
+     * 넘겨 받은 InsertSetMoreStep에 에 추가 적용
+     * @param moreStep
+     * @param fieldArray
+     * @param object
+     * @param nullOption true: null 허용, false: null 미허용
+     * @param emptyOption true: empty 허용, false: empty 미허용
+     * @return
+     */
+    public static InsertSetMoreStep setInsertSetMoreStep(InsertSetMoreStep moreStep, Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption){
+        return setInsertSetMoreStep(moreStep, Lists.newArrayList(fieldArray), object, nullOption, emptyOption, true);
     }
 
     /**
@@ -272,6 +342,21 @@ public class JooqUtils {
      */
     public static InsertSetMoreStep setInsertSetMoreStep(InsertSetMoreStep moreStep, List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption){
         return setInsertSetMoreStep(moreStep, fieldList, object, nullOption, emptyOption, true);
+    }
+
+    /**
+     * Object의 null이 아닌 값을 fieldlist의 field 들에 셋팅하여
+     * 넘겨 받은 InsertSetMoreStep에 에 추가 적용
+     * @param moreStep
+     * @param fieldArray
+     * @param object
+     * @param nullOption true: null 허용, false: null 미허용
+     * @param emptyOption true: empty 허용, false: empty 미허용
+     * @param isIpOption true: IP 옵션 적용, false: IP 옵션 미적용
+     * @return
+     */
+    public static InsertSetMoreStep setInsertSetMoreStep(InsertSetMoreStep moreStep, Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption, boolean isIpOption ){
+        return setInsertSetMoreStep(moreStep, Lists.newArrayList(fieldArray), object, nullOption, emptyOption, true);
     }
 
     /**
@@ -310,6 +395,19 @@ public class JooqUtils {
         return moreStep;
     }
 
+    /**
+     * Object의 값을 fieldlist의 field 들에 셋팅하여
+     * 넘겨 받은 UpdateSetMoreStep 에 추가 적용
+     * nullOption false: null 미허용 기본값
+     * @param update
+     * @param fieldArray
+     * @param object
+     * @return
+     */
+    public static UpdateSetMoreStep setUpdateSetMoreStep(UpdateSetStep update, Field<?>[] fieldArray, Object object){
+        UpdateSetMoreStep moreStep = (UpdateSetMoreStep) update;
+        return setUpdateSetMoreStep(moreStep, Lists.newArrayList(fieldArray), object, false, false);
+    }
 
     /**
      * Object의 값을 fieldlist의 field 들에 셋팅하여
@@ -329,6 +427,19 @@ public class JooqUtils {
      * Object의 값을 fieldlist의 field 들에 셋팅하여
      * 넘겨 받은 UpdateSetMoreStep 에 추가 적용
      * @param update
+     * @param fieldArray
+     * @param object
+     * @param nullOption true: null 허용, false: null 미허용
+     * @return
+     */
+    public static UpdateSetMoreStep setUpdateSetMoreStep(UpdateSetStep update, Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption){
+        return setUpdateSetMoreStep(update, Lists.newArrayList(fieldArray), object, nullOption, emptyOption, true);
+    }
+
+    /**
+     * Object의 값을 fieldlist의 field 들에 셋팅하여
+     * 넘겨 받은 UpdateSetMoreStep 에 추가 적용
+     * @param update
      * @param fieldList
      * @param object
      * @param nullOption true: null 허용, false: null 미허용
@@ -336,6 +447,22 @@ public class JooqUtils {
      */
     public static UpdateSetMoreStep setUpdateSetMoreStep(UpdateSetStep update, List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption){
         return setUpdateSetMoreStep(update, fieldList, object, nullOption, emptyOption, true);
+    }
+
+    /**
+     * Object의 값을 fieldlist의 field 들에 셋팅하여
+     * 넘겨 받은 UpdateSetMoreStep 에 추가 적용
+     * @param update
+     * @param fieldArray
+     * @param object
+     * @param nullOption true: null 허용, false: null 미허용
+     * @param emptyOption true: empty 허용, false: empty 미허용
+     * @param isIpOption true: IP 옵션 적용, false: IP 옵션 미적용
+     * @return
+     */
+    public static UpdateSetMoreStep setUpdateSetMoreStep(UpdateSetStep update, Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption, boolean isIpOption){
+        UpdateSetMoreStep moreStep = (UpdateSetMoreStep) update;
+        return setUpdateSetMoreStep(moreStep, Lists.newArrayList(fieldArray), object, nullOption, emptyOption, isIpOption);
     }
 
     /**
@@ -358,12 +485,38 @@ public class JooqUtils {
      * Object의 값을 fieldlist의 field 들에 셋팅하여
      * 넘겨 받은 UpdateSetMoreStep 에 추가 적용
      * @param moreStep
+     * @param fieldArray
+     * @param object
+     * @return
+     */
+    public static UpdateSetMoreStep setUpdateSetMoreStep(UpdateSetMoreStep moreStep, Field<?>[] fieldArray, Object object){
+        return setUpdateSetMoreStep(moreStep, Lists.newArrayList(fieldArray), object, false, false);
+    }
+
+    /**
+     * Object의 값을 fieldlist의 field 들에 셋팅하여
+     * 넘겨 받은 UpdateSetMoreStep 에 추가 적용
+     * @param moreStep
      * @param fieldList
      * @param object
      * @return
      */
     public static UpdateSetMoreStep setUpdateSetMoreStep(UpdateSetMoreStep moreStep, List<Field> fieldList, Object object){
         return setUpdateSetMoreStep(moreStep, fieldList, object, false, false);
+    }
+
+    /**
+     * Object의 값을 fieldlist의 field 들에 셋팅하여
+     * 넘겨 받은 UpdateSetMoreStep 에 추가 적용
+     * @param moreStep
+     * @param fieldArray
+     * @param object
+     * @param nullOption true: null 허용, false: null 미허용
+     * @param emptyOption true: empty 허용, false: empty 미허용
+     * @return
+     */
+    public static UpdateSetMoreStep setUpdateSetMoreStep(UpdateSetMoreStep moreStep, Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption ){
+        return setUpdateSetMoreStep(moreStep, Lists.newArrayList(fieldArray), object, nullOption, emptyOption, true);
     }
 
     /**
@@ -378,6 +531,21 @@ public class JooqUtils {
      */
     public static UpdateSetMoreStep setUpdateSetMoreStep(UpdateSetMoreStep moreStep, List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption ){
         return setUpdateSetMoreStep(moreStep, fieldList, object, nullOption, emptyOption, true);
+    }
+
+    /**
+     * Object의 값을 fieldlist의 field 들에 셋팅하여
+     * 넘겨 받은 UpdateSetMoreStep 에 추가 적용
+     * @param moreStep
+     * @param fieldList
+     * @param object
+     * @param nullOption true: null 허용, false: null 미허용
+     * @param emptyOption true: empty 허용, false: empty 미허용
+     * @param isIpOption true: IP 옵션 적용, false: IP 옵션 미적용
+     * @return
+     */
+    public static UpdateSetMoreStep setUpdateSetMoreStep(UpdateSetMoreStep moreStep, Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption, boolean isIpOption ){
+        return setUpdateSetMoreStep(moreStep, Lists.newArrayList(fieldArray), object, nullOption, emptyOption, isIpOption);
     }
 
     /**
@@ -420,12 +588,38 @@ public class JooqUtils {
      * Insert Values 필드리스트 기반 오브젝트 값 리스트 생성 유틸
      * 필드리스트에 해당되는 오브젝트의 값들을 리스트에 담아서 리턴해줌
      * 기본값으로 null 데이터를 허용 처리함
+     * @param fieldArray
+     * @param object
+     * @return
+     */
+    public static List<Object> getObjectValueList(Field<?>[] fieldArray, Object object) {
+        return getObjectValueList(Lists.newArrayList(fieldArray), object, false, false);
+    }
+
+    /**
+     * Insert Values 필드리스트 기반 오브젝트 값 리스트 생성 유틸
+     * 필드리스트에 해당되는 오브젝트의 값들을 리스트에 담아서 리턴해줌
+     * 기본값으로 null 데이터를 허용 처리함
      * @param fieldList
      * @param object
      * @return
      */
     public static List<Object> getObjectValueList(List<Field> fieldList, Object object) {
         return getObjectValueList(fieldList, object, false, false);
+    }
+
+    /**
+     * Insert Values 필드리스트 기반 오브젝트 값 리스트 생성 유틸
+     * 필드리스트에 해당되는 오브젝트의 값들을 리스트에 담아서 리턴해줌
+     * 기본값으로 null 데이터를 허용 처리함
+     * @param fieldArray
+     * @param object
+     * @param nullOption true: null 허용, false: null 미허용
+     * @param emptyOption true: null 허용, false: null 미허용
+     * @return
+     */
+    public static List<Object> getObjectValueList(Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption) {
+        return getObjectValueList(Lists.newArrayList(fieldArray), object, nullOption, emptyOption);
     }
 
     /**
