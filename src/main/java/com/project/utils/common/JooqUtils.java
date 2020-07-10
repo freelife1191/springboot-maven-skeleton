@@ -1227,6 +1227,7 @@ public class JooqUtils {
      * @param <T>
      */
     public static <T extends Table> void resetTable(DSLContext dsl, T table) {
+        log.info(" == TABLE RESET: [ SCHEMA = {}, TABLE = {} ] ==",table.getSchema(), table.getName());
         dsl.deleteFrom(table).execute();
         JooqUtils.resetAutoincrement(dsl, table);
     }

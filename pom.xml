@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.3.0.RELEASE</version>
+        <version>2.3.1.RELEASE</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.project</groupId>
@@ -16,11 +16,6 @@
 
     <repositories>
         <repository>
-            <id>jcenter-snapshots</id>
-            <name>jcenter</name>
-            <url>http://oss.jfrog.org/artifactory/oss-snapshot-local/</url>
-        </repository>
-        <repository>
             <id>central</id>
             <name>Central Repository</name>
             <url>https://repo.maven.apache.org/maven2</url>
@@ -30,8 +25,7 @@
     <properties>
         <java.version>14</java.version>
         <!-- swagger -->
-        <springfox-swagger.version>2.9.2</springfox-swagger.version>
-        <springfox-swagger-snapshot.version>3.0.0-SNAPSHOT</springfox-swagger-snapshot.version>
+        <springfox-swagger.version>2.10.5</springfox-swagger.version>
         <!-- util -->
         <guava.version>29.0-jre</guava.version>
         <commons-fileupload.version>1.4</commons-fileupload.version>
@@ -268,8 +262,7 @@
             <artifactId>json-path</artifactId>
         </dependency>
 
-        <!-- swagger 2.9.2 -->
-        <!--
+        <!-- swagger 2.10.X -->
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger2</artifactId>
@@ -280,8 +273,13 @@
             <artifactId>springfox-swagger-ui</artifactId>
             <version>${springfox-swagger.version}</version>
         </dependency>
-        -->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-data-rest</artifactId>
+            <version>${springfox-swagger.version}</version>
+        </dependency>
         <!-- swagger 3.0.0-SNAPSHOT -->
+        <!--
         <dependency>
             <groupId>io.springfox</groupId>
             <artifactId>springfox-swagger-ui</artifactId>
@@ -297,6 +295,8 @@
             <artifactId>springfox-data-rest</artifactId>
             <version>${springfox-swagger-snapshot.version}</version>
         </dependency>
+        -->
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-rest</artifactId>

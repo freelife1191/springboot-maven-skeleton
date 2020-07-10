@@ -99,6 +99,7 @@ public class WebConfig implements WebMvcConfigurer {
      * Swagger UI 리소스 설정
      * @param registry
      */
+    /*
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("swagger-ui.html")
@@ -107,4 +108,5 @@ public class WebConfig implements WebMvcConfigurer {
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");
     }
+    */
 }
