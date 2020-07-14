@@ -252,7 +252,7 @@ public class CommonUtils {
      * @return
      */
     public static boolean objectNotEmpty(Object object){
-        return Objects.nonNull(object) && !objectEmpty(object);
+        return objectNotEmpty(object, true);
     }
 
     /**
@@ -263,7 +263,14 @@ public class CommonUtils {
      * @return
      */
     public static boolean objectNotEmpty(Object object, boolean isZero){
-        return Objects.nonNull(object) && !objectEmpty(object, isZero);
+        try {
+            boolean objectBool;
+            if (object instanceof String) objectBool = StringUtils.isNotEmpty(String.valueOf(object));
+            else objectBool = Objects.nonNull(object);
+            return objectBool && !objectEmpty(object, isZero);
+        } catch (NullPointerException e) {
+            return false;
+        }
     }
 
     /**
@@ -273,7 +280,7 @@ public class CommonUtils {
      * @return
      */
     public static boolean objectEmpty(Object object) {
-        return Objects.isNull(object) || CommonUtils.getEmptyCheckObjectValueToList(object).isEmpty();
+        return objectEmpty(object, true);
     }
 
     /**
@@ -284,25 +291,21 @@ public class CommonUtils {
      * @return
      */
     public static boolean objectEmpty(Object object, boolean isZero) {
-        return Objects.isNull(object) || CommonUtils.getEmptyCheckObjectValueToList(object, isZero).isEmpty();
+        try {
+            boolean objectBool;
+            if (object instanceof String) objectBool = StringUtils.isEmpty(String.valueOf(object));
+            else objectBool = Objects.isNull(object);
+            return objectBool || getEmptyCheckObjectValueToList(object, isZero).isEmpty();
+        } catch (NullPointerException e) {
+            return true;
+        }
     }
 
     /**
      * objctEmpty 유틸 전용 빈 값 체크 유틸
      * Object Value To List
      * 멥 데이터를 순회하며 조건에 맞는 데이터만 걸러내고 리스트에 담아서 리턴
-     * @param object
-     * @return
-     */
-    public static List<Object> getEmptyCheckObjectValueToList(Object object) {
-        return getEmptyCheckMapValueToList(getEmptyCheckObjecttMap(object), true);
-    }
-
-    /**
-     * objctEmpty 유틸 전용 빈 값 체크 유틸
-     * Object Value To List
-     * 멥 데이터를 순회하며 조건에 맞는 데이터만 걸러내고 리스트에 담아서 리턴
-     * @param object
+     * @param object*
      * @param isZero true 0 허용, false 0 미허용
      * @return
      */

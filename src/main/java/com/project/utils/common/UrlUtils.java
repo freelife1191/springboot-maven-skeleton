@@ -10,7 +10,9 @@ import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -54,6 +56,26 @@ public class UrlUtils {
             fieldList.add(m.group().replaceAll("\\{|}",""));
         }
         return fieldList;
+    }
+
+    /**
+     * QueryString을 Map으로 변환
+     * @param query
+     * @return
+     */
+    public static Map<String, String> queryToMap(String query) {
+        Map<String, String> result = new HashMap<>();
+        if(StringUtils.isEmpty(query)) return result;
+
+        for (String param : query.split("&")) {
+            String pair[] = param.split("=");
+            if (pair.length>1) {
+                result.put(pair[0], pair[1]);
+            }else{
+                result.put(pair[0], "");
+            }
+        }
+        return result;
     }
 
     /**
