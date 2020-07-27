@@ -2,10 +2,10 @@
 가장 기본적인 상태의 SpringBoot Maven Skeleton 프로젝트
 
 ## Spec
-- **SpringBoot 2.3.0.RELEASE**
+- **SpringBoot 2.3.2.RELEASE**
 - **JAVA 14**
-- **ORM Jooq 3.13.2**
-- **Swagger 3.0.0 SNAPSHOT**
+- **ORM Jooq 3.13.3**
+- **Swagger 2.10.5**
 - **Build: Maven**
 
 ## 기본 구성

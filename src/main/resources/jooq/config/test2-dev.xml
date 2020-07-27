@@ -26,11 +26,16 @@
             <inputSchema>test2</inputSchema>
             <unsignedTypes>false</unsignedTypes>
             <tableValuedFunctions>true</tableValuedFunctions>
+            <!-- <includeCheckConstraints>false</includeCheckConstraints> -->
             <!-- https://blog.jooq.org/tag/boolean-type/ -->
             <forcedTypes>
                 <forcedType>
                     <name>BOOLEAN</name>
                     <includeTypes>(?i:TINYINT\(1\))</includeTypes>
+                </forcedType>
+                <forcedType>
+                    <name>INTEGER</name>
+                    <includeTypes>(?i:TINYINT\(3\))</includeTypes>
                 </forcedType>
             </forcedTypes>
         </database>

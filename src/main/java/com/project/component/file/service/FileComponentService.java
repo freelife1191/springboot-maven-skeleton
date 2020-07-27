@@ -2,14 +2,12 @@ package com.project.component.file.service;
 
 import com.project.component.file.domain.S3FileInfo;
 import com.project.component.file.domain.UploadFileResponse;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.ResourceLoader;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.List;
@@ -20,30 +18,33 @@ import java.util.List;
 @Service
 public class FileComponentService {
 
-    @Autowired
-    S3FileService s3FileService;
+    private final S3FileService s3FileService;
 
-    @Autowired
-    ResourceLoader resourceLoader;
+    public FileComponentService(S3FileService s3FileService) {
+        this.s3FileService = s3FileService;
+    }
+
+    @Value("${cloud.aws.s3.bucket}")
+    private String bucket;
 
     /**
      * TEMP 파일 변경 업로드
      * 파일 업로드 시 serviceName/category/type/contractId/UUID 형식으로 Path를 생성해서 전달
-     * @param file
+     * @param resource
      * @return
      */
-    public UploadFileResponse upload(File file, Path path) {
-        return s3FileService.upload(file, path);
+    public UploadFileResponse upload(Resource resource, Path path) {
+        return s3FileService.upload(resource, path);
     }
 
     /**
      * TEMP 파일 변경 다중 업로드
      * 파일 업로드 시 serviceName/category/type/contractId/UUID 형식으로 Path를 생성해서 전달
-     * @param files
+     * @param resources
      * @return
      */
-    public List<UploadFileResponse> upload(File[] files, Path path) {
-        return s3FileService.upload(files, path);
+    public List<UploadFileResponse> upload(List<Resource> resources, Path path) {
+        return s3FileService.upload(resources, path);
     }
 
     /**
@@ -65,13 +66,21 @@ public class FileComponentService {
         return s3FileService.upload(multipartFiles, path);
     }
 
+    /**
+     * S3 파일 이동
+     * @param path
+     * @param movePath
+     */
+    public void move(Path path, Path movePath) {
+        s3FileService.move(path, movePath);
+    }
 
     /**
      * 파일 다운로드 S3에서 파일 다운로드
      * @param path
      * @return
      */
-    public Resource download(Path path, String bucket) {
+    public Resource download(Path path) {
         return s3FileService.download(path, bucket);
     }
 

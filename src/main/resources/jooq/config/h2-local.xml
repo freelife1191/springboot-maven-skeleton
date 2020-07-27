@@ -34,6 +34,10 @@
                     <name>BOOLEAN</name>
                     <includeTypes>(?i:TINYINT\(1\))</includeTypes>
                 </forcedType>
+                <forcedType>
+                    <name>INTEGER</name>
+                    <includeTypes>(?i:TINYINT\(3\))</includeTypes>
+                </forcedType>
             </forcedTypes>
         </database>
         <target>

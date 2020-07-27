@@ -20,8 +20,8 @@ spring:
       ## 업로드된 파일의 임시 저장 공간
       ## TEMP 파일 경로 지정시 절대경로 지정 default: ${java.io.tmpdir}
       ## ${user.dir}/tmpfiles 는 현재 프로젝트에 tmpfiles
-      ## ${user.home}/rcs/tmpfiles 는 USER HOME 디렉토리에 rcs/tmpfiles
-      location: ${user.home}/${service.name}/tmpfiles
+      ## ${user.home}/${service.name}/tmpfiles 는 USER HOME 디렉토리에 rcs/tmpfiles
+      location: ${user.dir}/tmpfiles
       ## 파일의 최대 사이즈 (default: 1MB) 파일당 최대 파일 크기이다
       max-file-size: -1
       ## 요청의 최대 사이즈 (default: 10MB)

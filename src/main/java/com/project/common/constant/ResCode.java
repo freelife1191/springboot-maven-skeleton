@@ -31,6 +31,10 @@ public enum ResCode {
 
     FILE_REQUEST_ERROR(3010, "FILE REQUEST ERROR", "File Request Error"),
     FILE_NOT_EXIST(3101, "FILE NOT EXIST", "File Not Exist"),
+    FILE_NOT_MAKE_PATH(3102, "FILE NOT MAKE PATH", "File Not Make Path"),
+    FILE_UPLOAD_FAILED(3900, "FILE UPLOAD FAILED", "File Upload Failed"),
+    FILE_TEMP_APPLY_FAILED(3901, "FILE TEMP APPLY FAILED", "File Temp Apply Failed"),
+
 
     EXCEL_ERROR(4000, "EXCEL ERROR", "Excel Error"),
     // 엑셀 업로드 시 캐치 하지 못한 그외 에러

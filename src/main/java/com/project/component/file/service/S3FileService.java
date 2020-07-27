@@ -11,6 +11,7 @@ import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 import com.amazonaws.services.s3.transfer.Upload;
 import com.project.component.file.domain.S3FileInfo;
 import com.project.component.file.domain.UploadFileResponse;
+import com.project.exception.file.FileAwsS3ProcessException;
 import com.project.utils.common.PathUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -74,12 +75,12 @@ public class S3FileService {
      * @throws IOException
      */
     public UploadFileResponse upload(MultipartFile multipartFile, Path path) {
-        File s3UploadFile = convert(multipartFile)
-                .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File로 전환 실패"));
-        String s3UploadFileUrl = s3Upload(s3UploadFile, path);
+        // File s3UploadFile = convert(multipartFile)
+        //         .orElseThrow(() -> new IllegalArgumentException("MultipartFile -> File로 전환 실패"));
+        String s3UploadFileUrl = s3Upload(multipartFile, path);
 
         return new UploadFileResponse(
-                s3UploadFile.getName(),
+                multipartFile.getName(),
                 s3UploadFileUrl,
                 multipartFile.getContentType(),
                 multipartFile.getSize()
@@ -103,28 +104,29 @@ public class S3FileService {
 
     /**
      * TEMP 파일 변경 업로드 처리
-     * @param file
+     * @param resource
      * @param path
      * @return
      */
-    public UploadFileResponse upload(File file, Path path) {
-        log.info("[S3] Upload File = {}, path = {}",file.getName(),PathUtils.getPath(path));
+    public UploadFileResponse upload(Resource resource, Path path) {
+        log.info("[S3] Upload File = {}, path = {}",resource.getFilename(), PathUtils.getPath(path));
         UploadFileResponse uploadFileResponse = new UploadFileResponse();
-        uploadFileResponse.setFileName(file.getName());
-        uploadFileResponse.setFileDownloadUri(putS3(file, path));
+        uploadFileResponse.setFileName(resource.getFilename());
+        uploadFileResponse.setFileDownloadUri(putS3(resource, path));
         //업로드 후 파일 S3 업로드 상세경로 리턴
         return uploadFileResponse;
     }
 
+
     /**
      * TEMP 파일 변경 다중 업로드 처리
-     * @param files
+     * @param resources
      * @param path
      * @return
      */
-    public List<UploadFileResponse> upload(File[] files, Path path) {
+    public List<UploadFileResponse> upload(List<Resource> resources, Path path) {
         List<UploadFileResponse> resultList = new ArrayList<>();
-        for(File file : files) resultList.add(upload(file, path));
+        for(Resource resource : resources) resultList.add(upload(resource, path));
         return resultList;
     }
 
@@ -134,44 +136,107 @@ public class S3FileService {
      * @param path S3에 생성될 디렉토리명
      * @return
      */
-    private String s3Upload(File s3UploadFile, Path path) {
+    private String s3Upload(MultipartFile s3UploadFile, Path path) {
         //S3에 저장될 경로와 파일명 지정
         // String s3UploadfileName = path + "/" + s3UploadFile.getName();
         log.info("[S3] Upload File = {}, path = {}",s3UploadFile.getName(), PathUtils.getPath(path));
         //업로드 후 파일 S3 업로드 상세경로 리턴
         String s3UploadFileUrl = putS3(s3UploadFile, path);
-        removeNewFile(s3UploadFile);
+        // removeNewFile(s3UploadFile);
 
         return s3UploadFileUrl;
     }
 
     /**
      * S3에 파일 최종 업로드 처리
+     * @param resource 업로드할 파일
+     * @param path S3에 저장될 상세 경로(경로 + 파일명)
+     * @return
+     */
+    private String putS3(Resource resource , Path path) {
+        Map<String, Object> errorMap = new HashMap<>();
+
+        try {
+
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(resource.contentLength());
+
+            amazonS3Client.putObject(
+                    new PutObjectRequest(bucket, PathUtils.getPath(path), resource.getInputStream(), metadata)
+                            .withCannedAcl(CannedAccessControlList.PublicRead));
+        } catch (AmazonServiceException ase) {
+            //errorMap.put("AmazonServiceException","Caught an AmazonServiceException from PUT requests, rejected reasons:");
+            errorMap.put("Fail FileName:",resource.getFilename());
+            errorMap.put("Fail Path:", PathUtils.getPath(path));
+            errorMap = getErrorMap(errorMap, ase);
+            log.error("[S3] Upload Fail [putS3] :: AmazonServiceException :: {}",errorMap);
+            throw new FileAwsS3ProcessException("[S3] Upload Fail [putS3] :: AmazonServiceException :: "+errorMap);
+        } catch (AmazonClientException ace) {
+            errorMap.put("Fail FileName:",resource.getFilename());
+            errorMap.put("Fail Path:", PathUtils.getPath(path));
+            errorMap = getErrorMap(errorMap, ace);
+            log.error("[S3] Upload Fail [putS3] :: AmazonClientException :: {}",errorMap);
+            throw new FileAwsS3ProcessException("[S3] Upload Fail [putS3] :: AmazonClientException :: "+errorMap);
+        } catch (IOException e) {
+            throw new FileAwsS3ProcessException(e.getMessage(), e);
+        }
+        return amazonS3Client.getUrl(bucket, PathUtils.getPath(path)).toString();
+    }
+
+    /**
+     * S3에 파일 최종 업로드 처리( 멀티파트 처리 )
      * @param s3UploadFile 업로드할 파일
      * @param path S3에 저장될 상세 경로(경로 + 파일명)
      * @return
      */
-    private String putS3(File s3UploadFile, Path path) {
+    private String putS3(MultipartFile s3UploadFile, Path path) {
         Map<String, Object> errorMap = new HashMap<>();
 
         try {
-            amazonS3Client.putObject(new PutObjectRequest(bucket, PathUtils.getPath(path), s3UploadFile)
+            /*
+             * Obtain the Content length of the Input stream for S3 header
+             */
+            InputStream is = s3UploadFile.getInputStream();
+
+            Long contentLength = Long.valueOf(IOUtils.toByteArray(is).length);
+
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(contentLength);
+
+            amazonS3Client.putObject(
+                    new PutObjectRequest(bucket, PathUtils.getPath(path), s3UploadFile.getInputStream(), metadata)
                     .withCannedAcl(CannedAccessControlList.PublicRead));
         } catch (AmazonServiceException ase) {
             //errorMap.put("AmazonServiceException","Caught an AmazonServiceException from PUT requests, rejected reasons:");
             errorMap.put("Fail FileName:",s3UploadFile.getName());
-            errorMap.put("Fail Path:",PathUtils.getPath(path));
+            errorMap.put("Fail Path:", PathUtils.getPath(path));
             errorMap = getErrorMap(errorMap, ase);
             log.error("[S3] Upload Fail [putS3] :: AmazonServiceException :: {}",errorMap);
-            return null;
+            throw new FileAwsS3ProcessException("[S3] Upload Fail [putS3] :: AmazonServiceException :: "+errorMap);
         } catch (AmazonClientException ace) {
             errorMap.put("Fail FileName:",s3UploadFile.getName());
-            errorMap.put("Fail Path:",PathUtils.getPath(path));
+            errorMap.put("Fail Path:", PathUtils.getPath(path));
             errorMap = getErrorMap(errorMap, ace);
             log.error("[S3] Upload Fail [putS3] :: AmazonClientException :: {}",errorMap);
-            return null;
+            throw new FileAwsS3ProcessException("[S3] Upload Fail [putS3] :: AmazonClientException :: "+errorMap);
+        } catch (IOException e) {
+            throw new FileAwsS3ProcessException(e.getMessage(), e);
         }
         return amazonS3Client.getUrl(bucket, PathUtils.getPath(path)).toString();
+    }
+
+    /**
+     * S3 파일 오브젝트 이동 처리
+     * @param path
+     * @param movePath
+     */
+    public void move(Path path, Path movePath) {
+        try {
+            amazonS3Client.copyObject(new CopyObjectRequest(bucket, path.toString(), bucket, movePath.toString()));
+        } catch (AmazonClientException e) {
+            log.error("[S3] Move Fail [putS3] :: AmazonServiceException :: {}",e.getMessage());
+            throw new FileAwsS3ProcessException("savePath = "+path+", movePath = "+movePath);
+        }
     }
 
 
@@ -185,23 +250,28 @@ public class S3FileService {
 
         Resource resource = null;
         try {
+            GetObjectRequest getObjectRequest = new GetObjectRequest(bucket, PathUtils.getPath(path));
+            S3Object s3Object = amazonS3Client.getObject(getObjectRequest);
+            resource = new InputStreamResource(s3Object.getObjectContent());
+            /*
             S3Object s3object = amazonS3Client.getObject(bucket, PathUtils.getPath(path));
             log.info("[S3] Download File Content-Type: " + s3object.getObjectMetadata().getContentType());
             log.info("[S3] Download File Path = {}",PathUtils.getPath(path));
-            resource = new InputStreamResource(s3object.getObjectContent());
-
+            long contentLength = IOUtils.toByteArray(s3object.getObjectContent()).length;
+            resource = new FileInputStreamResource(s3object.getObjectContent(), 0);
+            */
             // .txt 파일이면 파일 읽는 부분
             //displayText(s3object.getObjectContent());
             log.info("================== Downloade File Complete ! ==================");
         } catch (AmazonServiceException ase) {
             //log.error("Caught an AmazonServiceException from GET requests, rejected reasons:");
-            errorMap.put("Fail Path:",PathUtils.getPath(path));
+            errorMap.put("Fail Path:", PathUtils.getPath(path));
             errorMap = getErrorMap(errorMap, ase);
             log.error("[S3] Download Fail [download] :: AmazonServiceException :: {}",errorMap);
 
         } catch (AmazonClientException ace) {
             //log.error("Caught an AmazonClientException: ");
-            errorMap.put("Fail Path:",PathUtils.getPath(path));
+            errorMap.put("Fail Path:", PathUtils.getPath(path));
             errorMap = getErrorMap(errorMap, ace);
             log.error("[S3] Download Fail [download] :: AmazonServiceException :: {}",errorMap);
         }
@@ -216,8 +286,8 @@ public class S3FileService {
      * @throws IOException
      */
     public ResponseEntity<byte[]> byteDownload(String path, String fileName) throws IOException {
-        String s3fullpath= path+"/"+fileName;
-        GetObjectRequest getObjectRequest = new GetObjectRequest(bucket, s3fullpath);
+        // String s3fullpath= path+"/"+fileName;
+        GetObjectRequest getObjectRequest = new GetObjectRequest(bucket, path);
         S3Object s3Object = amazonS3Client.getObject(getObjectRequest);
         S3ObjectInputStream objectInputStream = s3Object.getObjectContent();
 
@@ -240,16 +310,16 @@ public class S3FileService {
         Map<String, Object> errorMap = new HashMap<>();
         try {
             amazonS3Client.deleteObject(bucket, PathUtils.getPath(path));
-            log.info("[S3] File Deleted : {}",PathUtils.getPath(path));
+            log.info("[S3] File Deleted : {}", PathUtils.getPath(path));
         } catch (AmazonServiceException ase) {
             //log.error("Caught an AmazonServiceException from GET requests, rejected reasons:");
-            errorMap.put("Fail Path:",PathUtils.getPath(path));
+            errorMap.put("Fail Path:", PathUtils.getPath(path));
             errorMap = getErrorMap(errorMap, ase);
             log.error("[S3] File Deleted Fail [delete] :: AmazonServiceException :: {}",errorMap);
 
         } catch (AmazonClientException ace) {
             //log.error("Caught an AmazonClientException: ");
-            errorMap.put("Fail Path:",PathUtils.getPath(path));
+            errorMap.put("Fail Path:", PathUtils.getPath(path));
             errorMap = getErrorMap(errorMap, ace);
             log.error("[S3] File Deleted Fail [delete] :: AmazonServiceException :: {}",errorMap);
         }
@@ -314,7 +384,6 @@ public class S3FileService {
 
         return amazonS3Client.getUrl(bucket, fileName).toString();
     }
-
 
     /**
      * 특정 버켓에 들어있는 데이터 정보 가져오기
@@ -527,7 +596,9 @@ public class S3FileService {
     private Optional<File> convert(MultipartFile file){
 
         log.debug("S3 convert fileName = {}",file.getOriginalFilename());
-        File convertFile = new File(file.getOriginalFilename());
+        // String tempDir = System.getProperty(property);
+        File convertFile = new File(Objects.requireNonNull(file.getOriginalFilename()));
+        log.debug("## FILE PATH = {}",convertFile.getPath());
 
         try {
             file.transferTo(convertFile);

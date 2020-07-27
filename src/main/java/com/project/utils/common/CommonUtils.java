@@ -305,7 +305,7 @@ public class CommonUtils {
      * objctEmpty 유틸 전용 빈 값 체크 유틸
      * Object Value To List
      * 멥 데이터를 순회하며 조건에 맞는 데이터만 걸러내고 리스트에 담아서 리턴
-     * @param object*
+     * @param object
      * @param isZero true 0 허용, false 0 미허용
      * @return
      */

@@ -10,10 +10,7 @@ import com.project.component.excel.service.ExcelReader;
 import com.project.exception.common.*;
 import com.project.exception.common.constant.CommonError;
 import com.project.exception.excel.*;
-import com.project.exception.file.FileDuplicateException;
-import com.project.exception.file.FileNotExistException;
-import com.project.exception.file.FileRequestFileNotException;
-import com.project.exception.file.FileRequestParamRequiredException;
+import com.project.exception.file.*;
 import com.project.utils.common.ErrorUtils;
 import com.project.utils.common.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -102,6 +99,14 @@ public class CommonErrorHandler {
             FileDuplicateException.class,
             // 파일 등록 필수 파라메터 체크
             FileRequestParamRequiredException.class,
+            // 파일 업로드 실패 에러 핸들러
+            // FileUploadFailException.class,
+            // AWS S3 프로세싱 실패
+            FileAwsS3ProcessException.class,
+            // 임시 파일 적용 실패 에러 핸들러
+            FileTempApplyFailException.class,
+            // 파일 경로 생성 실패
+            FileNotMakePathException.class,
 
             // JWT 토큰 복호화 ERROR 핸들러
             InvalidSignatureException.class,
@@ -177,6 +182,26 @@ public class CommonErrorHandler {
         // Level 별 에러메시지 출력
         ErrorUtils.logWriter(error, CLASS_NAME, ERROR_MSG, errorMap, e, CUSTOM_MSG);
         return commonResult;
+    }
+
+    /**
+     * Handler 에서 예외처리 되지 않은 Exception 처리
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(FileUploadFailException.class)
+    public CommonResult<Map<String, Object>> FileUploadFailException(Exception e, HttpServletRequest request, WebRequest webRequest) throws Exception {
+        // 공통에러상수 객체 셋팅
+        CommonError error = CommonError.getCommonError(e);
+
+        String ERROR_MSG = error.getMessage();
+
+        Map<String, Object> resultMap = JsonUtils.getObjectMapper().readValue(e.getMessage(), Map.class);
+
+        errorMap = ErrorUtils.setErrorMap(request, webRequest, secretKey); // 에러 맵 기본 셋팅
+
+        ErrorUtils.errorWriter(CLASS_NAME, ERROR_MSG, errorMap, JsonUtils.toJson(resultMap)); //에러메세지 출력
+        return new CommonResult<>(error.getResCode(), ERROR_MSG, resultMap);
     }
 
     /**
