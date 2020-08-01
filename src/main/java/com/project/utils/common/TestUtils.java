@@ -9,6 +9,7 @@ import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * 테스트에서 사용하기 위한 유틸리티
@@ -61,6 +62,14 @@ public class TestUtils {
 
         if(Objects.isNull(resultMap))
             resultMap = new LinkedHashMap<>();
+
+        if(object instanceof Map) {
+            Set<String> keySet = ((Map) object).keySet();
+            for (String key: keySet) {
+                resultMap.put(key, String.valueOf(((Map) object).get(key)));
+            }
+            return resultMap;
+        }
 
         // 기본 클래스 값 셋팅
         for(Field field : object.getClass().getDeclaredFields())

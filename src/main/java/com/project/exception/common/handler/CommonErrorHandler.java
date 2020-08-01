@@ -99,6 +99,10 @@ public class CommonErrorHandler {
             FileDuplicateException.class,
             // 파일 등록 필수 파라메터 체크
             FileRequestParamRequiredException.class,
+            // 파일 다운로드 실패 에러 핸들러
+            FileDownloadFailException.class,
+            // 파일 삭제 실패 에러 핸들러
+            FileDeleteFailException.class,
             // 파일 업로드 실패 에러 핸들러
             // FileUploadFailException.class,
             // AWS S3 프로세싱 실패

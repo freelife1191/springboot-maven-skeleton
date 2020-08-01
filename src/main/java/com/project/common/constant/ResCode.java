@@ -20,6 +20,7 @@ public enum ResCode {
     DATA_NOT_FOUND(203, "DATA NOT FOUND", "Data not found"),
     EXCEED_MAXIMUM_DATA(204, "EXCEED_MAXIMUM_DATA", "Exceed Maximum Data"),
     DATA_REGISTRATION_FAIL(205, "DATA_REGISTRATION_FAIL", "Data Registration Failed"),
+    DATA_OVERWRITE(206, "DATA OVERWRITE", "Data Overwrite"),
 
     ERROR(500, "ERROR", "ERROR"),
     FAIL(900, "FAIL","FAIL"),
@@ -34,6 +35,8 @@ public enum ResCode {
     FILE_NOT_MAKE_PATH(3102, "FILE NOT MAKE PATH", "File Not Make Path"),
     FILE_UPLOAD_FAILED(3900, "FILE UPLOAD FAILED", "File Upload Failed"),
     FILE_TEMP_APPLY_FAILED(3901, "FILE TEMP APPLY FAILED", "File Temp Apply Failed"),
+    FILE_DOWNLOAD_FAILED(3902, "FILE DOWNLOAD FAILED", "File Download Failed"),
+    FILE_DELETE_FAILED(3903, "FILE DELETE FAILED", "File Delete Failed"),
 
 
     EXCEL_ERROR(4000, "EXCEL ERROR", "Excel Error"),

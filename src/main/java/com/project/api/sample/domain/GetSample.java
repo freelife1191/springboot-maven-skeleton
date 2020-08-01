@@ -26,7 +26,7 @@ import javax.validation.constraints.NotNull;
 @ApiModel("샘플 GET RequestParam 객체 도메인") // 모델명
 @JsonInclude(Include.ALWAYS)
 public class GetSample {
-    @ApiModelProperty(value = "순번", notes = "순번 데이터", example = "1")
+    @ApiModelProperty(value = "순번", position = 1, notes = "순번 데이터", example = "1")
     protected Integer seq;
     @NotNull(message = "아이디는 필수 입력갑 입니다")
     /*
@@ -38,32 +38,33 @@ public class GetSample {
         required - 필수 입력 여부
 
      */
-    @ApiModelProperty(value = "아이디",name = "my_id", notes = "이곳에 아이디를 넣어주세요", example = "abcd", required = true)
+    @ApiModelProperty(value = "아이디", position = 2, name = "my_id", notes = "이곳에 아이디를 넣어주세요", example = "abcd", required = true)
     @ParamName("my_id") // my_id 로 들어온 파라메터를 myId에 맵핑 시켜준다
     protected String myId;
 
     @NotNull(message = "이름은 필수 입력값 입니다")
-    @ApiModelProperty(value = "이름",name = "my_name", notes = "이곳에 이름을 넣어주세요", example = "홍길동", required = true)
+    @ApiModelProperty(value = "이름", position = 3, name = "my_name", notes = "이곳에 이름을 넣어주세요", example = "홍길동", required = true)
     @ParamName("my_name")
     protected String myName;
 
     @Min(value = 10, message = "나이는 최소 10살이상 입니다")
-    @ApiModelProperty(value = "나이\n최소 10살이상",name = "my_age", notes = "나이는 최소 10살이상 입니다", example = "10")
+    @ApiModelProperty(value = "나이\n최소 10살이상", position = 4, name = "my_age", notes = "나이는 최소 10살이상 입니다", example = "10")
     @ParamName("my_age")
     protected Integer myAge;
 
     @Email(message = "이메일 형식에 맞게 입력하세요")
-    @ApiModelProperty(value = "이메일\n이메일 형식에 맞게 입력",name = "my_email", notes = "이메일 형식에 맞게 입력해주세요",example = "abc@company.com")
+    @ApiModelProperty(value = "이메일\n이메일 형식에 맞게 입력", position = 5, name = "my_email", notes = "이메일 형식에 맞게 입력해주세요",example = "abc@company.com")
     @ParamName("my_email")
     protected String myEmail;
 
     @NotNull(message = "직업은 필수 입력값 입니다")
-    @ApiModelProperty(value = "직업",name = "my_job", notes = "직업을 입력하세요", example = "developer", required = true)
+    @ApiModelProperty(value = "직업",name = "my_job", position = 6, notes = "직업을 입력하세요", example = "developer", required = true)
     @ParamName("my_job")
     protected String myJob;
 
     //내부 객체는 @ParamName이 먹히지 않는다 방법을 연구해봐야 한다
     //그냥 myAddress.city 이런 형식으로만 받을 수 있다
+    @ApiModelProperty(value = "주소", position = 7, name = "my_address")
     @ParamName("my_address")
     protected Address myAddress;
 

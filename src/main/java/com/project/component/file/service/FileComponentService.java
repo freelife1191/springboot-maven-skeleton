@@ -77,6 +77,8 @@ public class FileComponentService {
 
     /**
      * 파일 다운로드 S3에서 파일 다운로드
+     * 파일 다운로드 예외처리시 유의 사항
+     * FileDownloadFailException 임의 예외 발생시 Transactional 에 의해 롤백되지 않도록 noRollbackFor 처리 필요
      * @param path
      * @return
      */
@@ -97,6 +99,7 @@ public class FileComponentService {
 
     /**
      * 단일 파일 삭제
+     * 파일이 존재 하지 않는 경우에는 에러 메세지만 출력 그외 에러 발생시에는 에러발생시킴
      * @param path
      * @return
      */
@@ -107,6 +110,7 @@ public class FileComponentService {
 
     /**
      * 다중 파일 삭제
+     * 파일이 존재 하지 않는 경우에는 에러 메세지만 출력후 다음 건 실행 그외 에러 발생시에는 에러발생시켜 처리를 중단함
      * @param fileList
      * @return
      */
@@ -117,6 +121,7 @@ public class FileComponentService {
 
     /**
      * 다중 파일 삭제
+     * 파일이 존재 하지 않는 경우에는 에러 메세지만 출력후 다음 건 실행 그외 에러 발생시에는 에러발생시켜 처리를 중단함
      * @param fileList
      * @return
      */

@@ -22,22 +22,22 @@ import javax.validation.constraints.NotEmpty;
 public class Address {
 
     @NotEmpty
-    @ApiModelProperty(value = "국가", notes = "국가 입력", example = "한국")
+    @ApiModelProperty(value = "국가", position = 1, notes = "국가 입력", example = "한국")
     //@JsonProperty("country")
     private String country;
 
     @NotEmpty
-    @ApiModelProperty(value = "시도", notes = "시도 입력", example = "서울")
+    @ApiModelProperty(value = "시도", position = 2, notes = "시도 입력", example = "서울")
     //@JsonProperty("state")
     private String state;
 
     @NotEmpty
-    @ApiModelProperty(value = "면읍구군시", notes = "면읍구군시 입력", example = "영등포구")
+    @ApiModelProperty(value = "면읍구군시", position = 3, notes = "면읍구군시 입력", example = "영등포구")
     //@JsonProperty("city")
     private String city;
 
     @NotEmpty
-    @ApiModelProperty(value = "우편번호", name = "zip_code", notes = "우편번호 입력", example = "07276")
+    @ApiModelProperty(value = "우편번호", position = 4, name = "zip_code", notes = "우편번호 입력", example = "07276")
     @JsonProperty("zip_code")
     private String zipCode;
 

@@ -6,13 +6,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.CaseUtils;
+import org.jooq.Record;
 import org.jooq.*;
 import org.jooq.impl.DSL;
+import org.springframework.data.domain.Sort;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static com.project.utils.common.constant.ConditionType.eq;
 import static org.jooq.impl.DSL.value;
@@ -55,11 +54,11 @@ public class JooqUtils {
      * 생성된 conditionList를 WHERE 조건에 적용
      * .where(DSL.and(conditionsList))
      *
-     * @param fieldList List<Field> 테이블 필드 리스트
+     * @param fieldList List<Field<?>> 테이블 필드 리스트
      * @param object 맵핑할 객체
      * @return List<Condition> 셋팅된 컨디션 리스트
      */
-    public static List<Condition> setConditionList(List<Field> fieldList, Object object) {
+    public static List<Condition> setConditionList(List<Field<?>> fieldList, Object object) {
         return setConditionList(null, fieldList, object, eq);
     }
 
@@ -76,7 +75,7 @@ public class JooqUtils {
      * @param nullOption
      * @return
      */
-    public static List<Condition> setConditionList(List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption) {
+    public static List<Condition> setConditionList(List<Field<?>> fieldList, Object object, boolean nullOption, boolean emptyOption) {
         return setConditionList(null, fieldList, object, eq, nullOption, emptyOption);
     }
 
@@ -84,7 +83,7 @@ public class JooqUtils {
         return setConditionList(null, Lists.newArrayList(fieldArray), object, eq, nullOption, emptyOption);
     }
 
-    public static List<Condition> setConditionList(List<Condition> conditionList, List<Field> fieldList, Object object) {
+    public static List<Condition> setConditionList(List<Condition> conditionList, List<Field<?>> fieldList, Object object) {
         return setConditionList(conditionList, fieldList, object, eq);
     }
 
@@ -102,7 +101,7 @@ public class JooqUtils {
      * @param nullOption
      * @return
      */
-    public static List<Condition> setConditionList(List<Condition> conditionList, List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption) {
+    public static List<Condition> setConditionList(List<Condition> conditionList, List<Field<?>> fieldList, Object object, boolean nullOption, boolean emptyOption) {
         return setConditionList(conditionList, fieldList, object, eq, nullOption, emptyOption);
     }
 
@@ -130,7 +129,7 @@ public class JooqUtils {
      * @return
      * @throws IllegalAccessException
      */
-    public static List<Condition> setConditionList(List<Condition> conditionList, List<Field> fieldList, Object object, ConditionType conditionType) {
+    public static List<Condition> setConditionList(List<Condition> conditionList, List<Field<?>> fieldList, Object object, ConditionType conditionType) {
         return setConditionList(conditionList, fieldList, object, conditionType, DEFAULT_NULL_OPTION, DEFAULT_EMPTY_OPTION);
     }
 
@@ -157,7 +156,7 @@ public class JooqUtils {
      * @return
      * @throws IllegalAccessException
      */
-    public static List<Condition> setConditionList(List<Condition> conditionList, List<Field> fieldList, Object object, ConditionType conditionType, boolean nullOption, boolean emptyOption) {
+    public static List<Condition> setConditionList(List<Condition> conditionList, List<Field<?>> fieldList, Object object, ConditionType conditionType, boolean nullOption, boolean emptyOption) {
 
         if(conditionList == null) conditionList = new ArrayList<>();
 
@@ -248,8 +247,8 @@ public class JooqUtils {
      * @param object
      * @return
      */
-    public static InsertSetMoreStep setInsertSetMoreStep(InsertSetStep insert, Field<?>[] fieldArray, Object object){
-        InsertSetMoreStep moreStep = (InsertSetMoreStep) insert;
+    public static <T extends Record> InsertSetMoreStep<T> setInsertSetMoreStep(InsertSetStep<T> insert, Field<?>[] fieldArray, Object object){
+        InsertSetMoreStep<T> moreStep = (InsertSetMoreStep<T>) insert;
         return setInsertSetMoreStep(moreStep, Lists.newArrayList(fieldArray), object, DEFAULT_NULL_OPTION, DEFAULT_EMPTY_OPTION, DEFAULT_IP_OPTION);
     }
 
@@ -261,8 +260,8 @@ public class JooqUtils {
      * @param object
      * @return
      */
-    public static InsertSetMoreStep setInsertSetMoreStep(InsertSetStep insert, List<Field> fieldList, Object object){
-        InsertSetMoreStep moreStep = (InsertSetMoreStep) insert;
+    public static <T extends Record> InsertSetMoreStep<T> setInsertSetMoreStep(InsertSetStep<T> insert, List<Field<?>> fieldList, Object object){
+        InsertSetMoreStep<T> moreStep = (InsertSetMoreStep<T>) insert;
         return setInsertSetMoreStep(moreStep, fieldList, object, DEFAULT_NULL_OPTION, DEFAULT_EMPTY_OPTION, DEFAULT_IP_OPTION);
     }
 
@@ -276,8 +275,8 @@ public class JooqUtils {
      * @param emptyOption true: empty 허용, false: empty 미허용
      * @return
      */
-    public static InsertSetMoreStep setInsertSetMoreStep(InsertSetStep insert, Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption){
-        InsertSetMoreStep moreStep = (InsertSetMoreStep) insert;
+    public static <T extends Record> InsertSetMoreStep<T> setInsertSetMoreStep(InsertSetStep<T> insert, Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption){
+        InsertSetMoreStep<T> moreStep = (InsertSetMoreStep<T>) insert;
         return setInsertSetMoreStep(moreStep, Lists.newArrayList(fieldArray), object, nullOption, emptyOption, DEFAULT_IP_OPTION);
     }
 
@@ -291,8 +290,8 @@ public class JooqUtils {
      * @param emptyOption true: empty 허용, false: empty 미허용
      * @return
      */
-    public static InsertSetMoreStep setInsertSetMoreStep(InsertSetStep insert, List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption){
-        InsertSetMoreStep moreStep = (InsertSetMoreStep) insert;
+    public static <T extends Record> InsertSetMoreStep<T> setInsertSetMoreStep(InsertSetStep<T> insert, List<Field<?>> fieldList, Object object, boolean nullOption, boolean emptyOption){
+        InsertSetMoreStep<T> moreStep = (InsertSetMoreStep<T>) insert;
         return setInsertSetMoreStep(moreStep, fieldList, object, nullOption, emptyOption, DEFAULT_IP_OPTION);
     }
 
@@ -307,8 +306,8 @@ public class JooqUtils {
      * @param ipOption true: IP 옵션 적용, false: IP 옵션 미적용
      * @return
      */
-    public static InsertSetMoreStep setInsertSetMoreStep(InsertSetStep insert, Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption, boolean ipOption){
-        InsertSetMoreStep moreStep = (InsertSetMoreStep) insert;
+    public static <T extends Record> InsertSetMoreStep<T> setInsertSetMoreStep(InsertSetStep<T> insert, Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption, boolean ipOption){
+        InsertSetMoreStep<T> moreStep = (InsertSetMoreStep<T>) insert;
         return setInsertSetMoreStep(moreStep, Lists.newArrayList(fieldArray), object, nullOption, emptyOption, ipOption);
     }
 
@@ -323,8 +322,8 @@ public class JooqUtils {
      * @param ipOption true: IP 옵션 적용, false: IP 옵션 미적용
      * @return
      */
-    public static InsertSetMoreStep setInsertSetMoreStep(InsertSetStep insert, List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption, boolean ipOption){
-        InsertSetMoreStep moreStep = (InsertSetMoreStep) insert;
+    public static <T extends Record> InsertSetMoreStep<T> setInsertSetMoreStep(InsertSetStep<T> insert, List<Field<?>> fieldList, Object object, boolean nullOption, boolean emptyOption, boolean ipOption){
+        InsertSetMoreStep<T> moreStep = (InsertSetMoreStep<T>) insert;
         return setInsertSetMoreStep(moreStep, fieldList, object, nullOption, emptyOption, ipOption);
     }
 
@@ -336,7 +335,7 @@ public class JooqUtils {
      * @param object
      * @return
      */
-    public static InsertSetMoreStep setInsertSetMoreStep(InsertSetMoreStep moreStep, Field<?>[] fieldArray, Object object){
+    public static <T extends Record> InsertSetMoreStep<T> setInsertSetMoreStep(InsertSetMoreStep<T> moreStep, Field<?>[] fieldArray, Object object){
         return setInsertSetMoreStep(moreStep, Lists.newArrayList(fieldArray), object, DEFAULT_NULL_OPTION, DEFAULT_EMPTY_OPTION, DEFAULT_IP_OPTION);
     }
 
@@ -348,7 +347,7 @@ public class JooqUtils {
      * @param object
      * @return
      */
-    public static InsertSetMoreStep setInsertSetMoreStep(InsertSetMoreStep moreStep, List<Field> fieldList, Object object){
+    public static <T extends Record> InsertSetMoreStep<T> setInsertSetMoreStep(InsertSetMoreStep<T> moreStep, List<Field<?>> fieldList, Object object){
         return setInsertSetMoreStep(moreStep, fieldList, object, DEFAULT_NULL_OPTION, DEFAULT_EMPTY_OPTION, DEFAULT_IP_OPTION);
     }
 
@@ -362,7 +361,7 @@ public class JooqUtils {
      * @param emptyOption true: empty 허용, false: empty 미허용
      * @return
      */
-    public static InsertSetMoreStep setInsertSetMoreStep(InsertSetMoreStep moreStep, Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption){
+    public static <T extends Record> InsertSetMoreStep<T> setInsertSetMoreStep(InsertSetMoreStep<T> moreStep, Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption){
         return setInsertSetMoreStep(moreStep, Lists.newArrayList(fieldArray), object, nullOption, emptyOption, DEFAULT_IP_OPTION);
     }
 
@@ -376,7 +375,7 @@ public class JooqUtils {
      * @param emptyOption true: empty 허용, false: empty 미허용
      * @return
      */
-    public static InsertSetMoreStep setInsertSetMoreStep(InsertSetMoreStep moreStep, List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption){
+    public static <T extends Record> InsertSetMoreStep<T> setInsertSetMoreStep(InsertSetMoreStep<T> moreStep, List<Field<?>> fieldList, Object object, boolean nullOption, boolean emptyOption){
         return setInsertSetMoreStep(moreStep, fieldList, object, nullOption, emptyOption, DEFAULT_IP_OPTION);
     }
 
@@ -391,7 +390,7 @@ public class JooqUtils {
      * @param ipOption true: IP 옵션 적용, false: IP 옵션 미적용
      * @return
      */
-    public static InsertSetMoreStep setInsertSetMoreStep(InsertSetMoreStep moreStep, Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption, boolean ipOption ){
+    public static <T extends Record> InsertSetMoreStep<T> setInsertSetMoreStep(InsertSetMoreStep<T> moreStep, Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption, boolean ipOption ){
         return setInsertSetMoreStep(moreStep, Lists.newArrayList(fieldArray), object, nullOption, emptyOption, DEFAULT_IP_OPTION);
     }
 
@@ -406,7 +405,7 @@ public class JooqUtils {
      * @param ipOption true: IP 옵션 적용, false: IP 옵션 미적용
      * @return
      */
-    public static InsertSetMoreStep setInsertSetMoreStep(InsertSetMoreStep moreStep, List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption, boolean ipOption ){
+    public static <T extends Record> InsertSetMoreStep<T> setInsertSetMoreStep(InsertSetMoreStep<T> moreStep, List<Field<?>> fieldList, Object object, boolean nullOption, boolean emptyOption, boolean ipOption ){
 
         if(moreStep == null) return null;
 
@@ -433,61 +432,61 @@ public class JooqUtils {
 
     /**
      * Object의 값을 fieldlist의 field 들에 셋팅하여
-     * 넘겨 받은 UpdateSetMoreStep 에 추가 적용
+     * 넘겨 받은 UpdateSetMoreStep<T> 에 추가 적용
      * nullOption false: null 미허용 기본값
      * @param update
      * @param fieldArray
      * @param object
      * @return
      */
-    public static UpdateSetMoreStep setUpdateSetMoreStep(UpdateSetStep update, Field<?>[] fieldArray, Object object){
-        UpdateSetMoreStep moreStep = (UpdateSetMoreStep) update;
+    public static <T extends Record> UpdateSetMoreStep<T> setUpdateSetMoreStep(UpdateSetStep<T> update, Field<?>[] fieldArray, Object object){
+        UpdateSetMoreStep<T> moreStep = (UpdateSetMoreStep<T>) update;
         return setUpdateSetMoreStep(moreStep, Lists.newArrayList(fieldArray), object, DEFAULT_NULL_OPTION, DEFAULT_EMPTY_OPTION);
     }
 
     /**
      * Object의 값을 fieldlist의 field 들에 셋팅하여
-     * 넘겨 받은 UpdateSetMoreStep 에 추가 적용
+     * 넘겨 받은 UpdateSetMoreStep<T> 에 추가 적용
      * nullOption false: null 미허용 기본값
      * @param update
      * @param fieldList
      * @param object
      * @return
      */
-    public static UpdateSetMoreStep setUpdateSetMoreStep(UpdateSetStep update, List<Field> fieldList, Object object){
-        UpdateSetMoreStep moreStep = (UpdateSetMoreStep) update;
+    public static <T extends Record> UpdateSetMoreStep<T> setUpdateSetMoreStep(UpdateSetStep<T> update, List<Field<?>> fieldList, Object object){
+        UpdateSetMoreStep<T> moreStep = (UpdateSetMoreStep<T>) update;
         return setUpdateSetMoreStep(moreStep, fieldList, object, DEFAULT_NULL_OPTION, DEFAULT_EMPTY_OPTION);
     }
 
     /**
      * Object의 값을 fieldlist의 field 들에 셋팅하여
-     * 넘겨 받은 UpdateSetMoreStep 에 추가 적용
+     * 넘겨 받은 UpdateSetMoreStep<T> 에 추가 적용
      * @param update
      * @param fieldArray
      * @param object
      * @param nullOption true: null 허용, false: null 미허용
      * @return
      */
-    public static UpdateSetMoreStep setUpdateSetMoreStep(UpdateSetStep update, Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption){
+    public static <T extends Record> UpdateSetMoreStep<T> setUpdateSetMoreStep(UpdateSetStep<T> update, Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption){
         return setUpdateSetMoreStep(update, Lists.newArrayList(fieldArray), object, nullOption, emptyOption, DEFAULT_IP_OPTION);
     }
 
     /**
      * Object의 값을 fieldlist의 field 들에 셋팅하여
-     * 넘겨 받은 UpdateSetMoreStep 에 추가 적용
+     * 넘겨 받은 UpdateSetMoreStep<T> 에 추가 적용
      * @param update
      * @param fieldList
      * @param object
      * @param nullOption true: null 허용, false: null 미허용
      * @return
      */
-    public static UpdateSetMoreStep setUpdateSetMoreStep(UpdateSetStep update, List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption){
+    public static <T extends Record> UpdateSetMoreStep<T> setUpdateSetMoreStep(UpdateSetStep<T> update, List<Field<?>> fieldList, Object object, boolean nullOption, boolean emptyOption){
         return setUpdateSetMoreStep(update, fieldList, object, nullOption, emptyOption, DEFAULT_IP_OPTION);
     }
 
     /**
      * Object의 값을 fieldlist의 field 들에 셋팅하여
-     * 넘겨 받은 UpdateSetMoreStep 에 추가 적용
+     * 넘겨 받은 UpdateSetMoreStep<T> 에 추가 적용
      * @param update
      * @param fieldArray
      * @param object
@@ -496,14 +495,14 @@ public class JooqUtils {
      * @param ipOption true: IP 옵션 적용, false: IP 옵션 미적용
      * @return
      */
-    public static UpdateSetMoreStep setUpdateSetMoreStep(UpdateSetStep update, Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption, boolean ipOption){
-        UpdateSetMoreStep moreStep = (UpdateSetMoreStep) update;
+    public static <T extends Record> UpdateSetMoreStep<T> setUpdateSetMoreStep(UpdateSetStep<T> update, Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption, boolean ipOption){
+        UpdateSetMoreStep<T> moreStep = (UpdateSetMoreStep<T>) update;
         return setUpdateSetMoreStep(moreStep, Lists.newArrayList(fieldArray), object, nullOption, emptyOption, ipOption);
     }
 
     /**
      * Object의 값을 fieldlist의 field 들에 셋팅하여
-     * 넘겨 받은 UpdateSetMoreStep 에 추가 적용
+     * 넘겨 받은 UpdateSetMoreStep<T> 에 추가 적용
      * @param update
      * @param fieldList
      * @param object
@@ -512,38 +511,38 @@ public class JooqUtils {
      * @param ipOption true: IP 옵션 적용, false: IP 옵션 미적용
      * @return
      */
-    public static UpdateSetMoreStep setUpdateSetMoreStep(UpdateSetStep update, List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption, boolean ipOption){
-        UpdateSetMoreStep moreStep = (UpdateSetMoreStep) update;
+    public static <T extends Record> UpdateSetMoreStep<T> setUpdateSetMoreStep(UpdateSetStep<T> update, List<Field<?>> fieldList, Object object, boolean nullOption, boolean emptyOption, boolean ipOption){
+        UpdateSetMoreStep<T> moreStep = (UpdateSetMoreStep<T>) update;
         return setUpdateSetMoreStep(moreStep, fieldList, object, nullOption, emptyOption, ipOption);
     }
 
     /**
      * Object의 값을 fieldlist의 field 들에 셋팅하여
-     * 넘겨 받은 UpdateSetMoreStep 에 추가 적용
+     * 넘겨 받은 UpdateSetMoreStep<T> 에 추가 적용
      * @param moreStep
      * @param fieldArray
      * @param object
      * @return
      */
-    public static UpdateSetMoreStep setUpdateSetMoreStep(UpdateSetMoreStep moreStep, Field<?>[] fieldArray, Object object){
+    public static <T extends Record> UpdateSetMoreStep<T> setUpdateSetMoreStep(UpdateSetMoreStep<T> moreStep, Field<?>[] fieldArray, Object object){
         return setUpdateSetMoreStep(moreStep, Lists.newArrayList(fieldArray), object, DEFAULT_NULL_OPTION, DEFAULT_EMPTY_OPTION);
     }
 
     /**
      * Object의 값을 fieldlist의 field 들에 셋팅하여
-     * 넘겨 받은 UpdateSetMoreStep 에 추가 적용
+     * 넘겨 받은 UpdateSetMoreStep<T> 에 추가 적용
      * @param moreStep
      * @param fieldList
      * @param object
      * @return
      */
-    public static UpdateSetMoreStep setUpdateSetMoreStep(UpdateSetMoreStep moreStep, List<Field> fieldList, Object object){
+    public static <T extends Record> UpdateSetMoreStep<T> setUpdateSetMoreStep(UpdateSetMoreStep<T> moreStep, List<Field<?>> fieldList, Object object){
         return setUpdateSetMoreStep(moreStep, fieldList, object, DEFAULT_NULL_OPTION, DEFAULT_EMPTY_OPTION);
     }
 
     /**
      * Object의 값을 fieldlist의 field 들에 셋팅하여
-     * 넘겨 받은 UpdateSetMoreStep 에 추가 적용
+     * 넘겨 받은 UpdateSetMoreStep<T> 에 추가 적용
      * @param moreStep
      * @param fieldArray
      * @param object
@@ -551,13 +550,13 @@ public class JooqUtils {
      * @param emptyOption true: empty 허용, false: empty 미허용
      * @return
      */
-    public static UpdateSetMoreStep setUpdateSetMoreStep(UpdateSetMoreStep moreStep, Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption ){
+    public static <T extends Record> UpdateSetMoreStep<T> setUpdateSetMoreStep(UpdateSetMoreStep<T> moreStep, Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption ){
         return setUpdateSetMoreStep(moreStep, Lists.newArrayList(fieldArray), object, nullOption, emptyOption, DEFAULT_IP_OPTION);
     }
 
     /**
      * Object의 값을 fieldlist의 field 들에 셋팅하여
-     * 넘겨 받은 UpdateSetMoreStep 에 추가 적용
+     * 넘겨 받은 UpdateSetMoreStep<T> 에 추가 적용
      * @param moreStep
      * @param fieldList
      * @param object
@@ -565,13 +564,13 @@ public class JooqUtils {
      * @param emptyOption true: empty 허용, false: empty 미허용
      * @return
      */
-    public static UpdateSetMoreStep setUpdateSetMoreStep(UpdateSetMoreStep moreStep, List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption ){
+    public static <T extends Record> UpdateSetMoreStep<T> setUpdateSetMoreStep(UpdateSetMoreStep<T> moreStep, List<Field<?>> fieldList, Object object, boolean nullOption, boolean emptyOption ){
         return setUpdateSetMoreStep(moreStep, fieldList, object, nullOption, emptyOption, DEFAULT_IP_OPTION);
     }
 
     /**
      * Object의 값을 fieldlist의 field 들에 셋팅하여
-     * 넘겨 받은 UpdateSetMoreStep 에 추가 적용
+     * 넘겨 받은 UpdateSetMoreStep<T> 에 추가 적용
      * @param moreStep
      * @param fieldArray
      * @param object
@@ -580,13 +579,13 @@ public class JooqUtils {
      * @param ipOption true: IP 옵션 적용, false: IP 옵션 미적용
      * @return
      */
-    public static UpdateSetMoreStep setUpdateSetMoreStep(UpdateSetMoreStep moreStep, Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption, boolean ipOption ){
+    public static <T extends Record> UpdateSetMoreStep<T> setUpdateSetMoreStep(UpdateSetMoreStep<T> moreStep, Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption, boolean ipOption ){
         return setUpdateSetMoreStep(moreStep, Lists.newArrayList(fieldArray), object, nullOption, emptyOption, ipOption);
     }
 
     /**
      * Object의 값을 fieldlist의 field 들에 셋팅하여
-     * 넘겨 받은 UpdateSetMoreStep 에 추가 적용
+     * 넘겨 받은 UpdateSetMoreStep<T> 에 추가 적용
      * @param moreStep
      * @param fieldList
      * @param object
@@ -595,7 +594,7 @@ public class JooqUtils {
      * @param ipOption true: IP 옵션 적용, false: IP 옵션 미적용
      * @return
      */
-    public static UpdateSetMoreStep setUpdateSetMoreStep(UpdateSetMoreStep moreStep, List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption, boolean ipOption ){
+    public static <T extends Record> UpdateSetMoreStep<T> setUpdateSetMoreStep(UpdateSetMoreStep<T> moreStep, List<Field<?>> fieldList, Object object, boolean nullOption, boolean emptyOption, boolean ipOption ){
 
         if(moreStep == null) return null;
 
@@ -640,7 +639,7 @@ public class JooqUtils {
      * @param object
      * @return
      */
-    public static List<Object> getObjectValueList(List<Field> fieldList, Object object) {
+    public static List<Object> getObjectValueList(List<Field<?>> fieldList, Object object) {
         return getObjectValueList(fieldList, object, DEFAULT_NULL_OPTION, DEFAULT_EMPTY_OPTION);
     }
 
@@ -667,7 +666,7 @@ public class JooqUtils {
      * @param emptyOption true: null 허용, false: null 미허용
      * @return
      */
-    public static List<Object> getObjectValueList(List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption) {
+    public static List<Object> getObjectValueList(List<Field<?>> fieldList, Object object, boolean nullOption, boolean emptyOption) {
         if(object == null) return null;
 
         List<Object> resultList = new ArrayList<>();
@@ -710,7 +709,7 @@ public class JooqUtils {
      * @param object
      * @return
      */
-    public static List<Field> getColumnFieldList(Field<?>[] fieldArray, Object object){
+    public static List<Field<?>> getColumnFieldList(Field<?>[] fieldArray, Object object){
         return getColumnFieldList(Lists.newArrayList(fieldArray), object);
     }
 
@@ -722,7 +721,7 @@ public class JooqUtils {
      * @param object
      * @return
      */
-    public static<T> List<Field> getColumnFieldList(List<Field> fieldList, Object object) {
+    public static<T> List<Field<?>> getColumnFieldList(List<Field<?>> fieldList, Object object) {
         return getColumnFieldList(fieldList, new ArrayList<>(), object, DEFAULT_NULL_OPTION, DEFAULT_EMPTY_OPTION);
     }
 
@@ -736,7 +735,7 @@ public class JooqUtils {
      * @param emptyOption true: null 허용, false: null 미허용
      * @return
      */
-    public static<T> List<Field> getColumnFieldList(List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption) {
+    public static<T> List<Field<?>> getColumnFieldList(List<Field<?>> fieldList, Object object, boolean nullOption, boolean emptyOption) {
         return getColumnFieldList(fieldList, new ArrayList<>(), object, nullOption, emptyOption);
     }
 
@@ -749,7 +748,7 @@ public class JooqUtils {
      * @param addFieldLists 추가 할 리스트 기존 동일항목이 있으면 제거하고 뒤에 추가
      * @return
      */
-    public static List<Field> getColumnFieldList(Field<?>[] fieldArray, Object object, Field<?>... addFieldLists) {
+    public static List<Field<?>> getColumnFieldList(Field<?>[] fieldArray, Object object, Field<?> ... addFieldLists) {
         return getColumnFieldList(Lists.newArrayList(fieldArray), Lists.newArrayList(addFieldLists), object);
     }
 
@@ -762,7 +761,7 @@ public class JooqUtils {
      * @param addFieldLists 추가 할 리스트 기존 동일항목이 있으면 제거하고 뒤에 추가
      * @return
      */
-    public static List<Field> getColumnFieldList(List<Field> fieldList, Object object, Field<?>... addFieldLists) {
+    public static List<Field<?>> getColumnFieldList(List<Field<?>> fieldList, Object object, Field<?> ... addFieldLists) {
         return getColumnFieldList(fieldList, Lists.newArrayList(addFieldLists), object);
     }
 
@@ -775,7 +774,7 @@ public class JooqUtils {
      * @param object
      * @return
      */
-    public static List<Field> getColumnFieldList(Field<?>[] fieldArray, List<Field> addFieldList, Object object) {
+    public static List<Field<?>> getColumnFieldList(Field<?>[] fieldArray, List<Field<?>> addFieldList, Object object) {
         return getColumnFieldList(Lists.newArrayList(fieldArray), addFieldList, object);
     }
 
@@ -788,7 +787,7 @@ public class JooqUtils {
      * @param object
      * @return
      */
-    public static List<Field> getColumnFieldList(List<Field> fieldList, List<Field> addFieldList, Object object) {
+    public static List<Field<?>> getColumnFieldList(List<Field<?>> fieldList, List<Field<?>> addFieldList, Object object) {
         return getColumnFieldList(fieldList, addFieldList, object, DEFAULT_NULL_OPTION, DEFAULT_EMPTY_OPTION);
     }
 
@@ -801,7 +800,7 @@ public class JooqUtils {
      * @param object
      * @return
      */
-    public static List<Field> getColumnFieldList(Field<?>[] fieldArray, List<Field> addFieldList, Object object, boolean nullOption, boolean emptyOption) {
+    public static List<Field<?>> getColumnFieldList(Field<?>[] fieldArray, List<Field<?>> addFieldList, Object object, boolean nullOption, boolean emptyOption) {
         return getColumnFieldList(Lists.newArrayList(fieldArray), addFieldList, object, nullOption, emptyOption);
     }
 
@@ -815,7 +814,7 @@ public class JooqUtils {
      * @param addFieldLists 추가 할 리스트 기존 동일항목이 있으면 제거하고 뒤에 추가
      * @return
      */
-    public static List<Field> getColumnFieldList(Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption, Field<?>... addFieldLists) {
+    public static List<Field<?>> getColumnFieldList(Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption, Field<?> ... addFieldLists) {
         return getColumnFieldList(Lists.newArrayList(fieldArray), Lists.newArrayList(addFieldLists), object, nullOption, emptyOption);
     }
 
@@ -829,7 +828,7 @@ public class JooqUtils {
      * @param addFieldLists 추가 할 리스트 기존 동일항목이 있으면 제거하고 뒤에 추가
      * @return
      */
-    public static List<Field> getColumnFieldList(List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption, Field<?>... addFieldLists) {
+    public static List<Field<?>> getColumnFieldList(List<Field<?>> fieldList, Object object, boolean nullOption, boolean emptyOption, Field<?> ... addFieldLists) {
         return getColumnFieldList(fieldList, Lists.newArrayList(addFieldLists), object, nullOption, emptyOption);
     }
 
@@ -843,11 +842,11 @@ public class JooqUtils {
      * @param emptyOption true: null 허용, false: null 미허용
      * @return
      */
-    public static List<Field> getColumnFieldList(List<Field> fieldList, List<Field> addFieldList, Object object, boolean nullOption, boolean emptyOption) {
+    public static List<Field<?>> getColumnFieldList(List<Field<?>> fieldList, List<Field<?>> addFieldList, Object object, boolean nullOption, boolean emptyOption) {
         if(object == null) return null;
         if(object instanceof List) return null;
 
-        List<Field> resultList = new ArrayList<>();
+        List<Field<?>> resultList = new ArrayList<>();
 
         if(fieldList != null && Objects.nonNull(object)) {
             for (Field field : fieldList) {
@@ -874,7 +873,7 @@ public class JooqUtils {
      * 필드리스트 셋팅 후 가져오기
      * @return
      */
-    public static List<Field> getFieldList(Field<?>[] fieldArray){
+    public static List<Field<?>> getFieldList(Field<?>[] fieldArray){
         return getFieldList(Lists.newArrayList(fieldArray), new ArrayList<>());
     }
 
@@ -882,7 +881,7 @@ public class JooqUtils {
      * 필드리스트 셋팅 후 가져오기
      * @return
      */
-    public static List<Field> getFieldList(Field<?>[] fieldArray, Field<?>... fields){
+    public static List<Field<?>> getFieldList(Field<?>[] fieldArray, Field<?> ... fields){
         return getFieldList(Lists.newArrayList(fieldArray), Lists.newArrayList(fields));
     }
 
@@ -890,7 +889,7 @@ public class JooqUtils {
      * 필드리스트 셋팅 후 가져오기
      * @return
      */
-    public static List<Field> getFieldList(Field<?>[] fieldArray, List<Field> outList){
+    public static List<Field<?>> getFieldList(Field<?>[] fieldArray, List<Field<?>> outList){
         return getFieldList(Lists.newArrayList(fieldArray), outList);
     }
 
@@ -898,7 +897,7 @@ public class JooqUtils {
      * 필드리스트 셋팅 후 가져오기
      * @return
      */
-    public static List<Field> getFieldList(List<Field> inList){
+    public static List<Field<?>> getFieldList(List<Field<?>> inList){
         return getFieldList(inList, new ArrayList<>());
     }
 
@@ -906,7 +905,7 @@ public class JooqUtils {
      * 필드리스트 셋팅 후 가져오기
      * @return
      */
-    public static List<Field> getFieldList(List<Field> inList, Field<?>... fields){
+    public static List<Field<?>> getFieldList(List<Field<?>> inList, Field<?> ... fields){
         return getFieldList(inList, Lists.newArrayList(fields));
     }
 
@@ -916,10 +915,10 @@ public class JooqUtils {
      * @param outList
      * @return
      */
-    public static List<Field> getFieldList(List<Field> inList, List<Field> outList) {
+    public static List<Field<?>> getFieldList(List<Field<?>> inList, List<Field<?>> outList) {
         if(ListUtils.emptyIfNull(inList).isEmpty()) return null;
 
-        List<Field> fieldList = new ArrayList<>();
+        List<Field<?>> fieldList = new ArrayList<>();
         fieldList.addAll(inList);
 
         if(!ListUtils.emptyIfNull(outList).isEmpty())
@@ -933,7 +932,7 @@ public class JooqUtils {
      * @param addFieldLists
      * @return
      */
-    public static List<Field> addAllFieldList(Field<?>[] fieldArray, Field<?>... addFieldLists) {
+    public static List<Field<?>> addAllFieldList(Field<?>[] fieldArray, Field<?> ... addFieldLists) {
         return addAllFieldList(Lists.newArrayList(fieldArray), Lists.newArrayList(addFieldLists));
     }
 
@@ -943,7 +942,7 @@ public class JooqUtils {
      * @param add
      * @return
      */
-    public static List<Field> addAllFieldList(Field<?>[] fieldArray, List<Field> add) {
+    public static List<Field<?>> addAllFieldList(Field<?>[] fieldArray, List<Field<?>> add) {
         return addAllFieldList(Lists.newArrayList(fieldArray), add);
     }
 
@@ -953,7 +952,7 @@ public class JooqUtils {
      * @param addFieldLists
      * @return
      */
-    public static List<Field> addAllFieldList(List<Field> original, Field<?>... addFieldLists) {
+    public static List<Field<?>> addAllFieldList(List<Field<?>> original, Field<?> ... addFieldLists) {
         return addAllFieldList(original, Lists.newArrayList(addFieldLists));
     }
 
@@ -963,13 +962,13 @@ public class JooqUtils {
      * @param add
      * @return
      */
-    public static List<Field> addAllFieldList(List<Field> original, List<Field> add) {
+    public static List<Field<?>> addAllFieldList(List<Field<?>> original, List<Field<?>> add) {
         original = ListUtils.emptyIfNull(original);
         add = ListUtils.emptyIfNull(add);
 
         if(original.isEmpty() && add.isEmpty()) return null;
 
-        List<Field> fieldList = new ArrayList<>();
+        List<Field<?>> fieldList = new ArrayList<>();
         fieldList.addAll(original);
         fieldList.addAll(add);
 
@@ -984,7 +983,7 @@ public class JooqUtils {
      * @param object 적용할 object
      * @return
      */
-    public static List<Field> setAliasFieldList(Field<?>[] fieldArray, Object object) {
+    public static List<Field<?>> setAliasFieldList(Field<?>[] fieldArray, Object object) {
         return setAliasFieldList(Lists.newArrayList(fieldArray), new ArrayList<>(), object, DEFAULT_NULL_OPTION, DEFAULT_EMPTY_OPTION, DEFAULT_IP_OPTION);
     }
 
@@ -995,7 +994,7 @@ public class JooqUtils {
      * @param object 적용할 object
      * @return
      */
-    public static List<Field> setAliasFieldList(List<Field> fieldList, Object object) {
+    public static List<Field<?>> setAliasFieldList(List<Field<?>> fieldList, Object object) {
         return setAliasFieldList(fieldList, new ArrayList<>(), object, DEFAULT_NULL_OPTION, DEFAULT_EMPTY_OPTION, DEFAULT_IP_OPTION);
     }
 
@@ -1007,7 +1006,7 @@ public class JooqUtils {
      * @param addFieldLists 추가 할 리스트 기존 동일항목이 있으면 제거하고 뒤에 추가
      * @return
      */
-    public static List<Field> setAliasFieldList(Field<?>[] fieldArray, Object object, Field<?>... addFieldLists) {
+    public static List<Field<?>> setAliasFieldList(Field<?>[] fieldArray, Object object, Field<?> ... addFieldLists) {
         return setAliasFieldList(Lists.newArrayList(fieldArray), Lists.newArrayList(addFieldLists), object);
     }
 
@@ -1019,7 +1018,7 @@ public class JooqUtils {
      * @param object 적용할 object
      * @return
      */
-    public static List<Field> setAliasFieldList(Field<?>[] fieldArray, List<Field> addFieldList, Object object) {
+    public static List<Field<?>> setAliasFieldList(Field<?>[] fieldArray, List<Field<?>> addFieldList, Object object) {
         return setAliasFieldList(Lists.newArrayList(fieldArray), addFieldList, object);
     }
 
@@ -1031,7 +1030,7 @@ public class JooqUtils {
      * @param addFieldLists 추가 할 리스트 기존 동일항목이 있으면 제거하고 뒤에 추가
      * @return
      */
-    public static List<Field> setAliasFieldList(List<Field> fieldList, Object object, Field<?>... addFieldLists) {
+    public static List<Field<?>> setAliasFieldList(List<Field<?>> fieldList, Object object, Field<?> ... addFieldLists) {
         return setAliasFieldList(fieldList, Lists.newArrayList(addFieldLists), object);
     }
 
@@ -1043,7 +1042,7 @@ public class JooqUtils {
      * @param object 적용할 object
      * @return
      */
-    public static List<Field> setAliasFieldList(List<Field> fieldList, List<Field> addFieldList, Object object) {
+    public static List<Field<?>> setAliasFieldList(List<Field<?>> fieldList, List<Field<?>> addFieldList, Object object) {
         return setAliasFieldList(fieldList, addFieldList, object, DEFAULT_NULL_OPTION, DEFAULT_EMPTY_OPTION, DEFAULT_IP_OPTION);
     }
 
@@ -1056,7 +1055,7 @@ public class JooqUtils {
      * @param emptyOption true: empty 허용, false: empty 미허용
      * @return
      */
-    public static List<Field> setAliasFieldList(List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption) {
+    public static List<Field<?>> setAliasFieldList(List<Field<?>> fieldList, Object object, boolean nullOption, boolean emptyOption) {
         return setAliasFieldList(fieldList, new ArrayList<>(), object, nullOption, emptyOption, DEFAULT_IP_OPTION);
     }
 
@@ -1069,7 +1068,7 @@ public class JooqUtils {
      * @param emptyOption true: empty 허용, false: empty 미허용
      * @return
      */
-    public static List<Field> setAliasFieldList(Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption) {
+    public static List<Field<?>> setAliasFieldList(Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption) {
         return setAliasFieldList(Lists.newArrayList(fieldArray), new ArrayList<>(), object, nullOption, emptyOption, DEFAULT_IP_OPTION);
     }
 
@@ -1081,7 +1080,7 @@ public class JooqUtils {
      * @param addFieldLists 추가 할 리스트 기존 동일항목이 있으면 제거하고 뒤에 추가
      * @return
      */
-    public static List<Field> setAliasFieldList(Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption, Field<?>... addFieldLists) {
+    public static List<Field<?>> setAliasFieldList(Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption, Field<?> ... addFieldLists) {
         return setAliasFieldList(Lists.newArrayList(fieldArray), Lists.newArrayList(addFieldLists), object, nullOption, emptyOption, DEFAULT_IP_OPTION);
     }
 
@@ -1093,7 +1092,7 @@ public class JooqUtils {
      * @param object 적용할 object
      * @return
      */
-    public static List<Field> setAliasFieldList(Field<?>[] fieldArray, List<Field> addFieldList, Object object, boolean nullOption, boolean emptyOption) {
+    public static List<Field<?>> setAliasFieldList(Field<?>[] fieldArray, List<Field<?>> addFieldList, Object object, boolean nullOption, boolean emptyOption) {
         return setAliasFieldList(Lists.newArrayList(fieldArray), addFieldList, object, nullOption, emptyOption, DEFAULT_IP_OPTION);
     }
 
@@ -1105,7 +1104,7 @@ public class JooqUtils {
      * @param addFieldLists 추가 할 리스트 기존 동일항목이 있으면 제거하고 뒤에 추가
      * @return
      */
-    public static List<Field> setAliasFieldList(List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption, Field<?>... addFieldLists) {
+    public static List<Field<?>> setAliasFieldList(List<Field<?>> fieldList, Object object, boolean nullOption, boolean emptyOption, Field<?> ... addFieldLists) {
         return setAliasFieldList(fieldList, Lists.newArrayList(addFieldLists), object, nullOption, emptyOption, DEFAULT_IP_OPTION);
     }
 
@@ -1119,7 +1118,7 @@ public class JooqUtils {
      * @param emptyOption true: empty 허용, false: empty 미허용
      * @return
      */
-    public static List<Field> setAliasFieldList(List<Field> fieldList, List<Field> addFieldList, Object object, boolean nullOption, boolean emptyOption) {
+    public static List<Field<?>> setAliasFieldList(List<Field<?>> fieldList, List<Field<?>> addFieldList, Object object, boolean nullOption, boolean emptyOption) {
         return setAliasFieldList(fieldList, addFieldList, object, nullOption, emptyOption, DEFAULT_IP_OPTION);
     }
 
@@ -1131,7 +1130,7 @@ public class JooqUtils {
      * @param addFieldLists 추가 할 리스트 기존 동일항목이 있으면 제거하고 뒤에 추가
      * @return
      */
-    public static List<Field> setAliasFieldList(Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption, boolean ipOption, Field<?>... addFieldLists) {
+    public static List<Field<?>> setAliasFieldList(Field<?>[] fieldArray, Object object, boolean nullOption, boolean emptyOption, boolean ipOption, Field<?> ... addFieldLists) {
         return setAliasFieldList(Lists.newArrayList(fieldArray), Lists.newArrayList(addFieldLists), object, nullOption, emptyOption, ipOption);
     }
 
@@ -1143,7 +1142,7 @@ public class JooqUtils {
      * @param object 적용할 object
      * @return
      */
-    public static List<Field> setAliasFieldList(Field<?>[] fieldArray, List<Field> addFieldList, Object object, boolean nullOption, boolean emptyOption, boolean ipOption) {
+    public static List<Field<?>> setAliasFieldList(Field<?>[] fieldArray, List<Field<?>> addFieldList, Object object, boolean nullOption, boolean emptyOption, boolean ipOption) {
         return setAliasFieldList(Lists.newArrayList(fieldArray), addFieldList, object, nullOption, emptyOption, ipOption);
     }
 
@@ -1155,7 +1154,7 @@ public class JooqUtils {
      * @param addFieldLists 추가 할 리스트 기존 동일항목이 있으면 제거하고 뒤에 추가
      * @return
      */
-    public static List<Field> setAliasFieldList(List<Field> fieldList, Object object, boolean nullOption, boolean emptyOption, boolean ipOption, Field<?>... addFieldLists) {
+    public static List<Field<?>> setAliasFieldList(List<Field<?>> fieldList, Object object, boolean nullOption, boolean emptyOption, boolean ipOption, Field<?> ... addFieldLists) {
         return setAliasFieldList(fieldList, Lists.newArrayList(addFieldLists), object, nullOption, emptyOption, ipOption);
     }
 
@@ -1169,9 +1168,9 @@ public class JooqUtils {
      * @param ipOption true: IP 옵션 적용, false: IP 옵션 미적용
      * @return
      */
-    public static List<Field> setAliasFieldList(List<Field> fieldList, List<Field> addFieldList, Object object, boolean nullOption, boolean emptyOption, boolean ipOption ){
+    public static List<Field<?>> setAliasFieldList(List<Field<?>> fieldList, List<Field<?>> addFieldList, Object object, boolean nullOption, boolean emptyOption, boolean ipOption ){
 
-        List<Field> aliasFieldList = new ArrayList<>();
+        List<Field<?>> aliasFieldList = new ArrayList<>();
 
         if(fieldList != null && Objects.nonNull(object)) {
             for (Field field : fieldList) {
@@ -1210,7 +1209,7 @@ public class JooqUtils {
      * @param field
      * @return
      */
-    public static Field<String> setDateTimeFormat(Field field){
+    public static Field<String> setDateTimeFormat(Field<?> field){
         return setDateTimeFormat(field, null);
     }
 
@@ -1220,7 +1219,7 @@ public class JooqUtils {
      * @param field
      * @return
      */
-    public static Field<String> setDateTimeFormat(Field field, String format){
+    public static Field<String> setDateTimeFormat(Field<?> field, String format){
         if(StringUtils.isEmpty(format)) format = "%Y-%m-%d %H:%i:%s";
         return DSL.function("DATE_FORMAT", String.class,field,value(format)).as(field.getName());
     }
@@ -1282,7 +1281,7 @@ public class JooqUtils {
      * @param field
      * @return
      */
-    public static Field<String> getConvertIp(Field field) {
+    public static Field<String> getConvertIp(Field<?> field) {
         return DSL.function("INET_NTOA", String.class,field).as(field.getName());
     }
 
@@ -1291,7 +1290,7 @@ public class JooqUtils {
      * @param field
      * @return
      */
-    public static Field<Integer> getLastInsertId(Field field) {
+    public static Field<Integer> getLastInsertId(Field<?> field) {
         return DSL.function("LAST_INSERT_ID", Integer.class, field);
     }
 
@@ -1301,7 +1300,7 @@ public class JooqUtils {
      * @param table
      * @return
      */
-    public static <T extends Table> int getAutoIncrementValue(DSLContext dsl, T table) {
+    public static <T extends Table<?>> int getAutoIncrementValue(DSLContext dsl, T table) {
         return dsl.select(DSL.field("AUTO_INCREMENT"))
                 .from(INFORMATION_SCHEMA.TABLES)
                 .where(DSL.field("table_name").eq(table.getName()))
@@ -1324,7 +1323,7 @@ public class JooqUtils {
         return DSL.function("SUBSTRING_INDEX", String.class, field, DSL.val(splitStr, String.class), DSL.val(index, Integer.class));
     }
 
-    public static Field<String> funcZerofill(Field field, Integer length) {
+    public static Field<String> funcZerofill(Field<?> field, Integer length) {
         return DSL.function("LPAD", String.class, field, DSL.val(length, Integer.class), value("0")).as(field.getName());
     }
 
@@ -1356,7 +1355,7 @@ public class JooqUtils {
 
         String typeName;
 
-        for(Field<?> field : table.fields()) {
+        for(Field field : table.fields()) {
             objectList.add(apiModel ? "@ApiModelProperty(\""+field.getComment()+"\")" : "/** "+field.getComment() +" **/");
 
             typeName = field.getDataType().getType().getSimpleName();
@@ -1373,4 +1372,80 @@ public class JooqUtils {
 
         return objectList;
     }
+
+
+    /**
+     * Pageable 객체에서 Sort 필드를 추출해 테이블 필드 리스트에서 해당 필드를 찾아서 컬렉션 타입으로 리턴
+     * @param sortSpecification Pageable의 Sort 객체
+     * @param fields Sort 시킬 필드
+     * @return
+     */
+    public static Collection<SortField<?>> getSortFields(Sort sortSpecification, Field<?>... fields) {
+        return getSortFields(sortSpecification, Lists.newArrayList(fields));
+
+    }
+
+    /**
+     * Pageable 객체에서 Sort 필드를 추출해 테이블 필드 리스트에서 해당 필드를 찾아서 컬렉션 타입으로 리턴
+     * @param sortSpecification Pageable의 Sort 객체
+     * @param fieldList Sort 시킬 필드 리스트
+     * @return
+     */
+    public static Collection<SortField<?>> getSortFields(Sort sortSpecification, List<Field<?>> fieldList) {
+        Collection<SortField<?>> querySortFields = new ArrayList<>();
+
+        if (sortSpecification == null) {
+            return querySortFields;
+        }
+
+        for (Sort.Order specifiedField : sortSpecification) {
+            String sortFieldName = specifiedField.getProperty();
+            Sort.Direction sortDirection = specifiedField.getDirection();
+
+            Field<?> tableField = getObjectFieldToTableField(fieldList, sortFieldName);
+            SortField<?> querySortField = convertTableFieldToSortField(tableField, sortDirection);
+            querySortFields.add(querySortField);
+        }
+
+        return querySortFields;
+    }
+
+    /**
+     * 필드 리스트에서 Sort FieldName 과 동일한 Field 객체를 찾아서 반환
+     * @param fieldList
+     * @param sortFieldName
+     * @return
+     */
+    private static Field<?> getObjectFieldToTableField(List<Field<?>> fieldList, String sortFieldName) {
+
+        if(ListUtils.emptyIfNull(fieldList).isEmpty()) {
+            log.warn("fieldList is Empty :: fieldList = {}",fieldList);
+            return null;
+        }
+
+        if(StringUtils.isEmpty(sortFieldName)){
+            log.warn("sortFieldName is Empty :: sortFieldName = {}",sortFieldName);
+            return null;
+        }
+
+        return fieldList.stream()
+                .filter(data -> data.getName().equals(CommonUtils.toSnakeCase(sortFieldName)))
+                .findFirst().orElse(null);
+    }
+
+    /**
+     * SortDirection값을 반환된 Field에 적용하여 반환
+     * @param tableField
+     * @param sortDirection
+     * @return
+     */
+    private static SortField<?> convertTableFieldToSortField(Field<?> tableField, Sort.Direction sortDirection) {
+        if (sortDirection == Sort.Direction.ASC) {
+            return tableField.asc();
+        }
+        else {
+            return tableField.desc();
+        }
+    }
+
 }

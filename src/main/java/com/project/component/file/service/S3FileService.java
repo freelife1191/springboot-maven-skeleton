@@ -12,6 +12,9 @@ import com.amazonaws.services.s3.transfer.Upload;
 import com.project.component.file.domain.S3FileInfo;
 import com.project.component.file.domain.UploadFileResponse;
 import com.project.exception.file.FileAwsS3ProcessException;
+import com.project.exception.file.FileDeleteFailException;
+import com.project.exception.file.FileDownloadFailException;
+import com.project.exception.file.FileNotExistException;
 import com.project.utils.common.PathUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -242,6 +245,8 @@ public class S3FileService {
 
     /**
      * 파일다운로드
+     * 파일 다운로드 예외처리시 유의 사항
+     * FileDownloadFailException 임의 예외 발생시 Transactional 에 의해 롤백되지 않도록 noRollbackFor 처리 필요
      * @param path
      * @return
      */
@@ -268,12 +273,15 @@ public class S3FileService {
             errorMap.put("Fail Path:", PathUtils.getPath(path));
             errorMap = getErrorMap(errorMap, ase);
             log.error("[S3] Download Fail [download] :: AmazonServiceException :: {}",errorMap);
-
+            if(ase.getStatusCode() == HttpStatus.NOT_FOUND.value() && ase.getErrorCode().equals("NoSuchKey"))
+                throw new FileNotExistException(ase.getErrorCode());
+            throw new FileDownloadFailException(ase.getErrorCode());
         } catch (AmazonClientException ace) {
             //log.error("Caught an AmazonClientException: ");
             errorMap.put("Fail Path:", PathUtils.getPath(path));
             errorMap = getErrorMap(errorMap, ace);
             log.error("[S3] Download Fail [download] :: AmazonServiceException :: {}",errorMap);
+            throw new FileDownloadFailException(ace.getMessage());
         }
         return resource;
     }
@@ -304,6 +312,7 @@ public class S3FileService {
 
     /**
      * 파일 삭제
+     * 파일이 존재 하지 않는 경우에는 에러 메세지만 출력 그외 에러 발생시에는 에러발생시킴
      * @param path
      */
     public void delete(Path path) {
@@ -316,12 +325,14 @@ public class S3FileService {
             errorMap.put("Fail Path:", PathUtils.getPath(path));
             errorMap = getErrorMap(errorMap, ase);
             log.error("[S3] File Deleted Fail [delete] :: AmazonServiceException :: {}",errorMap);
-
+            if(!(ase.getStatusCode() == HttpStatus.NOT_FOUND.value() && ase.getErrorCode().equals("NoSuchKey")))
+                throw new FileDeleteFailException(ase.getErrorCode());
         } catch (AmazonClientException ace) {
             //log.error("Caught an AmazonClientException: ");
             errorMap.put("Fail Path:", PathUtils.getPath(path));
             errorMap = getErrorMap(errorMap, ace);
             log.error("[S3] File Deleted Fail [delete] :: AmazonServiceException :: {}",errorMap);
+            throw new FileDeleteFailException(ace.getMessage());
         }
     }
 
@@ -618,14 +629,14 @@ public class S3FileService {
     private Map<String, Object> getErrorMap(Map<String, Object> errorMap, Object error) {
         if(error instanceof AmazonServiceException) {
             AmazonServiceException ase = (AmazonServiceException) error;
-            errorMap.put("Error Message:", ase.getMessage());
-            errorMap.put("HTTP Status Code:", ase.getStatusCode());
-            errorMap.put("AWS Error Code:", ase.getErrorCode());
-            errorMap.put("Error Type:", ase.getErrorType());
-            errorMap.put("Request ID:", ase.getRequestId());
+            errorMap.put("Error Message", ase.getMessage());
+            errorMap.put("HTTP Status Code", ase.getStatusCode());
+            errorMap.put("AWS Error Code", ase.getErrorCode());
+            errorMap.put("Error Type", ase.getErrorType());
+            errorMap.put("Request ID", ase.getRequestId());
         } else if(error instanceof AmazonClientException) {
             AmazonClientException ace = (AmazonClientException) error;
-            errorMap.put("Error Message:",ace.getMessage());
+            errorMap.put("Error Message",ace.getMessage());
         }
         return errorMap;
     }

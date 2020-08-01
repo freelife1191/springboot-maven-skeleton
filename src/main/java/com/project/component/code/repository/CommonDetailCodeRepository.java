@@ -45,7 +45,7 @@ public class CommonDetailCodeRepository {
     public CommonDetailCode findByCode(Integer id, Integer code) {
         if(id == null || code ==null) return null;
 
-        List<Field> selectFieldList = getDetailCodeFieldList();
+        List<Field<?>> selectFieldList = getDetailCodeFieldList();
         selectFieldList.add(COMMON_DETAIL_CODE.CREATED_ID);
         selectFieldList.add(COMMON_DETAIL_CODE.CREATED_AT);
         selectFieldList.add(COMMON_DETAIL_CODE.UPDATED_ID);
@@ -72,7 +72,7 @@ public class CommonDetailCodeRepository {
         if(!ListUtils.emptyIfNull(detailCodes).isEmpty())
             condition.and(COMMON_DETAIL_CODE.DETAIL_CODE.in(detailCodes));
 
-        List<Field> selectFieldList = getDetailCodeFieldList();
+        List<Field<?>> selectFieldList = getDetailCodeFieldList();
         selectFieldList.add(COMMON_DETAIL_CODE.CREATED_ID);
         selectFieldList.add(COMMON_DETAIL_CODE.CREATED_AT);
         selectFieldList.add(COMMON_DETAIL_CODE.UPDATED_ID);
@@ -93,7 +93,7 @@ public class CommonDetailCodeRepository {
     public List<CommonDetailCode> selectCommonDetailCode(CommonDetailCode condition) {
         List<Condition> conditionList = JooqUtils.setConditionList(getDetailCodeFieldList(), condition);
 
-        List<Field> selectFieldList = getDetailCodeFieldList();
+        List<Field<?>> selectFieldList = getDetailCodeFieldList();
         selectFieldList.add(COMMON_DETAIL_CODE.CREATED_ID);
         selectFieldList.add(COMMON_DETAIL_CODE.CREATED_AT);
         selectFieldList.add(COMMON_DETAIL_CODE.UPDATED_ID);
@@ -136,12 +136,12 @@ public class CommonDetailCodeRepository {
         if (Objects.isNull(commonDetailCode.getCommonCodeId())) return 0;
 
         // 공통메인코드 하위의 코드이므로 이전 코드에 +1하는 형태로 등록(DETAIL_CODE는 제외처리)
-        List<Field> outFieldList = Lists.newArrayList(COMMON_DETAIL_CODE.DETAIL_CODE);
-        List<Field> insertFieldList = JooqUtils.getFieldList(getDetailCodeFieldList(), outFieldList);
+        List<Field<?>> outFieldList = Lists.newArrayList(COMMON_DETAIL_CODE.DETAIL_CODE);
+        List<Field<?>> insertFieldList = JooqUtils.getFieldList(getDetailCodeFieldList(), outFieldList);
 
-        InsertSetStep insert = dsl.insertInto(COMMON_DETAIL_CODE);
+        InsertSetStep<?> insert = dsl.insertInto(COMMON_DETAIL_CODE);
 
-        InsertSetMoreStep moreStep = insert
+        InsertSetMoreStep<?> moreStep = insert
                 .set(COMMON_DETAIL_CODE.DETAIL_CODE, getMaxCommonDetailCode(commonDetailCode.getCommonCodeId()));
 
         moreStep = JooqUtils.setInsertSetMoreStep(moreStep, insertFieldList, commonDetailCode);
@@ -163,14 +163,14 @@ public class CommonDetailCodeRepository {
 
         Integer detailCode = getMaxCommonDetailCode(id);
 
-        List<InsertSetMoreStep> valueList = new ArrayList<>();
+        List<InsertSetMoreStep<?>> valueList = new ArrayList<>();
         for(CommonDetailCode detailCodeDto : commonDetailCodeList) {
 
             resultDetailCodeList.add(detailCode);
             detailCodeDto.setDetailCode(detailCode);
 
-            InsertSetStep insert = dsl.insertInto(COMMON_DETAIL_CODE);
-            InsertSetMoreStep moreStep = JooqUtils.setInsertSetMoreStep(insert, getDetailCodeFieldList(), detailCodeDto, false, false);
+            InsertSetStep<?> insert = dsl.insertInto(COMMON_DETAIL_CODE);
+            InsertSetMoreStep<?> moreStep = JooqUtils.setInsertSetMoreStep(insert, getDetailCodeFieldList(), detailCodeDto, false, false);
             valueList.add(moreStep);
             detailCode++;
         }
@@ -209,11 +209,11 @@ public class CommonDetailCodeRepository {
     public int updateCommonDetailCode(CommonDetailCode commonDetailCode, CommonDetailCode condition) {
         if (CommonUtils.objectEmpty(commonDetailCode)) return 0;
 
-        List<Field> outFieldList = Lists.newArrayList(COMMON_DETAIL_CODE.COMMON_CODE_ID, COMMON_DETAIL_CODE.DETAIL_CODE);
-        List<Field> updateFieldList = JooqUtils.getFieldList(getDetailCodeFieldList(), outFieldList);
+        List<Field<?>> outFieldList = Lists.newArrayList(COMMON_DETAIL_CODE.COMMON_CODE_ID, COMMON_DETAIL_CODE.DETAIL_CODE);
+        List<Field<?>> updateFieldList = JooqUtils.getFieldList(getDetailCodeFieldList(), outFieldList);
 
-        UpdateSetFirstStep update = dsl.update(COMMON_DETAIL_CODE);
-        UpdateSetMoreStep moreStep = update
+        UpdateSetFirstStep<?> update = dsl.update(COMMON_DETAIL_CODE);
+        UpdateSetMoreStep<?> moreStep = update
                 .set(COMMON_DETAIL_CODE.UPDATED_AT, LocalDateTime.now());
 
         moreStep = JooqUtils.setUpdateSetMoreStep(moreStep, updateFieldList, commonDetailCode);
@@ -242,7 +242,7 @@ public class CommonDetailCodeRepository {
      * 공통 코드 JOIN Select Field 리스트
      * @return
      */
-    private List<Field> getSelectFieldList() {
+    private List<Field<?>> getSelectFieldList() {
         return Lists.newArrayList(
                 COMMON_CODE.ID.as("code.id"),
                 COMMON_CODE.GROUP_CODE.as("code.groupCode"),
@@ -275,7 +275,7 @@ public class CommonDetailCodeRepository {
      * 공통 메인 코드 Field 리스트
      * @return
      */
-    private List<Field> getCodeFieldList() {
+    private List<Field<?>> getCodeFieldList() {
         return Lists.newArrayList(
                 COMMON_CODE.ID,
                 COMMON_CODE.GROUP_CODE,
@@ -296,7 +296,7 @@ public class CommonDetailCodeRepository {
      * 공통 상세 코드 Field 리스트
      * @return
      */
-    private List<Field> getDetailCodeFieldList() {
+    private List<Field<?>> getDetailCodeFieldList() {
         return Lists.newArrayList(
                 COMMON_DETAIL_CODE.COMMON_CODE_ID,
                 COMMON_DETAIL_CODE.DETAIL_CODE,

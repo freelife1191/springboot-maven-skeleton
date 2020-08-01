@@ -19,7 +19,7 @@ import lombok.ToString;
 @ApiModel("샘플 Json 응답 객체") // 모델명
 public class ResJsonSample extends JsonSample {
 
-    @ApiModelProperty("취미")
+    @ApiModelProperty(value = "취미", position = 8)
     private Hobby hobby;
 
     public ResJsonSample(ReqJsonSample reqJsonSample) {

@@ -25,7 +25,7 @@ import javax.validation.constraints.NotNull;
 @JsonInclude(Include.ALWAYS)
 public class ReqJsonSample extends JsonSample {
 
-    @ApiModelProperty("취미")
+    @ApiModelProperty(value = "취미", position = 8)
     private Hobby hobby;
 
     @Builder

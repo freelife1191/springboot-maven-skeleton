@@ -14,9 +14,9 @@ import org.springframework.web.multipart.MultipartFile;
 @ToString(callSuper = true)
 @ApiModel("파일 업로드 요청 객체")
 public class ReqFileSample extends ReqJsonFileSample {
-    @ApiModelProperty("업로드 단건파일")
+    @ApiModelProperty(value = "업로드 단건파일", position = 3)
     private MultipartFile file;
-    @ApiModelProperty("업로드 다중파일")
+    @ApiModelProperty(value = "업로드 다중파일", position = 4)
     private MultipartFile[] files;
 
     @Builder

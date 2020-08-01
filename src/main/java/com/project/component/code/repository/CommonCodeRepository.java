@@ -38,7 +38,7 @@ public class CommonCodeRepository {
     public CommonCode findById(Integer id) {
         if(Objects.isNull(id)) return null;
 
-        List<Field> selectFieldList = getFieldList();
+        List<Field<?>> selectFieldList = getFieldList();
         selectFieldList.add(COMMON_CODE.CREATED_ID);
         selectFieldList.add(COMMON_CODE.CREATED_AT);
         selectFieldList.add(COMMON_CODE.UPDATED_ID);
@@ -59,7 +59,7 @@ public class CommonCodeRepository {
     public List<CommonCode> selectCommonCode(CommonCode condition) {
         List<Condition> conditionList = JooqUtils.setConditionList(getFieldList(), condition);
 
-        List<Field> selectFieldList = getFieldList();
+        List<Field<?>> selectFieldList = getFieldList();
         selectFieldList.add(COMMON_CODE.CREATED_ID);
         selectFieldList.add(COMMON_CODE.CREATED_AT);
         selectFieldList.add(COMMON_CODE.UPDATED_ID);
@@ -79,17 +79,17 @@ public class CommonCodeRepository {
     public int insertCommonCode(CommonCode commonCode) {
         if(CommonUtils.objectEmpty(commonCode)) return 0;
 
-        List<Field> selectFieldList = getFieldList();
+        List<Field<?>> selectFieldList = getFieldList();
         selectFieldList.add(COMMON_CODE.CREATED_ID);
         selectFieldList.add(COMMON_CODE.CREATED_AT);
         selectFieldList.add(COMMON_CODE.UPDATED_ID);
         selectFieldList.add(COMMON_CODE.UPDATED_AT);
 
-        List<Field> fieldList = JooqUtils.getFieldList(getFieldList(), Lists.newArrayList(COMMON_CODE.CODE));
+        List<Field<?>> fieldList = JooqUtils.getFieldList(getFieldList(), Lists.newArrayList(COMMON_CODE.CODE));
 
-        InsertSetStep insert = dsl.insertInto(COMMON_CODE);
+        InsertSetStep<?> insert = dsl.insertInto(COMMON_CODE);
 
-        InsertSetMoreStep moreStep = insert
+        InsertSetMoreStep<?> moreStep = insert
                 .set(COMMON_CODE.CODE, getMaxCommonCode(commonCode.getGroupCode()));
 
         moreStep = JooqUtils.setInsertSetMoreStep(moreStep, fieldList, commonCode, false, false);
@@ -127,11 +127,11 @@ public class CommonCodeRepository {
     public int updateCommonCode(CommonCode commonCode, CommonCode condition) {
         if(CommonUtils.objectEmpty(commonCode)) return 0;
 
-        List<Field> outFieldList = Lists.newArrayList(COMMON_CODE.ID);
-        List<Field> updateFieldList = JooqUtils.getFieldList(getFieldList(), outFieldList);
+        List<Field<?>> outFieldList = Lists.newArrayList(COMMON_CODE.ID);
+        List<Field<?>> updateFieldList = JooqUtils.getFieldList(getFieldList(), outFieldList);
 
-        UpdateSetFirstStep update = dsl.update(COMMON_CODE);
-        UpdateSetMoreStep moreStep = update
+        UpdateSetFirstStep<?> update = dsl.update(COMMON_CODE);
+        UpdateSetMoreStep<?> moreStep = update
                 .set(COMMON_CODE.UPDATED_AT, LocalDateTime.now());
 
         moreStep = JooqUtils.setUpdateSetMoreStep(moreStep, updateFieldList, commonCode);
@@ -157,7 +157,7 @@ public class CommonCodeRepository {
      * 공통 코드 Field 리스트
      * @return
      */
-    private List<Field> getFieldList() {
+    private List<Field<?>> getFieldList() {
         return Lists.newArrayList(
                 COMMON_CODE.ID,
                 COMMON_CODE.GROUP_CODE,

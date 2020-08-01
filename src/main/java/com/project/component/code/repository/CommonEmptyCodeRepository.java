@@ -32,14 +32,14 @@ public class CommonEmptyCodeRepository {
      */
     public int insertCommonEmptyCode(CommonEmptyCode emptyCode) {
 
-        List<Field> fieldList = Lists.newArrayList(
+        List<Field<?>> fieldList = Lists.newArrayList(
                 COMMON_EMPTY_CODE.GROUP_CODE,
                 COMMON_EMPTY_CODE.DETAIL_CODE,
                 COMMON_EMPTY_CODE.VALUE
         );
 
-        InsertSetStep insert = dsl.insertInto(COMMON_EMPTY_CODE);
-        InsertSetMoreStep moreStep = JooqUtils.setInsertSetMoreStep(insert, fieldList, emptyCode);
+        InsertSetStep<?> insert = dsl.insertInto(COMMON_EMPTY_CODE);
+        InsertSetMoreStep<?> moreStep = JooqUtils.setInsertSetMoreStep(insert, fieldList, emptyCode);
         moreStep.onDuplicateKeyIgnore();
 
         return moreStep.execute();

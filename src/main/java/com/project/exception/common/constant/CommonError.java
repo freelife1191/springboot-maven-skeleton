@@ -54,10 +54,14 @@ public enum CommonError {
     /** 파일 덮어쓰기 여부 확인 **/
     FileDuplicateException(ERR_PARAMS, "", true, Level.ERROR),
     /** 파일 등록 필수 파라메터 체크 **/
-    FileRequestParamRequiredException(ERR_PARAMS, "필수 파라메터 누락: ", true, Level.ERROR),
+    FileRequestParamRequiredException(ERR_PARAMS, "파일 업로드 필수 파라메터 누락: ", true, Level.ERROR),
     /** 파일 업로드 실패 에러 핸들러 **/
     FileUploadFailException(FILE_UPLOAD_FAILED, "파일 업로드 실패: 잠시 후 다시 시도 해주세요", false, Level.ERROR),
-    /** AWS S3 파일처리 실패 */
+    /** 파일 다운로드 실패 에러 핸들러 */
+    FileDownloadFailException(FILE_DOWNLOAD_FAILED, "파일 다운로드 실패: 존재 하지 않는 파일은 자동 삭제처리 됩니다 :: ", true, Level.ERROR),
+    /** 파일 삭제 실패 에러 핸들러 */
+    FileDeleteFailException(FILE_DELETE_FAILED, "파일 삭제 실패: 삭제중 오류가 발생했습니다 :: ", true, Level.ERROR),
+    /** TEMP 파일 적용 실패 */
     FileTempApplyFailException(FILE_TEMP_APPLY_FAILED, "TEMP 파일 적용 실패: 임시 파일 적용 정보를 확인하세요 :: ", true, Level.ERROR),
     /** 파일 경로 생성 실패 */
     FileNotMapePathException(FILE_NOT_MAKE_PATH, "파일 경로 생성 실패: 관리자에게 문의 하세요 :: ", true, Level.ERROR),
@@ -66,9 +70,9 @@ public enum CommonError {
     InvalidSignatureException(ERR_PARAMS, "JWT 토큰 복호화 ERROR: ", true, Level.ERROR),
 
     /** 파라메터 유효성 체크 실패 에러 핸들러 **/
-    ParameterValidationFailedException(ERR_PARAMS, "", true, Level.WARN),
+    ParameterValidationFailedException(ERR_PARAMS, "파라메터 유효성 검증 실패: ", true, Level.WARN),
     /** 사용자 정의 필수 파라메터 누락 에러 핸들러 **/
-    RequestParamRequiredException(ERR_PARAMS, "", true, Level.WARN),
+    RequestParamRequiredException(ERR_PARAMS, "필수 파라메터 누락: ", true, Level.WARN),
     /** Parameter Validation Error **/
     MissingServletRequestParameterException(ERR_PARAMS, "", true, Level.ERROR),
     /** Parameter Validation Error **/

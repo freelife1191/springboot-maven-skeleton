@@ -16,16 +16,16 @@ import lombok.*;
 @ApiModel("샘플 파일 업로드 응답 객체")
 public class ResFileSample {
 
-    @ApiModelProperty("이름")
+    @ApiModelProperty(value = "이름", position = 1)
     private String name;
-    @ApiModelProperty("전화번호")
+    @ApiModelProperty(value = "전화번호", position = 2)
     private String phoneNumber;
-    @ApiModelProperty("파일명")
+    @ApiModelProperty(value = "파일명", position = 3)
     private String fileName;
-    @ApiModelProperty("파일다운로드URL")
+    @ApiModelProperty(value = "파일다운로드URL", position = 4)
     private String fileDownloadUri;
-    @ApiModelProperty("파일타입")
+    @ApiModelProperty(value = "파일타입", position = 5)
     private String fileType;
-    @ApiModelProperty("파일사이즈")
+    @ApiModelProperty(value = "파일사이즈", position = 6)
     private long size;
 }

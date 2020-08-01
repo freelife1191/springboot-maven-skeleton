@@ -22,7 +22,7 @@ import javax.validation.constraints.NotNull;
 @ApiModel("샘플 GET 요청 RequestParam 객체") // 모델명
 public class ReqGetSample extends GetSample {
 
-    @ApiModelProperty("취미")
+    @ApiModelProperty(value = "취미", position = 8)
     private Hobby hobby;
 
     @Builder
