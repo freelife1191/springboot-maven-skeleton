@@ -4,7 +4,7 @@
 ## Spec
 - **SpringBoot 2.3.2.RELEASE**
 - **JAVA 14**
-- **ORM Jooq 3.13.3**
+- **ORM Jooq 3.13.4**
 - **Swagger 2.10.5**
 - **Build: Maven**
 

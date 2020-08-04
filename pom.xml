@@ -36,7 +36,7 @@
         <mysql-connector-java.version>8.0.21</mysql-connector-java.version>
         <poi.version>4.1.2</poi.version>
         <jxls-jexcel.version>1.0.9</jxls-jexcel.version>
-        <jooq.version>3.13.3</jooq.version>
+        <jooq.version>3.13.4</jooq.version>
         <jooq.skip>false</jooq.skip>
         <jooq.profile.skip>false</jooq.profile.skip>
         <jackson.version>2.11.1</jackson.version>

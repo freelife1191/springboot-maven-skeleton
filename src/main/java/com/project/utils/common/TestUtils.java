@@ -17,6 +17,10 @@ import java.util.Set;
  */
 @Slf4j
 public class TestUtils {
+
+    public static final String SNAKE = "snake";
+    public static final String CAMEL = "camel";
+
     /**
      * Sub Object 가 있다면 depth 만큼 더 돌면서 resultMap에 String 값을 추가
      * @param object
@@ -25,7 +29,7 @@ public class TestUtils {
      * @param prefix
      * @return
      */
-    private static Map<String, String> getSubObjectStrMap(Object object, Field field, Map<String, String> resultMap, String prefix) {
+    private static Map<String, String> getSubObjectStrMap(Object object, Field field, Map<String, String> resultMap, String prefix, String caseStrategy) {
         if (Objects.nonNull(object)) {
 
             boolean isEnum;
@@ -37,9 +41,16 @@ public class TestUtils {
 
             if(field.getType().getTypeName().startsWith("java") || isEnum) {
                 String fieldName = StringUtils.isNotEmpty(prefix) ? prefix + field.getName() : field.getName();
+                if(StringUtils.isNotEmpty(caseStrategy)) {
+                    switch (caseStrategy){
+                        case SNAKE -> fieldName = CommonUtils.toSnakeCase(fieldName);
+                        case CAMEL -> fieldName = CommonUtils.toCamelCase(fieldName);
+                        default -> throw new IllegalStateException("Unexpected value: " + caseStrategy);
+                    }
+                }
                 resultMap.put(fieldName, String.valueOf(object));
             }
-            else resultMap = getResultStrMap(object, resultMap, field.getName()+".");
+            else resultMap = getResultStrMap(object, resultMap, field.getName()+".", caseStrategy);
         }
         return resultMap;
     }
@@ -49,8 +60,8 @@ public class TestUtils {
      * @param object
      * @return
      */
-    private static Map<String, String> getResultStrMap(Object object){
-        return getResultStrMap(object, null, null);
+    private static Map<String, String> getResultStrMap(Object object, String prefix, String caseStrategy){
+        return getResultStrMap(object, null, prefix, caseStrategy);
     }
 
     /**
@@ -58,7 +69,7 @@ public class TestUtils {
      * @param object
      * @return
      */
-    private static Map<String, String> getResultStrMap(Object object, Map<String, String> resultMap, String prefix){
+    private static Map<String, String> getResultStrMap(Object object, Map<String, String> resultMap, String prefix, String caseStrategy){
 
         if(Objects.isNull(resultMap))
             resultMap = new LinkedHashMap<>();
@@ -73,10 +84,10 @@ public class TestUtils {
 
         // 기본 클래스 값 셋팅
         for(Field field : object.getClass().getDeclaredFields())
-            resultMap = getSubObjectStrMap(CommonUtils.getFieldObject(field, object), field, resultMap, prefix);
+            resultMap = getSubObjectStrMap(CommonUtils.getFieldObject(field, object), field, resultMap, prefix, caseStrategy);
         // 슈퍼 클래스 값 셋팅
         for(Field field : object.getClass().getSuperclass().getDeclaredFields())
-            resultMap = getSubObjectStrMap(CommonUtils.getFieldObject(field, object), field, resultMap, prefix);
+            resultMap = getSubObjectStrMap(CommonUtils.getFieldObject(field, object), field, resultMap, prefix, caseStrategy);
 
         return resultMap;
     }
@@ -84,12 +95,15 @@ public class TestUtils {
     /**
      * Object를 Map<String, String>으로 변환
      * @param object
+     * @param caseStrategy
      * @return
      * @throws IllegalAccessException
      */
-    public static Map<String, String> objectToStrMap(Object object) {
-        return getResultStrMap(object);
+    public static Map<String, String> objectToStrMap(Object object, String prefix, String caseStrategy) {
+        return getResultStrMap(object, prefix, caseStrategy);
     }
+
+
 
     /**
      * 테스트 코드에서 GET 타입을 테스트할때 Object를 MultiValueMap 타입으로 변경해줌
@@ -104,12 +118,42 @@ public class TestUtils {
      *         .andExpect(jsonPath("$.code", is(equalTo(100))))
      *         .andExpect(jsonPath("result").exists());
      *
-     * @param object
+     * @param object MultiValueMap으로 변환할 오브젝트
      * @return
      */
     public static MultiValueMap<String, String> objectToMultiValueMap(Object object) {
+        return objectToMultiValueMap(object, null, null);
+    }
+
+    /**
+     * 테스트 코드에서 GET 타입을 테스트할때 Object를 MultiValueMap 타입으로 변경해줌 (prefix)
+     *
+     * 이런식으로 prefix 값을 전달하면 GET 요청시 Parameter 변수에 prefix를 붙여서 셋팅함
+     * params(TestUtils.objectToMultiValueMap(condition, "condition.")
+     * condition.pklpChargeType=[2], condition.pklpLimitType=[4], condition.pklpLimitValue=[10], condition.pklpVehicleType=[A]}
+     *
+     * 예시)
+     * mockMvc.perform(get("/v1/api")
+     *         .contentType(MediaType.APPLICATION_JSON)
+     *         .params(TestUtils.objectToMultiValueMap(object))
+     *         .params(TestUtils.objectToMultiValueMap(condition, "condition.")))
+     *         .andExpect(status().isOk())
+     *         .andDo(print())
+     *         .andExpect(jsonPath("$.code", is(equalTo(100))))
+     *         .andExpect(jsonPath("result").exists());
+     *
+     * @param object MultiValueMap으로 변환할 오브젝트
+     * @param prefix Parameter 앞에 붙일 String 데이터
+     * @param caseStrategy 파라메터 Strategy
+     * @return
+     */
+    public static MultiValueMap<String, String> objectToMultiValueMap(Object object, String prefix, String caseStrategy) {
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
-        multiValueMap.setAll(objectToStrMap(object));
+        multiValueMap.setAll(objectToStrMap(object, prefix, caseStrategy));
         return multiValueMap;
+    }
+
+    public static MultiValueMap<String, String> objectToMultiValueMap(Object object, String prefix) {
+        return objectToMultiValueMap(object, prefix, null);
     }
 }
