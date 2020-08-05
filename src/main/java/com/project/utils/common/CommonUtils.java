@@ -26,12 +26,32 @@ public class CommonUtils {
         for(Field field : object.getClass().getDeclaredFields())
             resultMap.put(field.getName(), getFieldObject(field, object));
 
-        // 슈퍼 클래스 값 셋팅
-        for(Field field : object.getClass().getSuperclass().getDeclaredFields())
-            resultMap.put(field.getName(), getFieldObject(field, object));
+        int i = 0;
+        // 슈퍼 클래스 값이 있을 때까지 반복
+        Class<?> superClassMapping = getSuperClassMapping(object.getClass());
+        while (Objects.nonNull(superClassMapping)) {
+            for(Field field : superClassMapping.getDeclaredFields())
+                resultMap.put(field.getName(), getFieldObject(field, object));
+            superClassMapping = getSuperClassMapping(superClassMapping);
+            if( i >= 100) break;
+            i++;
+        }
 
         return resultMap;
     }
+
+    /**
+     * 현재 클래스의 슈퍼클래스 가져오기
+     * @param clz
+     * @param <T>
+     * @return
+     */
+    private static <T> Class<? super T> getSuperClassMapping(Class<T> clz) {
+        if(Objects.isNull(clz.getSuperclass()))
+            return null;
+        return clz.getSuperclass();
+    }
+
 
     /**
      * Field 허용 처리 및 Object 값 받아오기
@@ -121,17 +141,25 @@ public class CommonUtils {
             }
         }
 
-        for(Field field : object.getClass().getSuperclass().getDeclaredFields()) {
-            Object fieldObject = getFieldObject(field, object);
-            if(fieldObject.getClass().getTypeName().startsWith("java.lang") ||
-                    fieldObject.getClass().getTypeName().startsWith("java.time")) {
-                resultMap.put(field.getName(), String.valueOf(fieldObject));
-            }else{
-                for (Field subField : fieldObject.getClass().getDeclaredFields()) {
-                    Object subFieldObject = getFieldObject(subField, fieldObject);
-                    resultMap.put(field.getName()+"."+subField.getName(), String.valueOf(subFieldObject));
+        int i = 0;
+        // 슈퍼 클래스 값이 있을 때까지 반복
+        Class<?> superClassMapping = getSuperClassMapping(object.getClass());
+        while (Objects.nonNull(superClassMapping)) {
+            for (Field field : superClassMapping.getDeclaredFields()) {
+                Object fieldObject = getFieldObject(field, object);
+                if (fieldObject.getClass().getTypeName().startsWith("java.lang") ||
+                        fieldObject.getClass().getTypeName().startsWith("java.time")) {
+                    resultMap.put(field.getName(), String.valueOf(fieldObject));
+                } else {
+                    for (Field subField : fieldObject.getClass().getDeclaredFields()) {
+                        Object subFieldObject = getFieldObject(subField, fieldObject);
+                        resultMap.put(field.getName() + "." + subField.getName(), String.valueOf(subFieldObject));
+                    }
                 }
             }
+            superClassMapping = getSuperClassMapping(superClassMapping);
+            if( i >= 100) break;
+            i++;
         }
         return resultMap;
     }
@@ -163,12 +191,20 @@ public class CommonUtils {
             else if (field.getName().equals(fieldName))
                 return fieldObject;
         }
-        for (Field field : object.getClass().getSuperclass().getDeclaredFields()) {
-            Object fieldObject = getFieldObject(field, object);
-            if(!StringUtils.isEmpty(arrfieldName) && field.getName().equals(arrfieldName))
-                return getFieldNameEqualsObject(fieldObject, subFieldName);
-            else if (field.getName().equals(fieldName))
-                return fieldObject;
+        int i = 0;
+        // 슈퍼 클래스 값이 있을 때까지 반복
+        Class<?> superClassMapping = getSuperClassMapping(object.getClass());
+        while (Objects.nonNull(superClassMapping)) {
+            for (Field field : superClassMapping.getDeclaredFields()) {
+                Object fieldObject = getFieldObject(field, object);
+                if(!StringUtils.isEmpty(arrfieldName) && field.getName().equals(arrfieldName))
+                    return getFieldNameEqualsObject(fieldObject, subFieldName);
+                else if (field.getName().equals(fieldName))
+                    return fieldObject;
+            }
+            superClassMapping = getSuperClassMapping(superClassMapping);
+            if( i >= 100) break;
+            i++;
         }
         return null;
     }
@@ -185,9 +221,17 @@ public class CommonUtils {
             if(field.getName().equals(fieldName))
                 return getFieldObject(field, object);
         }
-        for (Field field : object.getClass().getSuperclass().getDeclaredFields()) {
-            if(field.getName().equals(fieldName))
-                return getFieldObject(field, object);
+        int i = 0;
+        // 슈퍼 클래스 값이 있을 때까지 반복
+        Class<?> superClassMapping = getSuperClassMapping(object.getClass());
+        while (Objects.nonNull(superClassMapping)) {
+            for(Field field : superClassMapping.getDeclaredFields()) {
+                if(field.getName().equals(fieldName))
+                    return getFieldObject(field, object);
+            }
+            superClassMapping = getSuperClassMapping(superClassMapping);
+            if( i >= 100) break;
+            i++;
         }
         return null;
     }
@@ -236,12 +280,18 @@ public class CommonUtils {
             if (ValidationUtils.isEmpty(object, field.getName())) return new LinkedHashMap<>();
             resultMap.put(field.getName(), getFieldObject(field, object));
         }
-        // 슈퍼 클래스 값 셋팅
-        for(Field field : object.getClass().getSuperclass().getDeclaredFields()) {
-            if (ValidationUtils.isEmpty(object, field.getName())) return new LinkedHashMap<>();
-            resultMap.put(field.getName(), getFieldObject(field, object));
+        int i = 0;
+        // 슈퍼 클래스 값이 있을 때까지 반복
+        Class<?> superClassMapping = getSuperClassMapping(object.getClass());
+        while (Objects.nonNull(superClassMapping)) {
+            for(Field field : superClassMapping.getDeclaredFields()) {
+                if (ValidationUtils.isEmpty(object, field.getName())) return new LinkedHashMap<>();
+                resultMap.put(field.getName(), getFieldObject(field, object));
+            }
+            superClassMapping = getSuperClassMapping(superClassMapping);
+            if( i >= 100) break;
+            i++;
         }
-
         return resultMap;
     }
 
