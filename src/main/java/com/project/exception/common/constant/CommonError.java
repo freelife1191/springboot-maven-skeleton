@@ -95,6 +95,8 @@ public enum CommonError {
     ExcelReaderFileExtentionException(EXCEL_READER_FILE_ERROR, "엑셀 업로드는 [xlsx, xls] 확장자 파일만 처리가 가능합니다", false, Level.ERROR),
     /** 엑셀 업로드 시 캐치 하지 못한 그외 에러 **/
     ExcelReaderException(EXCEL_READER_ERROR, "엑셀 업로드 ERROR: ", true, Level.ERROR),
+    /** JSON 파싱 에러 **/
+    JsonMappingException(ERROR, "JSON 파싱 ERROR: ", true, Level.ERROR)
     ;
 
     private static Map<String, CommonError> nameToMap;

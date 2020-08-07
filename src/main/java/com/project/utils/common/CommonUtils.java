@@ -46,7 +46,7 @@ public class CommonUtils {
      * @param <T>
      * @return
      */
-    private static <T> Class<? super T> getSuperClassMapping(Class<T> clz) {
+    public static <T> Class<? super T> getSuperClassMapping(Class<T> clz) {
         if(Objects.isNull(clz.getSuperclass()))
             return null;
         return clz.getSuperclass();

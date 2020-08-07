@@ -5,6 +5,7 @@ package com.project.exception.common.handler;
  * 공통 Controller Exception Handler
  */
 
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.project.common.domain.CommonResult;
 import com.project.component.excel.service.ExcelReader;
 import com.project.exception.common.*;
@@ -61,8 +62,6 @@ public class CommonErrorHandler {
      * @throws Exception
      */
     @ExceptionHandler({
-            // HTTP 요청 에러
-            HttpMessageNotReadableException.class,
             // 지원되지 않는 HTTP METHOD 에러 핸들러
             HttpRequestMethodNotSupportedException.class,
 
@@ -206,6 +205,31 @@ public class CommonErrorHandler {
 
         ErrorUtils.errorWriter(CLASS_NAME, ERROR_MSG, errorMap, JsonUtils.toJson(resultMap)); //에러메세지 출력
         return new CommonResult<>(error.getResCode(), ERROR_MSG, resultMap);
+    }
+
+    /**
+     * HTTP 요청 에러
+     * @param e
+     * @return
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public CommonResult<Map<String, Object>> HttpMessageNotReadableException(Exception e, HttpServletRequest request, WebRequest webRequest) throws Exception {
+        // 공통에러상수 객체 셋팅
+        CommonError error = CommonError.getCommonError(e);
+
+        String ERROR_MSG = error.getMessage();
+
+        HttpMessageNotReadableException hm = (HttpMessageNotReadableException) e;
+        Throwable cause = hm.getCause();
+        if(cause instanceof JsonMappingException) {
+            JsonMappingException mapping = (JsonMappingException) cause;
+            ERROR_MSG = "JSON 파싱 ERROR: JSON 형식에 문제가 있어 Parsing에 실패 했습니다 :: "+mapping.getMessage();
+        }
+
+        errorMap = ErrorUtils.setErrorMap(request, webRequest, secretKey); // 에러 맵 기본 셋팅
+
+        ErrorUtils.errorWriter(CLASS_NAME, ERROR_MSG, errorMap, ERROR_MSG); //에러메세지 출력
+        return new CommonResult<>(error.getResCode(), ERROR_MSG, errorMap);
     }
 
     /**

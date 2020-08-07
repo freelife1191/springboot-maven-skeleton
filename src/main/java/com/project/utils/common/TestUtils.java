@@ -7,9 +7,10 @@ import org.springframework.util.MultiValueMap;
 
 import java.lang.reflect.Field;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * 테스트에서 사용하기 위한 유틸리티
@@ -29,7 +30,7 @@ public class TestUtils {
      * @param prefix
      * @return
      */
-    private static Map<String, String> getSubObjectStrMap(Object object, Field field, Map<String, String> resultMap, String prefix, String caseStrategy) {
+    private static Map<String, Object> getSubObjectMap(Object object, Field field, Map<String, Object> resultMap, String prefix, String caseStrategy) {
         if (Objects.nonNull(object)) {
 
             boolean isEnum;
@@ -48,9 +49,9 @@ public class TestUtils {
                         default -> throw new IllegalStateException("Unexpected value: " + caseStrategy);
                     }
                 }
-                resultMap.put(fieldName, String.valueOf(object));
+                resultMap.put(fieldName, object);
             }
-            else resultMap = getResultStrMap(object, resultMap, field.getName()+".", caseStrategy);
+            else resultMap = getResultMap(object, resultMap, field.getName()+".", caseStrategy);
         }
         return resultMap;
     }
@@ -60,8 +61,8 @@ public class TestUtils {
      * @param object
      * @return
      */
-    private static Map<String, String> getResultStrMap(Object object, String prefix, String caseStrategy){
-        return getResultStrMap(object, null, prefix, caseStrategy);
+    private static Map<String, Object> getResultMap(Object object, String prefix, String caseStrategy){
+        return getResultMap(object, null, prefix, caseStrategy);
     }
 
     /**
@@ -69,25 +70,31 @@ public class TestUtils {
      * @param object
      * @return
      */
-    private static Map<String, String> getResultStrMap(Object object, Map<String, String> resultMap, String prefix, String caseStrategy){
+    private static Map<String, Object> getResultMap(Object object, Map<String, Object> resultMap, String prefix, String caseStrategy){
 
         if(Objects.isNull(resultMap))
             resultMap = new LinkedHashMap<>();
 
         if(object instanceof Map) {
-            Set<String> keySet = ((Map) object).keySet();
-            for (String key: keySet) {
-                resultMap.put(key, String.valueOf(((Map) object).get(key)));
-            }
+            Map<String, Object> map = (Map<String, Object>) object;
+            for (String key: map.keySet())
+                resultMap.put(key, map.get(key));
             return resultMap;
         }
 
         // 기본 클래스 값 셋팅
         for(Field field : object.getClass().getDeclaredFields())
-            resultMap = getSubObjectStrMap(CommonUtils.getFieldObject(field, object), field, resultMap, prefix, caseStrategy);
-        // 슈퍼 클래스 값 셋팅
-        for(Field field : object.getClass().getSuperclass().getDeclaredFields())
-            resultMap = getSubObjectStrMap(CommonUtils.getFieldObject(field, object), field, resultMap, prefix, caseStrategy);
+            resultMap = getSubObjectMap(CommonUtils.getFieldObject(field, object), field, resultMap, prefix, caseStrategy);
+        int i = 0;
+        // 슈퍼 클래스 값이 있을 때까지 반복
+        Class<?> superClassMapping = CommonUtils.getSuperClassMapping(object.getClass());
+        while (Objects.nonNull(superClassMapping)) {
+            for(Field field : superClassMapping.getDeclaredFields())
+                resultMap = getSubObjectMap(CommonUtils.getFieldObject(field, object), field, resultMap, prefix, caseStrategy);
+            superClassMapping = CommonUtils.getSuperClassMapping(superClassMapping);
+            if( i >= 100) break;
+            i++;
+        }
 
         return resultMap;
     }
@@ -99,8 +106,8 @@ public class TestUtils {
      * @return
      * @throws IllegalAccessException
      */
-    public static Map<String, String> objectToStrMap(Object object, String prefix, String caseStrategy) {
-        return getResultStrMap(object, prefix, caseStrategy);
+    public static Map<String, Object> objectToMap(Object object, String prefix, String caseStrategy) {
+        return getResultMap(object, prefix, caseStrategy);
     }
 
 
@@ -149,7 +156,21 @@ public class TestUtils {
      */
     public static MultiValueMap<String, String> objectToMultiValueMap(Object object, String prefix, String caseStrategy) {
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
-        multiValueMap.setAll(objectToStrMap(object, prefix, caseStrategy));
+        Map<String, Object> objectMap = objectToMap(object, prefix, caseStrategy);
+        for (String key : objectMap.keySet()) {
+            Object value = objectMap.get(key);
+            if (value instanceof List) {
+                List<String> list = (List<String>) ((List) value).stream()
+                        .map(data -> String.valueOf(data))
+                        .collect(Collectors.toList());
+                multiValueMap.put(key, list);
+            }
+            else if(value instanceof Map)
+                multiValueMap.set(key, JsonUtils.toMapperJson(value));
+            else
+                multiValueMap.set(key, String.valueOf(value));
+        }
+
         return multiValueMap;
     }
 
