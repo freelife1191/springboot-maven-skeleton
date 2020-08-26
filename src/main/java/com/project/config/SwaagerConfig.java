@@ -18,12 +18,14 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import springfox.documentation.builders.*;
+import springfox.documentation.oas.annotations.EnableOpenApi;
 import springfox.documentation.schema.AlternateTypeRules;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.ResponseMessage;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 // import springfox.documentation.swagger2.annotations.EnableSwagger2;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import springfox.documentation.swagger2.annotations.EnableSwagger2WebMvc;
 
 import java.io.File;
@@ -43,10 +45,10 @@ import static com.google.common.collect.Lists.newArrayList;
  */
 @Configuration
 @Profile("!prod")
-/** Swagger 2.9.2 사용시 주석해제 */
-// @EnableSwagger2
-/** Swagger 3.0.0 SNAPSHOT 전용 설정 2.9.2 사용시 주석처리 */
-@EnableSwagger2WebMvc
+/** Swagger 2.10.5 사용시 주석해제 */
+@EnableSwagger2
+/** Swagger 3.0.0 전용 설정 2.10.5 사용시 주석처리 */
+@EnableOpenApi
 @RequiredArgsConstructor
 public class SwaagerConfig {
 

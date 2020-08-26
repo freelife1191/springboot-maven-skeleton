@@ -25,6 +25,16 @@
 - 공통 메인 코드 **API** 코드 및 테스트코드
 - 공통 상세 코드 **API** 코드 및 테스트코드
 
+## Swagger UI
+관련 정보 참조
+- springfox: https://github.com/springfox/springfox
+- springfox-demos: https://github.com/springfox/springfox-demos
+
+- Swagger UI URL: `/swagger-ui/index.html`
+    - ex) http://localhost:8080/swagger-ui/index.html
+
+`/swagger-ui.html` 입력시 `/swagger-ui/index.html` 로 리다이렉트 됨 
+
 ## local H2 DB 설정
 **local profile** 에 **H2 DB** 셋팅이 되어 있어 별도의 **DB** 셋팅 없이 
 **local profile**로 **Application** 실행시 **H2 DB** 가 생성되어 실행됨
