@@ -3,13 +3,12 @@ package com.project.component.code.domain;
 import com.project.component.code.packet.ReqCommonDetailCodeMod;
 import com.project.component.code.packet.ReqCommonDetailCodeRegist;
 import com.project.component.code.packet.ReqCommonDetailCodeRegistOne;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
 /**
+ * 공통 상세 코드 도메인
  * Created by KMS on 25/03/2020.
  */
 @Getter
@@ -18,39 +17,38 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @ToString
 @Builder
-@ApiModel("공통 상세 코드 도메인 객체")
 public class CommonDetailCode {
-    @ApiModelProperty("공통코드 ID")
+    /** 공통코드 ID */
     private Integer commonCodeId;
-    @ApiModelProperty("공통상세코드")
+    /** 공통상세코드 */
     private Integer detailCode;
-    @ApiModelProperty("공통상세코드 명")
+    /** 공통상세코드 명 */
     private String detailCodeNm;
-    @ApiModelProperty("공통상세코드 영문명")
+    /** 공통상세코드 영문명 */
     private String detailCodeEngNm;
-    @ApiModelProperty("공통상세코드 설명")
+    /** 공통상세코드 설명 */
     private String detailCodeDc;
-    @ApiModelProperty("정렬순서")
+    /** 정렬순서 */
     private Integer order;
-    @ApiModelProperty(value = "사용여부", example = "true")
+    /** 사용여부 */
     private Boolean enabled;
-    @ApiModelProperty("기타1")
+    /** 기타1 */
     private String etc1;
-    @ApiModelProperty("기타2")
+    /** 기타2 */
     private String etc2;
-    @ApiModelProperty("기타3")
+    /** 기타3 */
     private String etc3;
-    @ApiModelProperty("기타4")
+    /** 기타4 */
     private String etc4;
-    @ApiModelProperty("기타5")
+    /** 기타5 */
     private String etc5;
-    @ApiModelProperty("생성자")
+    /** 생성자 */
     private String createdId;
-    @ApiModelProperty("생성일시")
+    /** 생성일시 */
     private LocalDateTime createdAt;
-    @ApiModelProperty("수정자")
+    /** 수정자 */
     private String updatedId;
-    @ApiModelProperty("수정일시")
+    /** 수정일시 */
     private LocalDateTime updatedAt;
 
     /**

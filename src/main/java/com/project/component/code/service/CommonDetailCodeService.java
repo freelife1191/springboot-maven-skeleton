@@ -4,6 +4,7 @@ import com.project.common.domain.CommonResult;
 import com.project.component.code.domain.CommonCode;
 import com.project.component.code.domain.CommonDetailCode;
 import com.project.component.code.dto.CommonCodeDto;
+import com.project.component.code.packet.ReqCommonDetailCodeGET;
 import com.project.component.code.packet.ReqCommonDetailCodeMod;
 import com.project.component.code.packet.ReqCommonDetailCodeRegistMulti;
 import com.project.component.code.packet.ReqCommonDetailCodeRegistOne;
@@ -13,6 +14,8 @@ import com.project.exception.common.DataRegistrationFailedException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -81,12 +84,11 @@ public class CommonDetailCodeService {
 
     /**
      * 공통 상세 코드 리스트 조회
-     * @param commonDetailCode
+     * @param reqCommonDetailCodeGET
      * @return
      */
-    public CommonResult<List<CommonDetailCode>> selectCommonDetailCode(CommonDetailCode commonDetailCode) {
-        List<CommonDetailCode> commonDetailCodeList = detailCodeRepository.selectCommonDetailCode(commonDetailCode);
-        return new CommonResult<>(SUCCESS, SUCCESS.getMessage(), commonDetailCodeList);
+    public CommonResult<Page<CommonDetailCode>> selectCommonDetailCode(Pageable pageable, ReqCommonDetailCodeGET reqCommonDetailCodeGET) {
+        return new CommonResult<>(SUCCESS, SUCCESS.getMessage(), detailCodeRepository.selectCommonDetailCode(pageable, reqCommonDetailCodeGET));
     }
 
     /**

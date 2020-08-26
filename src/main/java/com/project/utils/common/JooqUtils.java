@@ -12,6 +12,7 @@ import org.jooq.impl.DSL;
 import org.springframework.data.domain.Sort;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.project.utils.common.constant.ConditionType.eq;
 import static org.jooq.impl.DSL.value;
@@ -1377,37 +1378,149 @@ public class JooqUtils {
     /**
      * Pageable 객체에서 Sort 필드를 추출해 테이블 필드 리스트에서 해당 필드를 찾아서 컬렉션 타입으로 리턴
      * @param sortSpecification Pageable의 Sort 객체
-     * @param fields Sort 시킬 필드
+     * @param sortFields Sort 가능한 필드 배열
      * @return
      */
-    public static Collection<SortField<?>> getSortFields(Sort sortSpecification, Field<?>... fields) {
-        return getSortFields(sortSpecification, Lists.newArrayList(fields));
+    public static Collection<SortField<?>> getSortFields(Sort sortSpecification, Field<?>... sortFields) {
+        return getSortFields(sortSpecification, Lists.newArrayList(sortFields));
 
     }
 
     /**
      * Pageable 객체에서 Sort 필드를 추출해 테이블 필드 리스트에서 해당 필드를 찾아서 컬렉션 타입으로 리턴
      * @param sortSpecification Pageable의 Sort 객체
-     * @param fieldList Sort 시킬 필드 리스트
+     * @param sortFieldList Sort 가능한 필드 리스트
      * @return
      */
-    public static Collection<SortField<?>> getSortFields(Sort sortSpecification, List<Field<?>> fieldList) {
-        Collection<SortField<?>> querySortFields = new ArrayList<>();
+    public static List<SortField<?>> getSortFields(Sort sortSpecification, List<Field<?>> sortFieldList) {
+        return getSortFields(new ArrayList<>(), sortSpecification, sortFieldList);
+    }
+
+    /**
+     * Pageable 객체에서 Sort 필드를 추출해 테이블 필드 리스트에서 해당 필드를 찾아서 컬렉션 타입으로 리턴
+     * 가장 우선순위가 높은 정렬 Field 리스트를 셋팅하려면 preSortFieldList를 셋팅하면됨
+     * @param preSortFieldList 가장 우선순위가 높은 preSortFieldList 객체
+     * @param sortSpecification Pageable의 Sort 객체
+     * @param sortFieldList Sort 가능한 필드 리스트
+     * @return
+     */
+    public static List<SortField<?>> getSortFields(List<SortField<?>> preSortFieldList, Sort sortSpecification, List<Field<?>> sortFieldList) {
+        if(ListUtils.emptyIfNull(preSortFieldList).isEmpty()) preSortFieldList = new ArrayList<>();
 
         if (sortSpecification == null) {
-            return querySortFields;
+            return preSortFieldList;
         }
 
         for (Sort.Order specifiedField : sortSpecification) {
             String sortFieldName = specifiedField.getProperty();
             Sort.Direction sortDirection = specifiedField.getDirection();
 
-            Field<?> tableField = getObjectFieldToTableField(fieldList, sortFieldName);
+            Field<?> tableField = getObjectFieldToTableField(sortFieldList, sortFieldName);
+            if(Objects.isNull(tableField))
+                return preSortFieldList;
             SortField<?> querySortField = convertTableFieldToSortField(tableField, sortDirection);
-            querySortFields.add(querySortField);
+            preSortFieldList.add(querySortField);
         }
 
-        return querySortFields;
+        return preSortFieldList;
+    }
+
+
+    /**
+     * SortFieldList 에서 sort 설정이 된 Field 를 제거
+     * @param sortFieldList
+     * @param outSortFields
+     * @return
+     */
+    public static List<Field<?>> setSortFieldList(List<Field<?>> sortFieldList, List<SortField<?>> outSortFields){
+        if(ListUtils.emptyIfNull(sortFieldList).isEmpty() || Objects.isNull(outSortFields)) return new ArrayList<>();
+
+        List<String> sortFieldNames = outSortFields.stream().map(SortField::getName).collect(Collectors.toList());
+
+        sortFieldList.removeIf(field -> sortFieldNames.contains(field.getName()));
+
+        return sortFieldList;
+    }
+
+    /**
+     * Pageable 에서 요청한 Sort 리스트에 기본 Sort 리스트를 추가
+     * 기본적으로 정렬하는 Field 의 경우 Pageable로 요청들어온 정렬 Field 보다 우선순위가 낮음
+     * sortDirection을 주지 않으면 기본으로 ASC 설정
+     * @param defaultSortFields 기본 정렬을 수행할 SortField 배열
+     * @return
+     */
+    public static List<SortField<?>> getDefaultSortFieldList(Field<?> ... defaultSortFields) {
+        return getDefaultSortFieldList(Lists.newArrayList(defaultSortFields), new ArrayList<>(), Sort.Direction.ASC);
+    }
+
+    /**
+     * Pageable 에서 요청한 Sort 리스트에 기본 Sort 리스트를 추가
+     * 기본적으로 정렬하는 Field 의 경우 Pageable로 요청들어온 정렬 Field 보다 우선순위가 낮음
+     * sortDirection을 주지 않으면 기본으로 ASC 설정
+     * 기본적으로 정렬하는 Field 의 경우 Pageable로 요청들어온 정렬 Field 보다 우선순위가 낮음
+     * @param sortDirection 정렬 Direction ASC(오름차순), DESC(내림차순)
+     * @param defaultSortFields 기본 정렬을 수행할 SortField 배열
+     * @return
+     */
+    public static List<SortField<?>> getDefaultSortFieldList(Sort.Direction sortDirection, Field<?> ... defaultSortFields) {
+        return getDefaultSortFieldList(Lists.newArrayList(defaultSortFields), new ArrayList<>(), sortDirection);
+    }
+
+    /**
+     * Pageable 에서 요청한 Sort 리스트에 기본 Sort 리스트를 추가
+     * 기본적으로 정렬하는 Field 의 경우 Pageable로 요청들어온 정렬 Field 보다 우선순위가 낮음
+     * sortDirection을 주지 않으면 기본으로 ASC 설정
+     * @param sortFields Pageable 을 통해 요청들어온 정렬 Field
+     * @param defaultSortFields 기본 정렬을 수행할 SortField 배열
+     * @return
+     */
+    public static List<SortField<?>> getDefaultSortFieldList(List<SortField<?>> sortFields, Field<?> ... defaultSortFields) {
+        return getDefaultSortFieldList(Lists.newArrayList(defaultSortFields), sortFields, Sort.Direction.ASC);
+    }
+
+    /**
+     * Pageable 에서 요청한 Sort 리스트에 기본 Sort 리스트를 추가
+     * 기본적으로 정렬하는 Field 의 경우 Pageable로 요청들어온 정렬 Field 보다 우선순위가 낮음
+     * sortDirection을 주지 않으면 기본으로 ASC 설정
+     * @param sortFields Pageable 을 통해 요청들어온 정렬 Field
+     * @param sortDirection 정렬 Direction ASC(오름차순), DESC(내림차순)
+     * @param defaultSortFields 기본 정렬을 수행할 SortField 배열
+     * @return
+     */
+    public static List<SortField<?>> getDefaultSortFieldList(List<SortField<?>> sortFields, Sort.Direction sortDirection, Field<?> ... defaultSortFields) {
+        return getDefaultSortFieldList(Lists.newArrayList(defaultSortFields), sortFields, sortDirection);
+    }
+
+    /**
+     * Pageable 에서 요청한 Sort 리스트에 기본 Sort 리스트를 추가
+     * 기본적으로 정렬하는 Field 의 경우 Pageable로 요청들어온 정렬 Field 보다 우선순위가 낮음
+     * sortDirection을 주지 않으면 기본으로 ASC 설정
+     * @param defaultSortFieldList 기본 정렬을 수행할 SortField 리스트
+     * @param sortFields Pageable 을 통해 요청들어온 정렬 Field
+     * @return
+     */
+    public static List<SortField<?>> getDefaultSortFieldList(List<Field<?>> defaultSortFieldList, List<SortField<?>> sortFields) {
+        return getDefaultSortFieldList(defaultSortFieldList, sortFields, Sort.Direction.ASC);
+    }
+    /**
+     * Pageable 에서 요청한 Sort 리스트에 기본 Sort 리스트를 추가
+     * 기본적으로 정렬하는 Field 의 경우 Pageable로 요청들어온 정렬 Field 보다 우선순위가 낮음
+     * sortDirection을 주지 않으면 기본으로 ASC 설정
+     * @param defaultSortFieldList 기본 정렬을 수행할 SortField 리스트
+     * @param sortFields Pageable 을 통해 요청들어온 정렬 Field
+     * @param sortDirection 정렬 Direction ASC(오름차순), DESC(내림차순)
+     * @return
+     */
+    public static List<SortField<?>> getDefaultSortFieldList(List<Field<?>> defaultSortFieldList, List<SortField<?>> sortFields, Sort.Direction sortDirection) {
+
+        setSortFieldList(defaultSortFieldList, sortFields);
+
+        List<? extends SortField<?>> makeSortFields = defaultSortFieldList.stream()
+                .map(field -> convertTableFieldToSortField(field, sortDirection))
+                .collect(Collectors.toList());
+
+        sortFields.addAll(makeSortFields);
+        return sortFields;
     }
 
     /**
@@ -1440,7 +1553,7 @@ public class JooqUtils {
      * @return
      */
     private static SortField<?> convertTableFieldToSortField(Field<?> tableField, Sort.Direction sortDirection) {
-        if (sortDirection == Sort.Direction.ASC) {
+        if (Objects.isNull(sortDirection) || sortDirection == Sort.Direction.ASC) {
             return tableField.asc();
         }
         else {

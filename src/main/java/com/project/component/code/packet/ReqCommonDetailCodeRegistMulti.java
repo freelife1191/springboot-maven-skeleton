@@ -1,5 +1,7 @@
 package com.project.component.code.packet;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
 
@@ -10,6 +12,7 @@ import lombok.*;
 @Setter
 @NoArgsConstructor
 @ToString
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @ApiModel("공통 상세 코드 다중 등록 객체")
 public class ReqCommonDetailCodeRegistMulti extends ReqCommonDetailCodeRegist{
 

@@ -1,5 +1,8 @@
 package com.project.component.code.packet;
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
@@ -11,7 +14,9 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 @NoArgsConstructor
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @ToString
+@ApiModel("공통 상세 코드 수정 객체")
 public class ReqCommonDetailCodeMod {
     @NotNull
     @ApiModelProperty(value = "공통코드 ID", required = true)

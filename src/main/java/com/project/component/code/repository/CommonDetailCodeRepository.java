@@ -3,13 +3,18 @@ package com.project.component.code.repository;
 import com.google.common.collect.Lists;
 import com.project.component.code.domain.CommonDetailCode;
 import com.project.component.code.dto.CommonCodeDto;
+import com.project.component.code.packet.ReqCommonDetailCodeGET;
 import com.project.utils.common.CommonUtils;
 import com.project.utils.common.JooqUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.ListUtils;
+import org.jooq.Record;
 import org.jooq.*;
 import org.jooq.impl.DSL;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,8 +38,6 @@ import static org.jooq.impl.DSL.*;
 public class CommonDetailCodeRepository {
 
     private final DSLContext dsl;
-
-    private final CommonCodeRepository commonCodeRepository;
 
     /**
      * 공통 상세 코드 단건 조회
@@ -86,24 +89,66 @@ public class CommonDetailCodeRepository {
     }
 
     /**
-     * 공통 상세 코드 조회
+     * 공통 상세 코드 조회 (페이징)
      * @param condition
      * @return
      */
-    public List<CommonDetailCode> selectCommonDetailCode(CommonDetailCode condition) {
+    public Page<CommonDetailCode> selectCommonDetailCode(Pageable pageable, ReqCommonDetailCodeGET condition) {
+        // 정렬 Field 셋팅
+        List<Field<?>> sortFieldList = Lists.newArrayList(
+                COMMON_DETAIL_CODE.COMMON_CODE_ID,
+                COMMON_DETAIL_CODE.DETAIL_CODE,
+                COMMON_DETAIL_CODE.DETAIL_CODE_NM,
+                COMMON_DETAIL_CODE.DETAIL_CODE_ENG_NM,
+                COMMON_DETAIL_CODE.DETAIL_CODE_DC,
+                COMMON_DETAIL_CODE.ORDER,
+                COMMON_DETAIL_CODE.ENABLED
+        );
+
+        // 정렬 Field 외에 항상 기본적으로 정렬하기 위한 Field 설정
+        // 기본적으로 정렬하는 Field 의 경우 Pageable로 요청들어온 Field 보다 뒤에 위치함
+        List<Field<?>> defaultSortFieldList = Lists.newArrayList(
+                COMMON_DETAIL_CODE.COMMON_CODE_ID,
+                COMMON_DETAIL_CODE.DETAIL_CODE,
+                COMMON_DETAIL_CODE.DETAIL_CODE_NM,
+                COMMON_DETAIL_CODE.ENABLED
+        );
+
+        // 가장 우선순위가 높은 정렬 Field
+        List<SortField<?>> preSortField = JooqUtils.getDefaultSortFieldList(COMMON_DETAIL_CODE.ORDER);
+
+        // 조회 필드 셋팅
+        List<Field<?>> selectFieldList = JooqUtils.getFieldList(getDetailCodeFieldList(),
+                COMMON_DETAIL_CODE.CREATED_ID,
+                COMMON_DETAIL_CODE.CREATED_AT,
+                COMMON_DETAIL_CODE.UPDATED_ID,
+                COMMON_DETAIL_CODE.UPDATED_AT);
+
+        // 데이터 조회
+        List<CommonDetailCode> commonDetailCodes = setCommonDetailCodeConditionStep(dsl.select(selectFieldList), condition)
+                .orderBy(JooqUtils.getDefaultSortFieldList(defaultSortFieldList, JooqUtils.getSortFields(preSortField, pageable.getSort(), sortFieldList))) // Pageable Sort 로 정렬
+                .limit(pageable.getPageSize()).offset(pageable.getOffset()) // Pageable 객체로 페이징 처리
+                .fetchInto(CommonDetailCode.class);
+
+        // 총 데이터수 조회
+        long totalCount = setCommonDetailCodeConditionStep(dsl.select(count()), condition).fetchOneInto(int.class);
+
+        return new PageImpl<>(commonDetailCodes, pageable, totalCount);
+    }
+
+    /**
+     * 공통 상세 코드 조회 조건
+     * @param select
+     * @param condition
+     * @param <T>
+     * @return
+     */
+    private <T extends Record> SelectConditionStep<T> setCommonDetailCodeConditionStep(SelectSelectStep<T> select, ReqCommonDetailCodeGET condition) {
+
         List<Condition> conditionList = JooqUtils.setConditionList(getDetailCodeFieldList(), condition);
 
-        List<Field<?>> selectFieldList = getDetailCodeFieldList();
-        selectFieldList.add(COMMON_DETAIL_CODE.CREATED_ID);
-        selectFieldList.add(COMMON_DETAIL_CODE.CREATED_AT);
-        selectFieldList.add(COMMON_DETAIL_CODE.UPDATED_ID);
-        selectFieldList.add(COMMON_DETAIL_CODE.UPDATED_AT);
-
-        return dsl.select(selectFieldList)
-                .from(COMMON_DETAIL_CODE)
-                .where(and(conditionList))
-                .orderBy(COMMON_DETAIL_CODE.COMMON_CODE_ID.asc(), COMMON_DETAIL_CODE.DETAIL_CODE.asc())
-                .fetchInto(CommonDetailCode.class);
+        return select.from(COMMON_DETAIL_CODE)
+                .where(and(conditionList));
     }
 
     /**

@@ -11,10 +11,7 @@ import com.amazonaws.services.s3.transfer.TransferManagerBuilder;
 import com.amazonaws.services.s3.transfer.Upload;
 import com.project.component.file.domain.S3FileInfo;
 import com.project.component.file.domain.UploadFileResponse;
-import com.project.exception.file.FileAwsS3ProcessException;
-import com.project.exception.file.FileDeleteFailException;
-import com.project.exception.file.FileDownloadFailException;
-import com.project.exception.file.FileNotExistException;
+import com.project.exception.file.*;
 import com.project.utils.common.PathUtils;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -272,9 +269,11 @@ public class S3FileService {
             //log.error("Caught an AmazonServiceException from GET requests, rejected reasons:");
             errorMap.put("Fail Path:", PathUtils.getPath(path));
             errorMap = getErrorMap(errorMap, ase);
-            log.error("[S3] Download Fail [download] :: AmazonServiceException :: {}",errorMap);
+            log.warn("[S3] Download Fail [download] :: AmazonServiceException :: {}",errorMap);
             if(ase.getStatusCode() == HttpStatus.NOT_FOUND.value() && ase.getErrorCode().equals("NoSuchKey"))
                 throw new FileNotExistException(ase.getErrorCode());
+
+            log.error("[S3] Download Fail [download] :: AmazonServiceException :: {}",errorMap);
             throw new FileDownloadFailException(ase.getErrorCode());
         } catch (AmazonClientException ace) {
             //log.error("Caught an AmazonClientException: ");
@@ -324,9 +323,13 @@ public class S3FileService {
             //log.error("Caught an AmazonServiceException from GET requests, rejected reasons:");
             errorMap.put("Fail Path:", PathUtils.getPath(path));
             errorMap = getErrorMap(errorMap, ase);
-            log.error("[S3] File Deleted Fail [delete] :: AmazonServiceException :: {}",errorMap);
-            if(!(ase.getStatusCode() == HttpStatus.NOT_FOUND.value() && ase.getErrorCode().equals("NoSuchKey")))
+            log.warn("[S3] File Deleted Fail [delete] :: AmazonServiceException :: {}",errorMap);
+            // 삭제 권한이 없으면 AWS S3 권한에러 예외 처리
+            if (ase.getStatusCode() == HttpStatus.FORBIDDEN.value() && ase.getErrorCode().equals("AccessDenied"))
+                throw new FileAwsS3AccessDeniedException(ase.getErrorCode());
+            else if(!( ase.getStatusCode() == HttpStatus.NOT_FOUND.value() && ase.getErrorCode().equals("NoSuchKey"))) // 해당 경로가 존재 하지 않거나
                 throw new FileDeleteFailException(ase.getErrorCode());
+            log.error("[S3] File Deleted Fail [delete] :: AmazonServiceException :: {}",errorMap);
         } catch (AmazonClientException ace) {
             //log.error("Caught an AmazonClientException: ");
             errorMap.put("Fail Path:", PathUtils.getPath(path));
