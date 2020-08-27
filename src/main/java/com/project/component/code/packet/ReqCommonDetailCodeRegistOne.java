@@ -6,8 +6,6 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.*;
 
-import javax.validation.constraints.NotNull;
-
 /**
  * Created by KMS on 30/03/2020.
  */
@@ -16,9 +14,9 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @ToString
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
-@ApiModel("공통 상세 코드 단건 등록 객체")
+@ApiModel("공통 상세 코드 단건 등록 요청")
 public class ReqCommonDetailCodeRegistOne extends ReqCommonDetailCodeRegist {
-    // @NotNull
+
     @ApiModelProperty(value = "공통코드 ID", hidden = true)
     private Integer commonCodeId;
 

@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 
 import static com.project.utils.common.constant.ConditionType.eq;
 import static org.jooq.impl.DSL.value;
-import static org.jooq.meta.mysql.information_schema.InformationSchema.INFORMATION_SCHEMA;
 
 /**
  * Created by KMS on 26/11/2019.
@@ -1265,7 +1264,7 @@ public class JooqUtils {
     public static <T extends Table> void resetTable(DSLContext dsl, T table) {
         log.info(" == TABLE RESET: [ SCHEMA = {}, TABLE = {} ] ==",table.getSchema(), table.getName());
         dsl.deleteFrom(table).execute();
-        resetAutoincrement(dsl, table);
+        com.project.utils.common.JooqUtils.resetAutoincrement(dsl, table);
     }
 
     /**
@@ -1295,6 +1294,7 @@ public class JooqUtils {
         return DSL.function("LAST_INSERT_ID", Integer.class, field);
     }
 
+
     /**
      * 테이블의 AutoIncrement 값 조회
      * @param dsl
@@ -1302,8 +1302,22 @@ public class JooqUtils {
      * @return
      */
     public static <T extends Table<?>> int getAutoIncrementValue(DSLContext dsl, T table) {
-        return dsl.select(DSL.field("AUTO_INCREMENT"))
-                .from(INFORMATION_SCHEMA.TABLES)
+        return getAutoIncrementValue(dsl, table, SQLDialect.DEFAULT);
+    }
+
+    /**
+     * 테이블의 AutoIncrement 값 조회
+     * @param dsl
+     * @param table
+     * @return
+     */
+    public static <T extends Table<?>> int getAutoIncrementValue(DSLContext dsl, T table, SQLDialect dialect) {
+        SelectSelectStep<?> select = dsl.select(DSL.field("AUTO_INCREMENT"));
+        // H2 타입인 경우 select 값 변경
+        if(Objects.nonNull(dialect) && dialect == SQLDialect.H2)
+            select = dsl.select(DSL.field("ROW_COUNT_ESTIMATE", Integer.class).plus(1));
+        return select
+                .from(DSL.table("INFORMATION_SCHEMA.TABLES"))
                 .where(DSL.field("table_name").eq(table.getName()))
                 .and(DSL.field("table_schema").eq(table.getSchema().getName()))
                 .fetchOneInto(Integer.class);

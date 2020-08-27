@@ -33,13 +33,44 @@
 - Swagger UI URL: `/swagger-ui/index.html`
     - ex) http://localhost:8080/swagger-ui/index.html
 
-`/swagger-ui.html` 입력시 `/swagger-ui/index.html` 로 리다이렉트 됨 
+`/swagger-ui.html` 입력시 `/swagger-ui/index.html` 로 리다이렉트 됨
 
-## local H2 DB 설정
-**local profile** 에 **H2 DB** 셋팅이 되어 있어 별도의 **DB** 셋팅 없이 
-**local profile**로 **Application** 실행시 **H2 DB** 가 생성되어 실행됨
+## active profile
 
-### `application-local.yml` 의 H2 DB 셋팅
+**active profile**은 **h2 profile**로 설정되어있음
+다른 **profile**을 **active profile**로 설정하고 싶으면
+`activation` 부분을 잘라내서 원하는 **profile**에 설정하면 됨
+ 
+```xml
+<profiles>
+    <profile>
+        <id>h2</id>
+        <properties> <!-- resource 필터 사용시 개발자 PC에 적용되는 필터 properties 의 폴더 위치 -->
+            <!--                <deployTarget>local</deployTarget>-->
+            <env>h2</env>
+        </properties>
+        <!-- DB를 붙여서 Application을 개발하기 시작하면 activation을 dev 로 이동 -->
+        <activation>
+            <!-- Jenkins Build 시 별도의 profile 값을 넘겨주지 않으면 기본값으로 설정됨-->
+            <activeByDefault>true</activeByDefault>
+        </activation>
+    </profile>
+    <profile>
+        <id>local</id>
+        <properties> <!-- resource 필터 사용시 개발서버에 적용되는 필터 properties 의 폴더 위치 -->
+            <!--                <deployTarget></deployTarget>-->
+            <env>local</env>
+        </properties>
+    </profile>
+</profiles>
+```
+## h2 H2 DB 설정
+
+**h2 profile**에 **H2 DB** 셋팅이 되어 있어 별도의 **DB** 셋팅 없이  
+**h2 profile**로 **Application** 실행시 **H2 DB** 가 생성되어 실행됨  
+**H2 DB** 셋팅을 사용하고 싶지 않으면 **active profile** 설정을 **h2**가 아닌 다른 **profile**로 변경하면 됨
+
+### `application-h2.yml` 의 H2 DB 셋팅
 ```yaml
 spring:
   datasource:

@@ -66,11 +66,11 @@ public class SwaagerConfig {
                 .select()
                //.apis(RequestHandlerSelectors.any()) //모든 패키지 OPEN
                //.apis(Predicates.not(RequestHandlerSelectors.basePackage("org.springframework.boot"))) // org.springframework.boot 패키지 제외
-                .apis(RequestHandlerSelectors.basePackage("com.project.api")
-                        .or(RequestHandlerSelectors.basePackage( "com.project.component.code.controller"))
+                .apis(RequestHandlerSelectors.basePackage("com.project.api") // api 패키지에 해당되는 컨트롤러만
+                        .or(RequestHandlerSelectors.basePackage( "com.project.component.code.controller")) // 공통컴포넌트 공통코드 패키지 추가
                 )// 패키지에 해당되는 컨트롤러만
                 .paths(PathSelectors.any()
-                        .and(PathSelectors.regex("/common/code/*").negate())
+                        // .and(PathSelectors.regex("/common/code/*").negate()) // 해당 패턴 PATH 제외
                 ) //모든 API 추가
                //.paths(regex("/product.*")) //특정 정규식 패턴에 해당되는 API 추가
                //.paths(PathSelectors.ant("/v2/file/*")) //특정 정규식 패턴에 해당되는 API 추가

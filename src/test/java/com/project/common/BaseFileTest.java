@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 //@Import(S3MockConfig.class)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestConstructor(autowireMode = TestConstructor.AutowireMode.ALL)
-@ActiveProfiles("local")
+@ActiveProfiles("h2")
 // @Transactional
 public class BaseFileTest {
     protected MockMvc mockMvc;

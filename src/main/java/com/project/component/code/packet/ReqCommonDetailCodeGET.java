@@ -3,7 +3,6 @@ package com.project.component.code.packet;
 import com.project.common.annotation.ParamName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.annotations.ApiParam;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -19,6 +18,7 @@ import java.time.LocalDateTime;
 @Builder
 @ApiModel("공통 상세 코드 조회 요청")
 public class ReqCommonDetailCodeGET {
+
     @ApiModelProperty(value = "공통코드 ID", name = "common_code_id", example = "1")
     @ParamName("common_code_id")
     private Integer commonCodeId;

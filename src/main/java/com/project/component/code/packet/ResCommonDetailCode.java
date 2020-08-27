@@ -32,7 +32,7 @@ public class ResCommonDetailCode {
     private String detailCodeDc;
     @ApiModelProperty(value = "정렬순서", position = 6)
     private Integer order;
-    @ApiModelProperty(value = "사용여부", example = "true", position = 7)
+    @ApiModelProperty(value = "사용여부", position = 7, example = "true")
     private Boolean enabled;
     @ApiModelProperty(value = "기타1", position = 8)
     private String etc1;

@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.validation.constraints.NotNull;
-
 /**
  * Created by KMS on 26/03/2020.
  */
@@ -21,8 +19,7 @@ import javax.validation.constraints.NotNull;
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @ApiModel("공통 메인 코드 수정 객체")
 public class ReqCommonCodeMod {
-    @NotNull
-    @ApiModelProperty("공통코드 ID")
+    @ApiModelProperty(value = "공통코드 ID", hidden = true)
     private Integer id;
     @ApiModelProperty("공통그룹코드 (식별을 위한 하위 그룹코드와 동일한 영문단어 또는 이니셜)")
     private String groupCode;

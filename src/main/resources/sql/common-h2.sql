@@ -2,7 +2,7 @@ drop table if exists common_code, common_detail_code, common_empty_code;
 
 create table common_code
 (
-    id          INTEGER auto_increment comment '공통코드 ID'   primary key,
+    id          int auto_increment comment '공통코드 ID'   primary key,
     group_code  varchar(254)                             not null comment '공통그룹코드 (식별을 위한 하위 그룹코드와 동일한 영문단어 또는 이니셜)',
     code        int                                      not null comment '공통코드(공통코드 ID 하위의 단순증가값)',
     code_nm     varchar(254)                             not null comment '공통코드명',

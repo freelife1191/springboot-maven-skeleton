@@ -4,10 +4,7 @@ import com.project.common.domain.CommonResult;
 import com.project.component.code.domain.CommonCode;
 import com.project.component.code.domain.CommonDetailCode;
 import com.project.component.code.dto.CommonCodeDto;
-import com.project.component.code.packet.ReqCommonDetailCodeGET;
-import com.project.component.code.packet.ReqCommonDetailCodeMod;
-import com.project.component.code.packet.ReqCommonDetailCodeRegistMulti;
-import com.project.component.code.packet.ReqCommonDetailCodeRegistOne;
+import com.project.component.code.packet.*;
 import com.project.component.code.repository.CommonCodeRepository;
 import com.project.component.code.repository.CommonDetailCodeRepository;
 import com.project.exception.common.DataRegistrationFailedException;
@@ -44,7 +41,7 @@ public class CommonDetailCodeService {
      * @param code
      * @return
      */
-    public List<CommonCodeDto> getCommonCodeDtoList(CommonCode code) {
+    private List<CommonCodeDto> getCommonCodeDtoList(CommonCode code) {
         return getCommonCodeDtoList(code, null);
     }
 
@@ -53,7 +50,7 @@ public class CommonDetailCodeService {
      * @param detailCode
      * @return
      */
-    public List<CommonCodeDto> getCommonCodeDtoList(CommonDetailCode detailCode) {
+    private List<CommonCodeDto> getCommonCodeDtoList(CommonDetailCode detailCode) {
         return getCommonCodeDtoList(null, detailCode);
     }
 
@@ -63,7 +60,7 @@ public class CommonDetailCodeService {
      * @param detailCode
      * @return
      */
-    public List<CommonCodeDto> getCommonCodeDtoList(CommonCode code, CommonDetailCode detailCode) {
+    private List<CommonCodeDto> getCommonCodeDtoList(CommonCode code, CommonDetailCode detailCode) {
 
         CommonCodeDto condition = CommonCodeDto.builder()
                 .code(code)
@@ -87,7 +84,7 @@ public class CommonDetailCodeService {
      * @param reqCommonDetailCodeGET
      * @return
      */
-    public CommonResult<Page<CommonDetailCode>> selectCommonDetailCode(Pageable pageable, ReqCommonDetailCodeGET reqCommonDetailCodeGET) {
+    public CommonResult<Page<ResCommonDetailCode>> selectCommonDetailCode(Pageable pageable, ReqCommonDetailCodeGET reqCommonDetailCodeGET) {
         return new CommonResult<>(SUCCESS, SUCCESS.getMessage(), detailCodeRepository.selectCommonDetailCode(pageable, reqCommonDetailCodeGET));
     }
 
@@ -96,16 +93,15 @@ public class CommonDetailCodeService {
      * @param regist
      * @return
      */
-    public CommonResult<CommonDetailCode> insertCommonDetailCode(ReqCommonDetailCodeRegistOne regist) throws Exception {
+    public CommonResult<ResCommonDetailCode> insertCommonDetailCode(ReqCommonDetailCodeRegistOne regist) throws Exception {
         CommonDetailCode commonDetailCode = new CommonDetailCode(regist);
 
-        CommonCode commonCode = codeRepository.findById(regist.getCommonCodeId());
+        ResCommonCode commonCode = codeRepository.findById(regist.getCommonCodeId());
         if(Objects.isNull(commonCode))
             throw new DataRegistrationFailedException("등록된 공통 메인 코드가 없어서 공통 상세 코드 등록이 실패 했습니다");
 
         int detailCode = detailCodeRepository.insertCommonDetailCode(commonDetailCode);
-        CommonDetailCode resultDetailCode = detailCodeRepository.findByCode(regist.getCommonCodeId(), detailCode);
-        return new CommonResult<>(SUCCESS, SUCCESS.getMessage(), resultDetailCode);
+        return new CommonResult<>(SUCCESS, SUCCESS.getMessage(), detailCodeRepository.findByCode(regist.getCommonCodeId(), detailCode));
     }
 
     /**
@@ -113,18 +109,17 @@ public class CommonDetailCodeService {
      * @param registList
      * @return
      */
-    public CommonResult<List<CommonDetailCode>> insertCommonDetailCode(Integer id, List<ReqCommonDetailCodeRegistMulti> registList) throws Exception {
+    public CommonResult<List<ResCommonDetailCode>> insertCommonDetailCode(Integer id, List<ReqCommonDetailCodeRegistMulti> registList) throws Exception {
         List<CommonDetailCode> commonDetailCodeList = new ArrayList<>();
 
-        CommonCode commonCode = codeRepository.findById(id);
+        ResCommonCode commonCode = codeRepository.findById(id);
         if(Objects.isNull(commonCode))
             throw new DataRegistrationFailedException("등록된 공통 메인 코드가 없어서 공통 상세 코드 등록이 실패 했습니다");
 
         registList.forEach(regist -> commonDetailCodeList.add(new CommonDetailCode(id, regist)));
 
         List<Integer> detailCodes = detailCodeRepository.insertCommonDetailCode(id, commonDetailCodeList);
-        List<CommonDetailCode> resultDetailCode = detailCodeRepository.findByCodes(id, detailCodes);
-        return new CommonResult<>(SUCCESS, SUCCESS.getMessage(), resultDetailCode);
+        return new CommonResult<>(SUCCESS, SUCCESS.getMessage(), detailCodeRepository.findByCodes(id, detailCodes));
     }
 
     /**

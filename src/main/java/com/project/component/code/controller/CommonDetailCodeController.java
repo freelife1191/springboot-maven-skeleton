@@ -1,11 +1,8 @@
 package com.project.component.code.controller;
 
+import com.project.common.Validator.CustomCollectionValidator;
 import com.project.common.domain.CommonResult;
-import com.project.component.code.domain.CommonDetailCode;
-import com.project.component.code.packet.ReqCommonDetailCodeGET;
-import com.project.component.code.packet.ReqCommonDetailCodeMod;
-import com.project.component.code.packet.ReqCommonDetailCodeRegistMulti;
-import com.project.component.code.packet.ReqCommonDetailCodeRegistOne;
+import com.project.component.code.packet.*;
 import com.project.component.code.service.CommonDetailCodeService;
 import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.WebRequest;
@@ -30,6 +29,7 @@ import java.util.List;
 public class CommonDetailCodeController {
 
     private final CommonDetailCodeService detailCodeService;
+    private final CustomCollectionValidator customCollectionValidator;
 
     @ApiOperation(value = "공통 상세 코드 리스트 조회(페이징)", notes = "# 공통 상세 코드 리스트 조회시 호출\n" +
             "___\n" +
@@ -99,47 +99,56 @@ public class CommonDetailCodeController {
                     "- 공통상세코드 설명: `detail_code_dc`\n" +
                     "- 정렬순서: `order`\n" +
                     "- 사용여부: `enabled`"
-                    , defaultValue = "stor_seq,asc")
+                    , defaultValue = "common_code_id,asc")
     })
     @GetMapping("/detail")
-    public CommonResult<Page<CommonDetailCode>> getCommonDetailCode(@Valid ReqCommonDetailCodeGET reqCommonDetailCodeGET,
-                                                                    @PageableDefault(size = 100, direction = Sort.Direction.ASC) Pageable pageable) throws Exception {
+    public CommonResult<Page<ResCommonDetailCode>> getCommonDetailCode(@PageableDefault(size = 100, direction = Sort.Direction.ASC) Pageable pageable,
+                                                                       @Valid ReqCommonDetailCodeGET reqCommonDetailCodeGET) throws Exception {
         return detailCodeService.selectCommonDetailCode(pageable, reqCommonDetailCodeGET);
     }
 
-    @ApiOperation(value = "공통 상세 코드 단건 등록", hidden = true)
+    @ApiOperation(value = "공통 상세 코드 단건 등록")
     @PostMapping("/{common_code_id}/detail")
-    public CommonResult<CommonDetailCode> commonDetailCodeRegistration(@ApiParam(value = "### [ PathVariable ] 공통코드 ID", example = "1", required = true)
-                                                                       @PathVariable("common_code_id") Integer commonCodeId,
-                                                                       @Valid @RequestBody ReqCommonDetailCodeRegistOne regist,
-                                                                       WebRequest webRequest) throws Exception {
+    public CommonResult<ResCommonDetailCode> commonDetailCodeRegistration(@ApiParam(value = "### [ PathVariable ] 공통코드 ID", example = "1", required = true)
+                                                                          @PathVariable("common_code_id") Integer commonCodeId,
+                                                                          @Valid @RequestBody ReqCommonDetailCodeRegistOne regist,
+                                                                          WebRequest webRequest) throws Exception {
         regist.setCommonCodeId(commonCodeId);
         webRequest.setAttribute("body", regist, RequestAttributes.SCOPE_REQUEST);
         return detailCodeService.insertCommonDetailCode(regist);
     }
 
-    @ApiOperation(value = "공통 상세 코드 다중 등록", hidden = true)
+    @ApiOperation(value = "공통 상세 코드 다중 등록")
     @PostMapping("/{common_code_id}/details")
-    public CommonResult<List<CommonDetailCode>> commonDetailCodeMultiRegistration(@ApiParam(value = "### [ PathVariable ] 공통코드 ID", example = "1", required = true)
-                                                                                  @PathVariable("common_code_id") Integer commonCodeId,
-                                                                                  @Valid @RequestBody List<ReqCommonDetailCodeRegistMulti> registList,
-                                                                       WebRequest webRequest) throws Exception {
+    public CommonResult<List<ResCommonDetailCode>> commonDetailCodeMultiRegistration(@ApiParam(value = "### [ PathVariable ] 공통코드 ID", example = "1", required = true)
+                                                                                     @PathVariable("common_code_id") Integer commonCodeId,
+                                                                                     @Valid @RequestBody List<ReqCommonDetailCodeRegistMulti> registList,
+                                                                                     WebRequest webRequest,
+                                                                                     BindingResult bindingResult) throws Exception {
         webRequest.setAttribute("body", registList, RequestAttributes.SCOPE_REQUEST);
+
+        // Collection 의 경우 @Valid 로 유효성 검증이 되지 않아 직접 validate
+        customCollectionValidator.validate(registList, bindingResult);
+
+        // Collection 유효성 검증 실패에 대한 예외처리
+        if (bindingResult.hasErrors())
+            throw new BindException(bindingResult);
+
         return detailCodeService.insertCommonDetailCode(commonCodeId, registList);
     }
 
-    @ApiOperation(value = "공통 상세 코드 수정", hidden = true)
+    @ApiOperation(value = "공통 상세 코드 수정")
     @PatchMapping("/{common_code_id}/detail")
     public CommonResult<Boolean> commonDetailCodeModification(@ApiParam(value = "### [ PathVariable ] 공통코드 ID", example = "1", required = true)
                                                               @PathVariable("common_code_id") Integer commonCodeId,
                                                               @Valid @RequestBody ReqCommonDetailCodeMod mod,
-                                                        WebRequest webRequest) throws Exception {
+                                                              WebRequest webRequest) throws Exception {
         mod.setCommonCodeId(commonCodeId);
         webRequest.setAttribute("body", mod, RequestAttributes.SCOPE_REQUEST);
         return detailCodeService.updateCommonDetailCode(mod);
     }
 
-    @ApiOperation(value = "공통 상세 코드 삭제",  hidden = true)
+    @ApiOperation(value = "공통 상세 코드 삭제")
     @DeleteMapping("/{common_code_id}/detail/{code}")
     public CommonResult<Boolean> commonCodeDeletion(@ApiParam(value = "### [ PathVariable ] 공통코드 ID", example = "1", required = true)
                                                     @PathVariable("common_code_id") Integer commonCodeId,

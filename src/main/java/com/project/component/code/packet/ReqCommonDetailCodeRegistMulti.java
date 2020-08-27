@@ -13,7 +13,7 @@ import lombok.*;
 @NoArgsConstructor
 @ToString
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
-@ApiModel("공통 상세 코드 다중 등록 객체")
+@ApiModel("공통 상세 코드 다중 등록 요청")
 public class ReqCommonDetailCodeRegistMulti extends ReqCommonDetailCodeRegist{
 
     @Builder

@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.project.component.code.domain.CommonDetailCode;
 import com.project.component.code.dto.CommonCodeDto;
 import com.project.component.code.packet.ReqCommonDetailCodeGET;
+import com.project.component.code.packet.ResCommonDetailCode;
 import com.project.utils.common.CommonUtils;
 import com.project.utils.common.JooqUtils;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +46,7 @@ public class CommonDetailCodeRepository {
      * @param code
      * @return
      */
-    public CommonDetailCode findByCode(Integer id, Integer code) {
+    public ResCommonDetailCode findByCode(Integer id, Integer code) {
         if(id == null || code ==null) return null;
 
         List<Field<?>> selectFieldList = getDetailCodeFieldList();
@@ -59,7 +60,7 @@ public class CommonDetailCodeRepository {
                 .where(COMMON_DETAIL_CODE.COMMON_CODE_ID.eq(id))
                 .and(COMMON_DETAIL_CODE.DETAIL_CODE.eq(code))
                 .limit(1)
-                .fetchOneInto(CommonDetailCode.class);
+                .fetchOneInto(ResCommonDetailCode.class);
     }
 
     /**
@@ -69,7 +70,7 @@ public class CommonDetailCodeRepository {
      * @param detailCodes
      * @return
      */
-    public List<CommonDetailCode> findByCodes(Integer id, List<Integer> detailCodes) {
+    public List<ResCommonDetailCode> findByCodes(Integer id, List<Integer> detailCodes) {
 
         Condition condition = DSL.trueCondition();
         if(!ListUtils.emptyIfNull(detailCodes).isEmpty())
@@ -85,7 +86,7 @@ public class CommonDetailCodeRepository {
                 .from(COMMON_DETAIL_CODE)
                 .where(COMMON_DETAIL_CODE.COMMON_CODE_ID.eq(id))
                 .and(condition)
-                .fetchInto(CommonDetailCode.class);
+                .fetchInto(ResCommonDetailCode.class);
     }
 
     /**
@@ -93,7 +94,7 @@ public class CommonDetailCodeRepository {
      * @param condition
      * @return
      */
-    public Page<CommonDetailCode> selectCommonDetailCode(Pageable pageable, ReqCommonDetailCodeGET condition) {
+    public Page<ResCommonDetailCode> selectCommonDetailCode(Pageable pageable, ReqCommonDetailCodeGET condition) {
         // 정렬 Field 셋팅
         List<Field<?>> sortFieldList = Lists.newArrayList(
                 COMMON_DETAIL_CODE.COMMON_CODE_ID,
@@ -125,10 +126,10 @@ public class CommonDetailCodeRepository {
                 COMMON_DETAIL_CODE.UPDATED_AT);
 
         // 데이터 조회
-        List<CommonDetailCode> commonDetailCodes = setCommonDetailCodeConditionStep(dsl.select(selectFieldList), condition)
+        List<ResCommonDetailCode> commonDetailCodes = setCommonDetailCodeConditionStep(dsl.select(selectFieldList), condition)
                 .orderBy(JooqUtils.getDefaultSortFieldList(defaultSortFieldList, JooqUtils.getSortFields(preSortField, pageable.getSort(), sortFieldList))) // Pageable Sort 로 정렬
                 .limit(pageable.getPageSize()).offset(pageable.getOffset()) // Pageable 객체로 페이징 처리
-                .fetchInto(CommonDetailCode.class);
+                .fetchInto(ResCommonDetailCode.class);
 
         // 총 데이터수 조회
         long totalCount = setCommonDetailCodeConditionStep(dsl.select(count()), condition).fetchOneInto(int.class);

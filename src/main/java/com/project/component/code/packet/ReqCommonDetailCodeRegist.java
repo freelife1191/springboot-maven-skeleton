@@ -19,12 +19,12 @@ import javax.validation.constraints.NotEmpty;
 @NoArgsConstructor
 @ToString
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
-@ApiModel("공통 상세 코드 등록 객체")
+@ApiModel("공통 상세 코드 등록 요청")
 public class ReqCommonDetailCodeRegist {
-    @NotEmpty
+    @NotEmpty(message = "공통상세코드 명은 필수 입력값 입니다")
     @ApiModelProperty(value = "공통상세코드 명", required = true)
     private String detailCodeNm;
-    @NotEmpty
+    @NotEmpty(message = "공통상세코드 영문명은 필수 입력값 입니다")
     @ApiModelProperty(value = "공통상세코드 영문명", required = true)
     private String detailCodeEngNm;
     @ApiModelProperty("공통상세코드 설명")

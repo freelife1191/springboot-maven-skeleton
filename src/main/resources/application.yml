@@ -6,13 +6,15 @@ service:
 ## 서버 설정
 server:
   port: 8080
+## REQUEST HEADER IS TOO LARGE 에러 발생시 설정
+#  max-http-header-size: 30KB
 #  servlet:
 #    context-path: /skeleton
 
 ## Spring 설정
 spring:
   profiles:
-    active: local
+    active: h2
   servlet:
     multipart:
       ## 멀티파트 업로드 지원여부 (default: true)

@@ -16,15 +16,15 @@ import javax.validation.constraints.NotEmpty;
 @NoArgsConstructor
 @ToString
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
-@ApiModel("공통 메인 코드 등록 객체")
+@ApiModel("공통 메인 코드 등록 요청")
 public class ReqCommonCodeRegist {
-    @NotEmpty
+    @NotEmpty(message = "공통그룹코드는 필수 입력값 입니다")
     @ApiModelProperty("공통그룹코드 (식별을 위한 하위 그룹코드와 동일한 영문단어 또는 이니셜)")
     private String groupCode;
-    @NotEmpty
+    @NotEmpty(message = "공통코드명은 필수 입력값 입니다")
     @ApiModelProperty("공통코드명")
     private String codeNm;
-    @NotEmpty
+    @NotEmpty(message = "공통코드 영문명는 필수 입력값 입니다")
     @ApiModelProperty("공통코드 영문명")
     private String codeEngNm;
     @ApiModelProperty("공통코드 설명")

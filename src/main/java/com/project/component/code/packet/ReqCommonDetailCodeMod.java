@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @ToString
-@ApiModel("공통 상세 코드 수정 객체")
+@ApiModel("공통 상세 코드 수정 요청")
 public class ReqCommonDetailCodeMod {
     @ApiModelProperty(value = "공통코드 ID", hidden = true)
     private Integer commonCodeId;

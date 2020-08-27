@@ -417,10 +417,10 @@
     -->
     <profiles>
         <profile>
-            <id>dev</id>
+            <id>h2</id>
             <properties> <!-- resource 필터 사용시 개발자 PC에 적용되는 필터 properties 의 폴더 위치 -->
                 <!--                <deployTarget>local</deployTarget>-->
-                <env>dev</env>
+                <env>h2</env>
             </properties>
             <!-- DB를 붙여서 Application을 개발하기 시작하면 activation을 dev 로 이동 -->
             <activation>
@@ -541,6 +541,13 @@
             <properties> <!-- resource 필터 사용시 개발서버에 적용되는 필터 properties 의 폴더 위치 -->
                 <!--                <deployTarget></deployTarget>-->
                 <env>local</env>
+            </properties>
+        </profile>
+        <profile>
+            <id>dev</id>
+            <properties> <!-- resource 필터 사용시 개발서버에 적용되는 필터 properties 의 폴더 위치 -->
+                <!--                <deployTarget></deployTarget>-->
+                <env>dev</env>
             </properties>
         </profile>
         <profile>
