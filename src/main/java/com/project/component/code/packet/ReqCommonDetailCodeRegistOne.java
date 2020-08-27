@@ -18,8 +18,8 @@ import javax.validation.constraints.NotNull;
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy.class)
 @ApiModel("공통 상세 코드 단건 등록 객체")
 public class ReqCommonDetailCodeRegistOne extends ReqCommonDetailCodeRegist {
-    @NotNull
-    @ApiModelProperty(value = "공통코드 ID", required = true)
+    // @NotNull
+    @ApiModelProperty(value = "공통코드 ID", hidden = true)
     private Integer commonCodeId;
 
     @Builder

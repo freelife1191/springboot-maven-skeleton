@@ -18,8 +18,7 @@ import javax.validation.constraints.NotNull;
 @ToString
 @ApiModel("공통 상세 코드 수정 객체")
 public class ReqCommonDetailCodeMod {
-    @NotNull
-    @ApiModelProperty(value = "공통코드 ID", required = true)
+    @ApiModelProperty(value = "공통코드 ID", hidden = true)
     private Integer commonCodeId;
     @NotNull
     @ApiModelProperty(value = "공통상세코드", required = true)

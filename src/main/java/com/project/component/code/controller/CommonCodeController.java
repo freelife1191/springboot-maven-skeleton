@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.WebRequest;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -23,6 +24,7 @@ import java.util.List;
 @RequestMapping("/common/code")
 @RequiredArgsConstructor
 @Api(value = "공통 메인 코드 컨트롤러", tags = "공통 메인 코드")
+@ApiIgnore
 public class CommonCodeController {
 
     private final CommonCodeService codeService;
