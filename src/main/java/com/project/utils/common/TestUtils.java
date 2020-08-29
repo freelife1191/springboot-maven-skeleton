@@ -1,15 +1,14 @@
 package com.project.utils.common;
 
+import com.google.common.collect.Lists;
+import com.project.exception.common.NotSupportedException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.lang.reflect.Field;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -33,14 +32,25 @@ public class TestUtils {
     private static Map<String, Object> getSubObjectMap(Object object, Field field, Map<String, Object> resultMap, String prefix, String caseStrategy) {
         if (Objects.nonNull(object)) {
 
-            boolean isEnum;
+            boolean isEnum = false;
+
             try {
-                isEnum = Class.forName(field.getType().getTypeName()).isEnum();
+                if(!field.getType().getTypeName().equals("boolean"))
+                    isEnum = Class.forName(field.getType().getTypeName()).isEnum();
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e.getMessage(), e);
             }
 
-            if(field.getType().getTypeName().startsWith("java") || isEnum) {
+            ArrayList<Boolean> allowFieldTypes = Lists.newArrayList(
+                    field.getType().getTypeName().startsWith("java"),
+                    field.getType().getTypeName().equals("boolean"),
+                    isEnum
+            );
+
+            if(allowFieldTypes.stream().noneMatch(data -> data))
+                throw new NotSupportedException("TestUtils에서 지원되지 않는 Field Type 추가 요망 :: FieldName = "+field.getName()+", FieldType = "+field.getType().getTypeName());
+
+            if(allowFieldTypes.stream().anyMatch(data -> data)) {
                 String fieldName = StringUtils.isNotEmpty(prefix) ? prefix + field.getName() : field.getName();
                 if(StringUtils.isNotEmpty(caseStrategy)) {
                     switch (caseStrategy){

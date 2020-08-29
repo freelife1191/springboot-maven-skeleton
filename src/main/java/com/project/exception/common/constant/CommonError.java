@@ -47,6 +47,8 @@ public enum CommonError {
 
     /** 프로세스를 더이상 진행할 수 없을 때 **/
     UnprocessableException(ERROR, "", true, Level.ERROR),
+    /** 지원되지 않는 기능에 대한 예외처리 **/
+    NotSupportedException(ERROR, "", true, Level.ERROR),
     /** 파일이 존재하지 않을 때 **/
     FileNotExistException(FILE_NOT_EXIST, "", true, Level.ERROR),
     /** 파일 등록 필수 파라메터 체크 **/

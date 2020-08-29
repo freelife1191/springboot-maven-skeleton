@@ -90,6 +90,8 @@ public class CommonErrorHandler {
 
             //프로세스를 더이상 진행할 수 없을 때
             UnprocessableException.class,
+            //지원되지 않는 기능에 대한 예외처리
+            NotSupportedException.class,
             // 파일이 존재하지 않을 때
             FileNotExistException.class,
             // 파일 등록 파일 유무 체크
