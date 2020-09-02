@@ -1,6 +1,7 @@
 package com.project.utils.common;
 
 import com.google.common.collect.Lists;
+import com.google.gson.internal.Primitives;
 import com.project.exception.common.NotSupportedException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -10,6 +11,8 @@ import org.springframework.util.MultiValueMap;
 import java.lang.reflect.Field;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.project.exception.common.constant.CommonError.NotSupportedException;
 
 /**
  * 테스트에서 사용하기 위한 유틸리티
@@ -35,7 +38,7 @@ public class TestUtils {
             boolean isEnum = false;
 
             try {
-                if(!field.getType().getTypeName().equals("boolean"))
+                if(!Primitives.isPrimitive(field.getType()))
                     isEnum = Class.forName(field.getType().getTypeName()).isEnum();
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e.getMessage(), e);
@@ -43,7 +46,7 @@ public class TestUtils {
 
             ArrayList<Boolean> allowFieldTypes = Lists.newArrayList(
                     field.getType().getTypeName().startsWith("java"),
-                    field.getType().getTypeName().equals("boolean"),
+                    Primitives.isPrimitive(field.getType()),
                     isEnum
             );
 
