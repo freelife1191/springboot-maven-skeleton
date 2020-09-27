@@ -170,6 +170,10 @@ public class S3FileService {
             errorMap.put("Fail Path:", PathUtils.getPath(path));
             errorMap = getErrorMap(errorMap, ase);
             log.error("[S3] Upload Fail [putS3] :: AmazonServiceException :: {}",errorMap);
+            if(ase.getStatusCode() == HttpStatus.NOT_FOUND.value() && ase.getErrorCode().equals("NoSuchKey"))
+                throw new FileNotExistException(ase.getErrorCode());
+            else if(!( ase.getStatusCode() == HttpStatus.NOT_FOUND.value() && ase.getErrorCode().equals("NoSuchKey"))) // 해당 경로가 존재 하지 않거나
+                throw new FileUploadFailException(ase.getErrorCode());
             throw new FileAwsS3ProcessException("[S3] Upload Fail [putS3] :: AmazonServiceException :: "+errorMap);
         } catch (AmazonClientException ace) {
             errorMap.put("Fail FileName:",resource.getFilename());
@@ -212,6 +216,10 @@ public class S3FileService {
             errorMap.put("Fail Path:", PathUtils.getPath(path));
             errorMap = getErrorMap(errorMap, ase);
             log.error("[S3] Upload Fail [putS3] :: AmazonServiceException :: {}",errorMap);
+            if(ase.getStatusCode() == HttpStatus.NOT_FOUND.value() && ase.getErrorCode().equals("NoSuchKey"))
+                throw new FileNotExistException(ase.getErrorCode());
+            else if(!( ase.getStatusCode() == HttpStatus.NOT_FOUND.value() && ase.getErrorCode().equals("NoSuchKey"))) // 해당 경로가 존재 하지 않거나
+                throw new FileUploadFailException(ase.getErrorCode());
             throw new FileAwsS3ProcessException("[S3] Upload Fail [putS3] :: AmazonServiceException :: "+errorMap);
         } catch (AmazonClientException ace) {
             errorMap.put("Fail FileName:",s3UploadFile.getName());

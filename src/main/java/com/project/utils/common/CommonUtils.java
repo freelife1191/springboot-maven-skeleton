@@ -55,7 +55,7 @@ public class CommonUtils {
 
     /**
      * Field 허용 처리 및 Object 값 받아오기
-     * @param field
+     // * @param field
      * @param object
      * @return
      */
@@ -272,7 +272,7 @@ public class CommonUtils {
      * @param object
      * @return
      */
-    private static Map getEmptyCheckObjecttMap(Object object){
+    private static Map getEmptyCheckObjectMap(Object object){
         Map resultMap = new LinkedHashMap<>();
 
         // 기본 클래스 값 셋팅
@@ -289,7 +289,7 @@ public class CommonUtils {
                 resultMap.put(field.getName(), getFieldObject(field, object));
             }
             superClassMapping = getSuperClassMapping(superClassMapping);
-            if( i >= 100) break;
+            if( i >= 10) break;
             i++;
         }
         return resultMap;
@@ -360,7 +360,7 @@ public class CommonUtils {
      * @return
      */
     public static List<Object> getEmptyCheckObjectValueToList(Object object, boolean isZero) {
-        return getEmptyCheckMapValueToList(getEmptyCheckObjecttMap(object), isZero);
+        return getEmptyCheckMapValueToList(getEmptyCheckObjectMap(object), isZero);
     }
 
     /**

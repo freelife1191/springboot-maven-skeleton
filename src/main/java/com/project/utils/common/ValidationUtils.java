@@ -1,5 +1,6 @@
 package com.project.utils.common;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import javax.validation.ConstraintViolation;
@@ -14,6 +15,7 @@ import java.util.regex.Pattern;
  * 유효성 검증 유틸
  * Created by KMS on 24/04/2020.
  */
+@Slf4j
 public class ValidationUtils {
 
     /* Validator 객체 */
@@ -52,7 +54,12 @@ public class ValidationUtils {
      * @param <T>
      */
     public static<T> boolean isEmpty(T object, String fieldName) {
-        return !isNotEmpty(object, fieldName);
+        ConstraintViolation<T> validData = getValidData(object, fieldName);
+        if(Objects.isNull(validData)) return false;
+        boolean isValid = validData.getMessageTemplate().contains("NotEmpty") || validData.getMessageTemplate().contains("NotNull");
+        if(isValid)
+            log.error("필수 입력값 누락: {}",validData.getPropertyPath()+" 은/는 필수 입력값 입니다");
+        return isValid;
     }
 
     /**
@@ -62,9 +69,7 @@ public class ValidationUtils {
      * @param <T>
      */
     public static<T> boolean isNotEmpty(T object, String fieldName) {
-        ConstraintViolation<T> validData = getValidData(object, fieldName);
-        if(Objects.isNull(validData)) return true;
-        return !validData.getMessageTemplate().contains("NotEmpty") && !validData.getMessageTemplate().contains("NotNull");
+        return !isEmpty(object, fieldName);
     }
 
     /**

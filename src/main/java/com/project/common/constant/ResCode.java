@@ -37,7 +37,8 @@ public enum ResCode {
     FILE_TEMP_APPLY_FAILED(3901, "FILE TEMP APPLY FAILED", "File Temp Apply Failed"),
     FILE_DOWNLOAD_FAILED(3902, "FILE DOWNLOAD FAILED", "File Download Failed"),
     FILE_DELETE_FAILED(3903, "FILE DELETE FAILED", "File Delete Failed"),
-
+    FILE_ACCESS_DENIED(3904, "FILE ACCESS DENIED", "File Access Denied"),
+    FILE_PROCESS_FAILED(3905, "FILE PROCESS FAILED", "File Process Failed"),
 
     EXCEL_ERROR(4000, "EXCEL ERROR", "Excel Error"),
     // 엑셀 업로드 시 캐치 하지 못한 그외 에러

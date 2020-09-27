@@ -67,6 +67,10 @@ public enum CommonError {
     FileTempApplyFailException(FILE_TEMP_APPLY_FAILED, "TEMP 파일 적용 실패: 임시 파일 적용 정보를 확인하세요 :: ", true, Level.ERROR),
     /** 파일 경로 생성 실패 */
     FileNotMapePathException(FILE_NOT_MAKE_PATH, "파일 경로 생성 실패: 관리자에게 문의 하세요 :: ", true, Level.ERROR),
+    /** AWS 권한 에러 */
+    FileAwsS3AccessDeniedException(FILE_ACCESS_DENIED, "AWS S3 권한 에러: 파일 처리 실패 :: ", true, Level.ERROR),
+    /** AWS S3 파일 처리 실패 */
+    FileAwsS3ProcessException(FILE_PROCESS_FAILED, "AWS S3 파일 처리 에러: 파일 처리 실패 :: ", true, Level.ERROR),
 
     /** JWT 토큰 복호화 ERROR 핸들러 **/
     InvalidSignatureException(ERR_PARAMS, "JWT 토큰 복호화 ERROR: ", true, Level.ERROR),
