@@ -32,7 +32,7 @@ public class TestUtils {
      * @param prefix
      * @return
      */
-    private static Map<String, Object> getSubObjectMap(Object object, Field field, Map<String, Object> resultMap, String prefix, String caseStrategy) {
+    private static Map<String, Object> getSubObjectMap(Object object, Field field, Map<String, Object> resultMap, String caseStrategy, String prefix) {
         if (Objects.nonNull(object)) {
 
             boolean isEnum = false;
@@ -74,8 +74,8 @@ public class TestUtils {
      * @param object
      * @return
      */
-    private static Map<String, Object> getResultMap(Object object, String prefix, String caseStrategy){
-        return getResultMap(object, null, prefix, caseStrategy);
+    private static Map<String, Object> getResultMap(Object object, String caseStrategy, String prefix){
+        return getResultMap(object, null, caseStrategy, prefix);
     }
 
     /**
@@ -83,7 +83,7 @@ public class TestUtils {
      * @param object
      * @return
      */
-    private static Map<String, Object> getResultMap(Object object, Map<String, Object> resultMap, String prefix, String caseStrategy){
+    private static Map<String, Object> getResultMap(Object object, Map<String, Object> resultMap, String caseStrategy, String prefix){
 
         if(Objects.isNull(resultMap))
             resultMap = new LinkedHashMap<>();
@@ -97,13 +97,13 @@ public class TestUtils {
 
         // 기본 클래스 값 셋팅
         for(Field field : object.getClass().getDeclaredFields())
-            resultMap = getSubObjectMap(CommonUtils.getFieldObject(field, object), field, resultMap, prefix, caseStrategy);
+            resultMap = getSubObjectMap(CommonUtils.getFieldObject(field, object), field, resultMap, caseStrategy, prefix);
         int i = 0;
         // 슈퍼 클래스 값이 있을 때까지 반복
         Class<?> superClassMapping = CommonUtils.getSuperClassMapping(object.getClass());
         while (Objects.nonNull(superClassMapping)) {
             for(Field field : superClassMapping.getDeclaredFields())
-                resultMap = getSubObjectMap(CommonUtils.getFieldObject(field, object), field, resultMap, prefix, caseStrategy);
+                resultMap = getSubObjectMap(CommonUtils.getFieldObject(field, object), field, resultMap, caseStrategy, prefix);
             superClassMapping = CommonUtils.getSuperClassMapping(superClassMapping);
             if( i >= 100) break;
             i++;
@@ -119,8 +119,8 @@ public class TestUtils {
      * @return
      * @throws IllegalAccessException
      */
-    public static Map<String, Object> objectToMap(Object object, String prefix, String caseStrategy) {
-        return getResultMap(object, prefix, caseStrategy);
+    public static Map<String, Object> objectToMap(Object object, String caseStrategy, String prefix) {
+        return getResultMap(object, caseStrategy, prefix);
     }
 
 
@@ -167,16 +167,27 @@ public class TestUtils {
      * @param caseStrategy 파라메터 Strategy
      * @return
      */
-    public static MultiValueMap<String, String> objectToMultiValueMap(Object object, String prefix, String caseStrategy) {
+    public static MultiValueMap<String, String> objectToMultiValueMap(Object object, String caseStrategy, String prefix) {
         MultiValueMap<String, String> multiValueMap = new LinkedMultiValueMap<>();
-        Map<String, Object> objectMap = objectToMap(object, prefix, caseStrategy);
+        Map<String, Object> objectMap = objectToMap(object, caseStrategy, prefix);
         for (String key : objectMap.keySet()) {
             Object value = objectMap.get(key);
             if (value instanceof List) {
+
                 List<String> list = (List<String>) ((List) value).stream()
                         .map(data -> String.valueOf(data))
                         .collect(Collectors.toList());
                 multiValueMap.put(key, list);
+                /*
+                for( Object objectData : (List) value) {
+                    Map<String, Object> listObjectMap = objectToMap(objectData, prefix, caseStrategy);
+                    for(String subKey : listObjectMap.keySet()){
+                        multiValueMap.set(key+"."+subKey, String.valueOf(listObjectMap.get(subKey)));
+                        // log.debug("key = {},subkey = {}, value = {}",key,subKey,listObjectMap.get(subKey));
+                    }
+                }
+                */
+
             }
             else if(value instanceof Map)
                 multiValueMap.set(key, JsonUtils.toMapperJson(value));
@@ -187,7 +198,7 @@ public class TestUtils {
         return multiValueMap;
     }
 
-    public static MultiValueMap<String, String> objectToMultiValueMap(Object object, String prefix) {
-        return objectToMultiValueMap(object, prefix, null);
+    public static MultiValueMap<String, String> objectToMultiValueMap(Object object, String caseStrategy) {
+        return objectToMultiValueMap(object, caseStrategy, null);
     }
 }

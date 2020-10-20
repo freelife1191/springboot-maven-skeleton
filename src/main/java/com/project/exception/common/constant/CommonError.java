@@ -102,7 +102,13 @@ public enum CommonError {
     /** 엑셀 업로드 시 캐치 하지 못한 그외 에러 **/
     ExcelReaderException(EXCEL_READER_ERROR, "엑셀 업로드 ERROR: ", true, Level.ERROR),
     /** JSON 파싱 에러 **/
-    JsonMappingException(ERROR, "JSON 파싱 ERROR: ", true, Level.ERROR)
+    JsonMappingException(ERROR, "JSON 파싱 ERROR: ", true, Level.ERROR),
+    /** Header 필수값 누락 에러 핸들러 **/
+    MissingRequestHeaderException(ERR_PARAMS, "Header 필수값 누락 ERROR: JWT 토큰은 필수 입력값 입니다", false, Level.ERROR),
+    /** 맵핑 에러 **/
+    IllegalStateException(ERR_PARAMS, "", true, Level.ERROR),
+    /** 인자값 형식 에러 **/
+    IllegalArgumentException(ERR_PARAMS, "", false, Level.ERROR)
     ;
 
     private static Map<String, CommonError> nameToMap;

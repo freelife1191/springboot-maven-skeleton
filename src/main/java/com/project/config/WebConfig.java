@@ -1,15 +1,16 @@
 package com.project.config;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.connector.Connector;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
@@ -21,6 +22,7 @@ import java.time.Duration;
  * Created by KMS on 2019-08-19.
  * 웹 공통 설정
  */
+@Slf4j
 @Configuration
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
@@ -58,6 +60,16 @@ public class WebConfig implements WebMvcConfigurer {
                 .setConnectTimeout(Duration.ofSeconds(30)) //접속유지 30초
                 .setReadTimeout(Duration.ofSeconds(300)) //응답대기 300초
                 .build();
+    }
+
+    @Bean
+    public TomcatServletWebServerFactory tomcatServletWebServerFactory() {
+        return new TomcatServletWebServerFactory() {
+            protected void customizeConnector(Connector connector) {
+                super.customizeConnector(connector);
+                connector.setParseBodyMethods("POST,PUT,PATCH,DELETE");
+            }
+        };
     }
 
     /*

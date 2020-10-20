@@ -26,6 +26,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -142,6 +143,12 @@ public class CommonErrorHandler {
             ExcelReaderFileExtentionException.class,
             // 엑셀 업로드 시 캐치 하지 못한 그외 에러
             ExcelReaderException.class,
+            // Header 필수값 누락 에러 핸들러
+            MissingRequestHeaderException.class,
+            // 맵핑 에러
+            IllegalStateException.class,
+            // 인자값 형식 에러
+            IllegalArgumentException.class
     })
     public CommonResult<?> CommonErrorException(Exception e, HttpServletRequest request, WebRequest webRequest) throws Exception {
 
@@ -155,13 +162,14 @@ public class CommonErrorHandler {
         CommonResult<?> commonResult = null;
         String CUSTOM_MSG = null; //커스텀 Exception Message
 
+        Throwable cause;
         /* Exception 별 커스텀 처리 */
         switch (error) {
             case MaxUploadSizeExceededException: // 최대 파일 용량 초과 에러
                 long permittedSize=0L; //제한용량
                 long actualSize=0L; //요청 파일용량
                 MaxUploadSizeExceededException me = (MaxUploadSizeExceededException) e;
-                Throwable cause = me.getCause();
+                cause = me.getCause();
                 if(cause instanceof SizeLimitExceededException) {
                     SizeLimitExceededException sizeLimit = (SizeLimitExceededException) cause;
                     permittedSize = sizeLimit.getPermittedSize() != 0L ? sizeLimit.getPermittedSize()/1024/1024 : 0L;
@@ -179,6 +187,27 @@ public class CommonErrorHandler {
             case ExcelReaderFieldException: // 엑셀 업로드 필드 에러 핸들러
                 commonResult = new CommonResult<>(error.getResCode(), ERROR_MSG, ExcelReader.errorFieldList);
                 errorMap.put("CommonResult", commonResult);
+                break;
+            case HttpMessageNotReadableException:
+                HttpMessageNotReadableException hm = (HttpMessageNotReadableException) e;
+                cause = hm.getCause();
+                if(cause instanceof JsonMappingException) {
+                    JsonMappingException mapping = (JsonMappingException) cause;
+                    ERROR_MSG = "JSON 파싱 ERROR: JSON 형식에 문제가 있어 Parsing에 실패 했습니다 :: "+mapping.getMessage();
+                    CUSTOM_MSG = mapping.getMessage();
+                }
+                break;
+            /*
+            case IllegalStateException:
+                String message = "No primary or default constructor found for interface java.util.List";
+                if(e.getMessage().contains(message))
+                    ERROR_MSG = "요청 파라메터 타입 ERROR: List 타입의 파라메터로 요청해야 합니다";
+                break;
+            */
+            case IllegalArgumentException:
+                String illegalArgumentExceptionMessage = "JWT must have 3 tokens";
+                if(e.getMessage().contains(illegalArgumentExceptionMessage))
+                    ERROR_MSG = "JWT 데이터 형식 ERROR: JWT에는 3 개의 토큰이 있어야 합니다\n입력된 JWT 데이터를 확인하세요";
                 break;
         }
         if(Objects.isNull(commonResult))

@@ -46,8 +46,14 @@ public class ErrorUtils {
         ObjectMapper objectMapper = new ObjectMapper();
 
         errorMap = getErrorMap(errorMap, request); //에러 맵 생성
-        if(StringUtils.isNotEmpty(secretKey))
-            errorMap.put("Request USER ID", AuthUtils.getUserId(request.getHeader("jwt"), secretKey));
+        if(StringUtils.isNotEmpty(secretKey)){
+            try {
+                String userId = AuthUtils.getUserId(request.getHeader("jwt"), secretKey);
+                errorMap.put("Request USER ID", userId);
+            } catch (Exception e) {
+                log.error("JWT 복호화 해제 실패: ERROR_MSG = {}, JWT = {}",e.getMessage(),request.getHeader("jwt"));
+            }
+        }
         Object body = webRequest.getAttribute("body", RequestAttributes.SCOPE_REQUEST);
         if(body instanceof String)
             body = objectMapper.readValue((String) body, Map.class);
