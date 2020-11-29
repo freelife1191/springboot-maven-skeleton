@@ -65,7 +65,7 @@ public class SwaagerConfig {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
                //.apis(RequestHandlerSelectors.any()) //모든 패키지 OPEN
-               //.apis(not(RequestHandlerSelectors.basePackage("com.iparking.api.sample"))) // com.iparking.api.sample 패키지 제외
+               //.apis(not(RequestHandlerSelectors.basePackage("com.project.api.sample"))) // com.project.api.sample 패키지 제외
                 .apis(RequestHandlerSelectors.basePackage("com.project.api") // api 패키지에 해당되는 컨트롤러만
                         .or(RequestHandlerSelectors.basePackage( "com.project.component.code.controller")) // 공통컴포넌트 공통코드 패키지 추가
                 )// 패키지에 해당되는 컨트롤러만

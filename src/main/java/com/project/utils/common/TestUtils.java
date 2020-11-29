@@ -172,22 +172,23 @@ public class TestUtils {
         Map<String, Object> objectMap = objectToMap(object, caseStrategy, prefix);
         for (String key : objectMap.keySet()) {
             Object value = objectMap.get(key);
+            int i =0;
             if (value instanceof List) {
-
                 List<String> list = (List<String>) ((List) value).stream()
                         .map(data -> String.valueOf(data))
                         .collect(Collectors.toList());
                 multiValueMap.put(key, list);
                 /*
                 for( Object objectData : (List) value) {
-                    Map<String, Object> listObjectMap = objectToMap(objectData, prefix, caseStrategy);
+                    Map<String, Object> listObjectMap = objectToMap(objectData,caseStrategy, prefix);
                     for(String subKey : listObjectMap.keySet()){
-                        multiValueMap.set(key+"."+subKey, String.valueOf(listObjectMap.get(subKey)));
+                        multiValueMap.set(key+"["+i+"]."+subKey, String.valueOf(listObjectMap.get(subKey)));
                         // log.debug("key = {},subkey = {}, value = {}",key,subKey,listObjectMap.get(subKey));
                     }
+                    i++;
                 }
                 */
-
+                
             }
             else if(value instanceof Map)
                 multiValueMap.set(key, JsonUtils.toMapperJson(value));
