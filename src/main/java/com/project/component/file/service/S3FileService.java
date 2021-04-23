@@ -360,7 +360,7 @@ public class S3FileService {
      * @param fileList
      */
     public void delete(List<Path> fileList) {
-        fileList.forEach(this::delete);
+        fileList.forEach(path -> delete(path));
     }
 
     /**

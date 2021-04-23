@@ -2,9 +2,9 @@ package com.project.component.excel.tutorial.baeldung.jexcel;
 
 import jxl.read.biff.BiffException;
 import jxl.write.WriteException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Created by KMS on 29/08/2019.
@@ -24,7 +24,7 @@ public class JExcelIntegrationTest {
     private static String FILE_NAME = "temp.xls";
     private String fileLocation;
 
-    @Before
+    @BeforeEach
     public void generateExcelFile() throws IOException, WriteException {
 
         /**
@@ -65,7 +65,7 @@ public class JExcelIntegrationTest {
         assertEquals("20", data.get(2)
                 .get(1));
     }
-    @After
+    @AfterEach
     public void cleanup(){
         File testFile = new File(fileLocation);
         if (testFile.exists()) {

@@ -1,15 +1,15 @@
 package com.project.component.excel.tutorial.baeldung.poi.excel;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Created by KMS on 29/08/2019.
@@ -22,7 +22,7 @@ public class ExcelIntegrationTest {
     private static String FILE_NAME = "temp.xlsx";
     private String fileLocation;
 
-    @Before
+    @BeforeEach
     public void generateExcelFile() throws IOException {
 
         // Path dirpath = Paths.get("src", "test", "resources",".");
@@ -54,7 +54,7 @@ public class ExcelIntegrationTest {
                 .get(1));
     }
 
-    @After
+    @AfterEach
     public void cleanup(){
         File testFile = new File(fileLocation);
         if (testFile.exists()) {

@@ -64,6 +64,7 @@ public class BaseTest {
     protected static MockMultipartFile getMultipartFile(String originalFileName, String reqFileName) {
         return getMultipartFile(null, originalFileName, reqFileName);
     }
+
     /**
      * 파일 업로드 데이터 생성
      * @param originalFileName 원본파일명

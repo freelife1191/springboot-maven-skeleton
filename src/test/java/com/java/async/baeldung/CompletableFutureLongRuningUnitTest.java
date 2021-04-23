@@ -1,8 +1,7 @@
 package com.java.async.baeldung;
 
 import lombok.extern.slf4j.Slf4j;
-
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletableFuture;
@@ -12,8 +11,8 @@ import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * GUIDE
@@ -113,7 +112,7 @@ public class CompletableFutureLongRuningUnitTest {
      * @throws ExecutionException
      * @throws InterruptedException
      */
-    @Test(expected = CancellationException.class)
+    @Test
     public void whenCancelingTheFuture_thenThrowsCancellationException() throws ExecutionException, InterruptedException {
         Future<String> future = calculateAsyncWithCancellation();
         future.get();
@@ -358,7 +357,7 @@ public class CompletableFutureLongRuningUnitTest {
      * @throws ExecutionException
      * @throws InterruptedException
      */
-    @Test(expected = ExecutionException.class)
+    @Test
     public void whenCompletingFutureExceptionally_thenGetMethodThrows() throws ExecutionException, InterruptedException {
         CompletableFuture<String> completableFuture = new CompletableFuture<>();
 

@@ -1,7 +1,7 @@
 package com.java;
 
 import org.apache.commons.lang3.BooleanUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Created by KMS on 18/04/2020.

@@ -27,7 +27,7 @@ import java.time.Duration;
 @RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
 
-    private final RestTemplateBuilder restTemplateBuilder;
+    // private final RestTemplateBuilder restTemplateBuilder;
 
     @Value("${properties.file.max-upload-size}")
     private long MAX_UPLOAD_SIZE;
@@ -51,8 +51,9 @@ public class WebConfig implements WebMvcConfigurer {
                 .maxAge(60 * 60); // 1시간
     }
 
+    /*
     @Bean
-    public RestTemplate restTemplateCustomizer() {
+    public RestTemplate restTemplate() {
         return restTemplateBuilder
                 .requestFactory(HttpComponentsClientHttpRequestFactory::new)
                 //.additionalInterceptors(new RestTemplateClientHttpRequestInterceptor)
@@ -61,6 +62,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .setReadTimeout(Duration.ofSeconds(300)) //응답대기 300초
                 .build();
     }
+    */
 
     @Bean
     public TomcatServletWebServerFactory tomcatServletWebServerFactory() {
