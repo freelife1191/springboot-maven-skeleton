@@ -149,8 +149,8 @@ cloud:
   aws:
     # AWS S3 bucket의 정보
     s3:
-       bucket: test.co.kr
-       download-url: https://s3.ap-northeast-2.amazonaws.com/test.co.kr/
+      bucket: test.co.kr
+      download-url: https://s3.ap-northeast-2.amazonaws.com/test.co.kr/
     region:
       static: ap-northeast-2
     stack:
@@ -172,8 +172,8 @@ external-service:
 
 ## JWT 설정
 jwt:
-  secret-key:
-  default-value:
+  secret-key: A
+  default-value: A
 
 ## 기타 속성설정
 properties:

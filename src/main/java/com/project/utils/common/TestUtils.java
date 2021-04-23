@@ -57,9 +57,12 @@ public class TestUtils {
                 String fieldName = StringUtils.isNotEmpty(prefix) ? prefix + field.getName() : field.getName();
                 if(StringUtils.isNotEmpty(caseStrategy)) {
                     switch (caseStrategy){
-                        case SNAKE -> fieldName = CommonUtils.toSnakeCase(fieldName);
-                        case CAMEL -> fieldName = CommonUtils.toCamelCase(fieldName);
-                        default -> throw new IllegalStateException("Unexpected value: " + caseStrategy);
+                        case SNAKE:
+                            fieldName = CommonUtils.toSnakeCase(fieldName);
+                        case CAMEL:
+                            fieldName = CommonUtils.toCamelCase(fieldName);
+                        default:
+                            throw new IllegalStateException("Unexpected value: " + caseStrategy);
                     }
                 }
                 resultMap.put(fieldName, object);
