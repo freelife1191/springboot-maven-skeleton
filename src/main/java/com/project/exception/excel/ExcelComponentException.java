@@ -29,4 +29,5 @@ public class ExcelComponentException extends RuntimeException{
                                       boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
+    
 }

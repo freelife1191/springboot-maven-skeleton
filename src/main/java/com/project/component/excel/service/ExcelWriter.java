@@ -135,6 +135,7 @@ public class ExcelWriter {
             fileName = new String(fileName.getBytes( "KSC5601"), "8859_1");
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+            e.printStackTrace();
         }
         */
         /*

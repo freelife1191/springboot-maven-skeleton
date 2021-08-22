@@ -15,8 +15,7 @@ import org.springframework.util.StopWatch;
 import org.springframework.web.context.WebApplicationContext;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.Matchers.hasLength;
-import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -165,6 +164,7 @@ class SampleApiControllerTest extends BaseTest {
                 .andExpect(status().isOk())
                 .andExpect(header().exists(HttpHeaders.VARY)) // HEADER에 Location 있는지 확인
                 .andExpect(header().string(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_UTF8_VALUE)) //Content-Type 값 확인
+                .andExpect(jsonPath("result", hasSize(2)))
                 .andExpect(jsonPath("code").value(500))
                 .andDo(print());
     }

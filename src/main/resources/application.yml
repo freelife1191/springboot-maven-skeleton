@@ -162,8 +162,8 @@ cloud:
       # AWS의 instanceProfile를 사용
       instanceProfile: true
       # AWS S3 KEY
-      accessKey:
-      secretKey:
+      accessKey: ABVSDASDA
+      secretKey: ASDADASDASD
 
 ## 외부 서비스 URL
 external-service:

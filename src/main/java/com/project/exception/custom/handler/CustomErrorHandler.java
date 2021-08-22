@@ -8,7 +8,7 @@ package com.project.exception.custom.handler;
 import com.project.api.sample.controller.SampleApiController;
 import com.project.common.domain.CommonResult;
 import com.project.exception.custom.CustomException;
-import com.project.utils.common.ErrorUtils;
+import com.project.exception.utils.ErrorUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;

@@ -12,7 +12,7 @@ import com.project.exception.common.*;
 import com.project.exception.common.constant.CommonError;
 import com.project.exception.excel.*;
 import com.project.exception.file.*;
-import com.project.utils.common.ErrorUtils;
+import com.project.exception.utils.ErrorUtils;
 import com.project.utils.common.JsonUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.fileupload.FileUploadBase.SizeLimitExceededException;

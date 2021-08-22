@@ -1,5 +1,6 @@
 package com.project.api.sample.service;
 
+import com.project.api.sample.packet.ReqFileDataFormSample;
 import com.project.api.sample.packet.ReqFileSample;
 import com.project.api.sample.packet.ResFileSample;
 import com.project.common.domain.CommonResult;
@@ -24,10 +25,7 @@ import java.nio.file.Files;
 import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 import static com.project.common.constant.ResCode.SUCCESS;
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING;
@@ -92,6 +90,31 @@ public class SampleFileService {
         CommonResult commonResult = new CommonResult<>(SUCCESS, SUCCESS.getMessage(), map);
         log.info("## commonResult = {}",commonResult);
         return commonResult;
+    }
+
+    /**
+     * Sample 파일 ModelAttribute MIX 업로드 서비스
+     * @param formSample
+     * @param request
+     * @param webRequest
+     * @return
+     * @throws IOException
+     */
+    public ResponseEntity<List<Map<String, String>>> listForm(ReqFileDataFormSample formSample, HttpServletRequest request, WebRequest webRequest) throws IOException {
+
+        if(formSample.getDataList().size() <= 0)
+            return ResponseEntity.noContent().build();
+
+        List<Map<String, String>> resultMap = new ArrayList<>();
+
+        formSample.getDataList().forEach(data -> {
+            Map<String, String> map = new HashMap<>();
+            map.put("filename",data.getFile().getOriginalFilename());
+            map.put("data", data.getData());
+            resultMap.add(map);
+        });
+
+        return ResponseEntity.ok(resultMap);
     }
 
 
