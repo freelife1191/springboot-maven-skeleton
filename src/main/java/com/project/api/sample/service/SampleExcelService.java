@@ -1,6 +1,7 @@
 package com.project.api.sample.service;
 
 import com.project.api.sample.dto.SampleExcelDto;
+import com.project.api.sample.packet.ReqJsonSample;
 import com.project.common.domain.CommonResult;
 import com.project.component.excel.service.ExcelReader;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +49,20 @@ public class SampleExcelService {
             log.info("Excel Upload Sample Data = {}", dto);
         }
         return new CommonResult<>(SUCCESS, SUCCESS.getMessage(), sampleExcelDtoList);
+    }
+
+    /**
+     * Sample 엑셀 업로드 테스트
+     * @return
+     * @throws Exception
+     */
+    public CommonResult<List<ReqJsonSample>> excelUpload(List<ReqJsonSample> samples) throws Exception {
+
+
+        for(ReqJsonSample sample: samples) {
+            log.info("Excel Upload Sample Data = {}", sample);
+        }
+        return new CommonResult<>(SUCCESS, SUCCESS.getMessage(), samples);
     }
 
     /**

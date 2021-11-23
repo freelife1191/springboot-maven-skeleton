@@ -11,10 +11,9 @@ import eu.bitwalker.useragentutils.Browser;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
@@ -25,6 +24,7 @@ import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.text.NumberFormat;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.Objects;
@@ -145,6 +145,12 @@ public class ExcelUtils {
      */
     public static String getValue(Cell cell) {
 
+        // 소수점 데이터를 그대로 보여주기 위한 설정
+        DataFormatter df = new DataFormatter();
+        // 지수표현식을 풀기위한 설정
+        NumberFormat f = NumberFormat.getInstance();
+        f.setGroupingUsed(false);
+
         if(Objects.isNull(cell) || Objects.isNull(cell.getCellType()))
             return "";
 
@@ -159,7 +165,12 @@ public class ExcelUtils {
                 if (DateUtil.isCellDateFormatted(cell))
                     value = cell.getLocalDateTimeCellValue().toString();
                 else
-                    value = String.valueOf(cell.getNumericCellValue());
+                    // 소수점 데이터를 String으로 표현
+                    value = df.formatCellValue(cell);
+                    // 지수가 있으면 지수 푸는 코드 적용
+                    if (value.matches(".*[a-zA-Z+-].*")) {
+                        value = String.valueOf(f.format(cell.getNumericCellValue()));
+                    }
                     if (value.endsWith(".0"))
                         value = value.substring(0, value.length() - 2);
                 break;
@@ -177,7 +188,7 @@ public class ExcelUtils {
             default:
                 value = "";
         }
-        //log.debug("## cellType = {}, value = {}",cell.getCellType(),value);
+        log.debug("## cellType = {}, value = {}",cell.getCellType(),value);
         return value;
     }
 
